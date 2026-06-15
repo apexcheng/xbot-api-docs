@@ -8,13 +8,13 @@
 
 ## 关键工具提醒
 
-1. Agent 在真实影刀项目目录完成开发或修改后，必须运行本仓库根目录的 `shadowbot_dev_tool.py`。
-2. `shadowbot_dev_tool.py` 默认位于当前知识库根目录，不在真实影刀项目目录里。
+1. Agent 在真实影刀项目目录完成开发或修改后，必须运行本仓库根目录的 `shadowbot_sync_tool.py`。
+2. `shadowbot_sync_tool.py` 默认位于当前知识库根目录，不在真实影刀项目目录里。
 3. 不要假设当前工作目录就是知识库根目录；调用时要明确区分工具路径和 `--project-dir` 指向的真实影刀项目目录。
 4. 最小调用示例：
 
 ```powershell
-python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```
 
 ## 使用顺序
@@ -44,7 +44,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.p
 
 1. 删除本次改动造成的不再使用的 import、变量或函数。
 2. 说明验证方式；不能在影刀编辑器内验证时，不要写成“已验证通过”。
-3. 真实影刀项目中修改 `.py` 后，运行 `shadowbot_dev_tool.py prepare` 同步收尾。
+3. 真实影刀项目中修改 `.py` 后，运行 `shadowbot_sync_tool.py prepare` 同步收尾。
 4. 复核本次 diff：每个新增函数、常量、异常处理、兜底分支都必须能对应当前明确需求。
 
 ## 代码风格门禁
@@ -169,17 +169,17 @@ price = fields.get("价格")
 3. Agent 在真实影刀项目目录中开发和修改代码；本仓库只用于查规则、查 API、查示例和查排错方法，不承担业务项目源码目录角色。
 4. 影刀项目代码入口通常为 `main(args)`；常见初始化导入包括 `import xbot`、`from . import package`、`from .package import variables as glv`。
 5. `args` 中使用的流程参数名必须由人类先在影刀编辑器中配置，Agent 不应自行猜测参数名。
-6. 开发完成后，代码不会自动进入影刀编辑器，必须从本仓库根目录调用 `shadowbot_dev_tool.py`，并指定目标影刀项目目录进行同步。
+6. 开发完成后，代码不会自动进入影刀编辑器，必须从本仓库根目录调用 `shadowbot_sync_tool.py`，并指定目标影刀项目目录进行同步。
 7. 同步前先核对：`main(args)` 入口结构是否正确、`args` 参数名是否已配置、`package.variables` 变量名是否一致、元素库名称和资源文件名称是否一致、目标项目环境是否已安装所需市场指令。
 8. 测试由人类在影刀编辑器中完成；Agent 根据测试反馈继续修改并再次同步，不把“已同步”写成“已在编辑器内验证通过”。
-9. `shadowbot_dev_tool.py prepare` 只接收 `.py` 文件作为输入；不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
+9. `shadowbot_sync_tool.py prepare` 只接收 `.py` 文件作为输入；不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
 10. `prepare` 会顺带处理 `package.json` 的 flow 更新和编译，但不会自动备份项目；如果只改了 Python 文件，正常只传相关 `.py` 文件即可。
-11. 如需备份，请显式调用 `shadowbot_dev_tool.py backup ...`，不要把 `prepare` 当成自动备份命令。
+11. 如需备份，请显式调用 `shadowbot_sync_tool.py backup ...`，不要把 `prepare` 当成自动备份命令。
 
 最小调用示例：
 
 ```powershell
-python .\shadowbot_dev_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python .\shadowbot_sync_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```
 
 ## 文档维护约定

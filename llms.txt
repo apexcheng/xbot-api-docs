@@ -6,13 +6,13 @@
 
 ## 开发后必做
 
-- Agent 在真实影刀项目目录完成代码修改后，必须运行本仓库根目录的 `shadowbot_dev_tool.py` 做同步收尾。
-- `shadowbot_dev_tool.py` 不在真实影刀项目目录里，默认位于当前知识库根目录。
+- Agent 在真实影刀项目目录完成代码修改后，必须运行本仓库根目录的 `shadowbot_sync_tool.py` 做同步收尾。
+- `shadowbot_sync_tool.py` 不在真实影刀项目目录里，默认位于当前知识库根目录。
 - 不要假设当前工作目录就是知识库根目录；调用时应明确区分“知识库工具路径”和“真实项目目录”。
 - 最小示例：
 
 ```powershell
-python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```
 
 ## Agent Rules

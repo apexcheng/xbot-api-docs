@@ -67,14 +67,14 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 
 ## 5. 真实项目开发收尾
 
-- 真实影刀项目修改 `.py` 后，必须运行 `shadowbot_dev_tool.py --project-dir "<项目根目录>" prepare <files...>`。
+- 真实影刀项目修改 `.py` 后，必须运行 `shadowbot_sync_tool.py --project-dir "<项目根目录>" prepare <files...>`。
 - 这一步会登记 flow 并编译；不执行的话，影刀编辑器可能感知不到新代码。
 - 测试由人类在影刀编辑器中完成，Agent 不要把“已同步”写成“已在编辑器内验证通过”。
 
 最小示例：
 
 ```powershell
-python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.py --project-dir "C:\path\to\real_project" prepare main.py run.py
+python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "C:\path\to\real_project" prepare main.py run.py
 ```
 
 ## 6. 不建议继承到新项目的内容

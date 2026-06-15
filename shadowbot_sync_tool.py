@@ -359,7 +359,7 @@ def build_parser():
     :return argparse.ArgumentParser: Configured parser instance.
     """
     parser = argparse.ArgumentParser(
-        description="外部修改影刀项目代码时的辅助工具。"
+        description="将外部修改的影刀项目代码同步到影刀编辑器的工具。"
     )
     parser.add_argument(
         "--project-dir",

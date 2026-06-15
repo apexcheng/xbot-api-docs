@@ -197,14 +197,14 @@ if not order_no:
 2. Agent 应直接将真实影刀项目目录作为工作根目录打开，而不是把知识库仓库当成业务项目目录。
 3. 影刀项目代码入口通常为 `main(args)`；常见初始化导入包括 `import xbot`、`from . import package`、`from .package import variables as glv`。
 4. `args` 中使用的流程参数名必须由人类先在影刀编辑器中配置，Agent 不应自行猜测参数名。
-5. 开发完成后，代码不会自动进入影刀编辑器，真实影刀项目中修改 `.py` 后必须运行知识库根目录的 `shadowbot_dev_tool.py prepare` 同步收尾。
+5. 开发完成后，代码不会自动进入影刀编辑器，真实影刀项目中修改 `.py` 后必须运行知识库根目录的 `shadowbot_sync_tool.py prepare` 同步收尾。
 6. 同步前先核对：`main(args)` 入口结构、`args` 参数名、`package.variables` 变量名、元素库名称、资源文件名称、目标项目环境是否已安装所需市场指令。
 7. 测试由人类在影刀编辑器中完成；Agent 根据测试反馈继续修改，不把“已同步”写成“已在编辑器内验证通过”。
-8. `shadowbot_dev_tool.py prepare` 只接收 `.py` 文件作为输入；不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
-9. `prepare` 会顺带处理 `package.json` 的 flow 更新和编译，但不会自动备份项目；如需备份，显式调用 `shadowbot_dev_tool.py backup ...`。
+8. `shadowbot_sync_tool.py prepare` 只接收 `.py` 文件作为输入；不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
+9. `prepare` 会顺带处理 `package.json` 的 flow 更新和编译，但不会自动备份项目；如需备份，显式调用 `shadowbot_sync_tool.py backup ...`。
 
 最小调用示例：
 
 ```powershell
-python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```

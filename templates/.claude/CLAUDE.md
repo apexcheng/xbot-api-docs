@@ -126,14 +126,14 @@ if not order_no:
 
 1. 删除本次改动造成的不再使用的 import、变量或函数。
 2. 说明验证方式；不能在影刀编辑器内验证时，不要写成“已验证通过”。
-3. 真实影刀项目中修改 `.py` 后，必须运行知识库根目录的 `shadowbot_dev_tool.py prepare` 同步收尾。
-4. `shadowbot_dev_tool.py prepare` 只接收 `.py` 文件作为输入；不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
-5. `prepare` 会顺带处理 `package.json` 的 flow 更新和编译，但不会自动备份项目；如需备份，显式调用 `shadowbot_dev_tool.py backup ...`。
+3. 真实影刀项目中修改 `.py` 后，必须运行知识库根目录的 `shadowbot_sync_tool.py prepare` 同步收尾。
+4. `shadowbot_sync_tool.py prepare` 只接收 `.py` 文件作为输入；不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
+5. `prepare` 会顺带处理 `package.json` 的 flow 更新和编译，但不会自动备份项目；如需备份，显式调用 `shadowbot_sync_tool.py backup ...`。
 
 最小调用示例：
 
 ```powershell
-python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```
 
 ## 核心原则
