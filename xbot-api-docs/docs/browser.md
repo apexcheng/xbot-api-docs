@@ -73,15 +73,15 @@ element = browser.find_by_xpath('//div[@class="item"]', timeout=10)
 element = browser.find_by_css('.item', timeout=10)
 ```
 
-### 2.5 `xbot.print` vs Python `print`
+### 2.5 运行日志
 
 ```python
-import xbot
-from xbot import print as xbot_print
+from xbot.app import logging
 
-xbot_print("第1页采集中...")
-print("第1页采集中...")
+logging.info("第1页采集中...")
 ```
+
+真实影刀项目里的运行日志优先使用 `xbot.app.logging`，不要使用 Python 内置 `print()`。`xbot.print()` 属于历史兼容写法，普通新代码不再优先推荐。
 
 ### 2.6 全局变量 `package.variables`
 
@@ -646,6 +646,8 @@ file_path = browser.dowload_url(
 
 注意：方法名是 `dowload_url`，不是 `download_url`。
 
+业务里凡是“下载文件后等待结果”的场景，统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`；这里的 `wait_complete` / `wait_complete_timeout` 只作为原生接口参数说明保留。
+
 ---
 
 ## 22. 截图
@@ -857,5 +859,5 @@ is_logged_in = "PDDAccessToken" in names or "pdd_user_id" in names
 | `dowload_timeout` 拼写奇怪 | 源码就是这个拼写 | 按源码传 `dowload_timeout` |
 | 元素匹配多个 | 单元素查找要求唯一 | 改选择器，或用 `find_all*` 后自己取 |
 | 中文输入异常 | 输入法干扰 | 改用 `clipboard_input()` |
-| 下载后文件还没生成 | 没等下载完成 | 设置 `wait_complete=True` |
+| 下载后文件还没生成 | 没等下载完成 | 业务里统一改用 `activity_dae43741.browser_utils.wait_download_file(...)` |
 | `dialog_result="OK"` 不确定 | 源码注释是小写 `ok` / `cancel` | 建议传 `"ok"` / `"cancel"` |

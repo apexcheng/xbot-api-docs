@@ -7,7 +7,7 @@
 - 表格中存在 `商品链接价格监测` 工作表，并包含 `平台`、`目标价格`、`实际价格` 字段
 """
 
-from xbot import print
+from xbot.app import logging
 
 
 def table_action(action, client_id, client_secret, base_id, user_id, sheet, params=None):
@@ -68,13 +68,13 @@ def main(args):
         params={"page_size": 10, "max_pages": 1},
     )
     records = result.get("data", {}).get("records") or []
-    print(f"读取到 {len(records)} 条记录")
+    logging.info(f"读取到 {len(records)} 条记录")
     if not records:
         return
 
     first_record = records[0]
     fields = first_record["fields"]
-    print(f"第一条记录平台: {(fields.get('平台') or {}).get('name') or fields.get('平台') or ''}")
+    logging.info(f"第一条记录平台: {(fields.get('平台') or {}).get('name') or fields.get('平台') or ''}")
 
     record_id = first_record.get("id") or first_record.get("recordId") or first_record.get("record_id")
     if not record_id:
@@ -89,4 +89,4 @@ def main(args):
         sheet=sheet,
         params={"records": [{"id": record_id, "fields": {"实际价格": "示例回写"}}]},
     )
-    print("已回写第一条记录的实际价格字段")
+    logging.info("已回写第一条记录的实际价格字段")

@@ -7,7 +7,8 @@
 """
 
 import xbot
-from xbot import print, sleep
+from xbot import sleep
+from xbot.app import logging
 
 from . import package
 from .package import variables as glv
@@ -22,12 +23,11 @@ def main(args):
     shop_name = args.get("shop_name") or ""
     profile = args.get("profile") or "Default"
 
-    print(f"shop_name={shop_name}")
-    print(f"profile={profile}")
+    logging.info(f"shop_name={shop_name}")
+    logging.info(f"profile={profile}")
 
     glv["shop_name"] = shop_name
     glv["profile"] = profile
 
     # 这里只是最小入口骨架，真实业务逻辑按项目需要继续补充。
     sleep(1)
-

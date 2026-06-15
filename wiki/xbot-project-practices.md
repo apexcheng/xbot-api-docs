@@ -84,3 +84,9 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_dev_tool.p
 - 未分类的全局 `atexit` 钩子：小项目可以，大项目优先显式管理保存时机。
 - 硬编码业务字段、店铺名、平台代码、业务 XPath：不应沉淀为通用模式。
 - 还没验证能否跨项目复用的内部辅助模式：先写 `wiki/unresolved.md` 标注“需运行验证”。
+
+## 7. 下载等待辅助方法约定
+
+- 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`。
+- `filename` 是可选参数：传了就按指定文件名等，不传就按“本次新出现并稳定的文件”判断。
+- 不再为同类下载等待业务单独维护旧封装。

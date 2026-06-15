@@ -6,7 +6,6 @@
 - `args` 中的 app_key、app_secret、open_conversation_id 由影刀编辑器提前配置
 """
 
-from xbot import print
 from xbot.app import logging
 
 
@@ -65,4 +64,4 @@ def main(args):
         title=title,
         content=content,
     )
-    print("钉钉群 Markdown 通知已提交")
+    logging.info("钉钉群 Markdown 通知已提交")

@@ -1,7 +1,7 @@
 # 影刀日志记录方法
 
 > 定位：影刀 / xbot 编码版的日志输出接口。
-> 说明：`xbot` 顶层的 `print()` 会转到 `xbot.app.logging.info()`，所以本页同时说明 `xbot.print` 和 `xbot.app.logging` 的关系。
+> 说明：真实影刀项目里的运行日志优先使用 `xbot.app.logging`；`xbot.print()` 只作为历史兼容写法说明。
 
 ---
 
@@ -14,7 +14,7 @@
 
 ---
 
-## 2. `xbot.print()` 与 `xbot.app.logging`
+## 2. `xbot.app.logging` 与 `xbot.print()`
 
 ### 2.1 关系说明
 
@@ -23,13 +23,14 @@ import xbot
 from xbot import print as xbot_print
 ```
 
-- `xbot.print()`：将内容输出到影刀日志面板，内部最终走 `xbot.app.logging.info()`
 - `xbot.app.logging`：提供更细的日志级别控制
+- `xbot.print()`：将内容输出到影刀日志面板，内部最终走 `xbot.app.logging.info()`，历史代码可能会用
 - Python 内置 `print()`：输出到当前控制台，不会自动进入影刀日志面板
 
 ### 2.2 建议
 
-- 需要普通运行日志时，用 `xbot.print()` 或 `xbot.app.logging.info()`
+- 当前项目示例和新代码统一使用 `from xbot.app import logging`
+- 需要普通运行日志时，用 `logging.info()`
 - 需要分级日志时，用 `debug/info/success/warning/error`
 - 需要导出日志时，用 `export()`
 

@@ -20,7 +20,7 @@
 
 | 目录名 | 指令名 | 调用类型 | package.json | prototype.block.json | __init__.py | core.py / py_api.py | 独立 .py 文件 |
 |---|---|---|---|---|---|---|---|
-| `activity_47680f64` | 小工具指令集 | both | ✅ | ✅ | ✅ (processN 包装) | ❌ | ✅ (6 个业务 + 5 个 process) |
+| `activity_47680f64` | 小工具指令集 | both | ✅ | ✅ | ✅ (processN 包装) | ❌ | ✅ (5 个业务 + 5 个 process) |
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | ✅ | ✅ | ✅ (仅 import) | ❌ | ✅ (3 个) |
 | `activity_6f13bae5` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
@@ -42,7 +42,6 @@
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
-| 等待下载完成并保存文件 | direct python | `DownAndMoveFile` | — | `DownAndMoveFile.py` | 浏览器下载保存路径、保存文件夹路径、是否重命名、重命名文件名、最大等待时长 | 文件路径列表 |
 | 递归创建文件夹 | direct python | `CreateDir` | — | `CreateDir.py` | 创建文件夹路径 | — |
 | 移动文件到上一级目录 | direct python | `MoveToPardir` | — | `MoveToPardir.py` | 文件路径 | 移动后文件路径 |
 | 解压文件到当前目录 | flow | `process1` | `process1()` | `process1.py` (仅 main) | 压缩文件路径、删除原文件 | 文件路径列表 |
@@ -54,7 +53,7 @@
 | 入参校验 | flow | `process5` | `process5()` | `process5.py` (仅 main) | 传入值、可选项列表、是否多选、分隔符 | — |
 
 **调用方式总结：**
-- **Code 型 flow**（DownAndMoveFile、CreateDir、MoveToPardir、DateStringCheck、latest_email、get_SMS_code）：直接调用对应 `.py` 文件中的 `main()` 函数
+- **Code 型 flow**（CreateDir、MoveToPardir、DateStringCheck、latest_email、get_SMS_code）：直接调用对应 `.py` 文件中的 `main()` 函数
 - **Visual 型 flow**（process1~5）：通过 `__init__.py` 中的 `processN()` 包装函数调用 `xbot_visual.process.run()`
 
 ---
@@ -257,6 +256,7 @@
 |---|---|---|---|---|---|---|
 | XPath 等待出现 | direct python | `wait_appear_by_xpath` | —（仅模块导入） | `browser_utils.py` | `page`、`xpath`、`timeout` | `WebElement` 或 `None` |
 | XPath 等待消失 | direct python | `wait_disappear_by_xpath` | —（仅模块导入） | `browser_utils.py` | `page`、`xpath`、`timeout` | `bool` |
+| 等待下载完成 | direct python | `wait_download_file` | —（仅模块导入） | `browser_utils.py` | `download_dir`、`filename`、`timeout`、`interval` | `Path` |
 | 异常详情格式化 | direct python | `format_exception_detail` | —（仅模块导入） | `exception_utils.py` | `e` | `str` |
 
 ---
@@ -386,11 +386,10 @@ def main(args):
 
 **调用入口：**
 - Flow：`xbot_extensions.activity_47680f64.process1()` ~ `process5()`
-- Direct：`xbot_extensions.activity_47680f64.DownAndMoveFile.main()`、`CreateDir.main()`、`MoveToPardir.main()`、`DateStringCheck.main()`、`latest_email.main()`、`get_SMS_code.main()`
+- Direct：`CreateDir.main()`、`MoveToPardir.main()`、`DateStringCheck.main()`、`latest_email.main()`、`get_SMS_code.main()`
 
 **参数说明：**
 - `process2(是否弹窗下载, 保存文件夹, 文件名, 下载前文件数量, 浏览器下载保存路径, 最大等待时长)`
-- `DownAndMoveFile`：浏览器下载保存路径、下载前文件数量、保存文件夹路径、重命名文件名、是否重命名、等待下载完成最大时长
 
 **默认值：**
 - 浏览器下载保存路径：默认 `$HOME/Downloads`
@@ -412,10 +411,6 @@ xbot_extensions.activity_47680f64.process2(
     浏览器下载保存路径="",
     最大等待时长=30
 )
-
-# Direct 型
-from xbot_extensions.activity_47680f64 import DownAndMoveFile
-DownAndMoveFile.main(args)
 ```
 
 ---
@@ -1164,16 +1159,19 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 **调用入口：**
 - `from xbot_extensions.activity_dae43741.browser_utils import wait_appear_by_xpath`
 - `from xbot_extensions.activity_dae43741.browser_utils import wait_disappear_by_xpath`
+- `from xbot_extensions.activity_dae43741.browser_utils import wait_download_file`
 - `from xbot_extensions.activity_dae43741.exception_utils import format_exception_detail`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
 - `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，查找抛异常即视为已消失，返回 `True`；超时返回 `False`
+- `wait_download_file(download_dir, filename=None, timeout=300, interval=1)`：等待下载目录中的文件下载完成；`filename` 可选，传了按指定文件名等，不传按本次新出现并稳定的文件判断
 - `format_exception_detail(e)`：返回错误信息、报错位置、当前时间、函数名、代码行，适合通知或日志汇总
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
 - 原生 `wait_appear()` / `wait_disappear()` 不方便直接用于 XPath 字符串等待
+- 下载文件业务需要统一等待下载完成
 - 需要把异常对象整理成更易读的文本内容
 
 **最小示例：**
@@ -1182,8 +1180,10 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 from xbot_extensions.activity_dae43741.browser_utils import (
     wait_appear_by_xpath,
     wait_disappear_by_xpath,
+    wait_download_file,
 )
 from xbot_extensions.activity_dae43741.exception_utils import format_exception_detail
+from xbot.app import logging
 
 
 element = wait_appear_by_xpath(page, '//button[contains(., "查询")]', timeout=10)
@@ -1194,17 +1194,20 @@ element.click()
 if not wait_disappear_by_xpath(page, '//div[@class="loading"]', timeout=20):
     raise RuntimeError("loading 未消失")
 
+file_path = wait_download_file(r"C:\Downloads", filename="result.xlsx", timeout=300)
+
 try:
     page.find_by_xpath('//input[@name="keyword"]', timeout=3).input("影刀")
 except Exception as e:
     detail = format_exception_detail(e)
-    xbot.print(detail)
+    logging.error(detail)
 ```
 
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
 - `wait_disappear_by_xpath()` 的判定依据是“查找抛异常即视为已消失”
+- 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
@@ -1220,7 +1223,7 @@ except Exception as e:
 | block 定义 | `activity_*/prototype.block.json` |
 | __init__.py 包装模式 | `activity_47680f64/__init__.py`、`activity_6f13bae5/__init__.py`、`ad_killer/__init__.py`、`web_action/__init__.py` |
 | 仅模块导入型增强工具 | `activity_dae43741/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils` |
-| XPath 等待增强 | `activity_dae43741/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()` |
+| 浏览器等待增强 | `activity_dae43741/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
 | 异常详情格式化 | `activity_dae43741/exception_utils.py`：`format_exception_detail()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`activity_df0688e4/__init__.py` |
@@ -1268,12 +1271,12 @@ except Exception as e:
 
 | 场景 | 推荐目录 | 推荐指令 |
 |---|---|---|
-| 文件下载/移动/解压 | `activity_47680f64` | `DownAndMoveFile`、`process1`、`process2` |
+| 文件下载/移动/解压 | `activity_47680f64` | `process1`、`process2` |
 | 钉钉表格操作 | `activity_5b77c4ce` | `general_table_action`、`yd_ai_table_action` |
 | 钉钉消息通知 | `activity_6f13bae5` | `process1`、`process2`、`to_markdown_table` |
 | 电商后台登录 | `activity_7bca6d` | `process7`(淘宝)、`process6`(京东)、`process21`(拼多多) |
 | ERP 数据查询 | `activity_df0688e4` | `select_stock`、`select_item`、`select_order_list` |
-| XPath 等待 / 异常详情格式化 | `activity_dae43741` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`format_exception_detail` |
+| XPath 等待 / 下载等待 / 异常详情格式化 | `activity_dae43741` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail` |
 | 关闭网页广告 | `ad_killer` | `close_ads`、`close_ads_win` |
 | 网页元素扩展操作 | `web_action` | `process1`(滚动)、`process4`(背景色)、`select_date` |
 

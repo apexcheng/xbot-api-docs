@@ -7,7 +7,7 @@
 """
 
 import xbot
-from xbot import print
+from xbot.app import logging
 
 from . import package
 
@@ -41,5 +41,4 @@ def main(args):
     input_element.input(keyword)
     search_buttons[0].click()
 
-    print(f"已提交搜索关键词: {keyword}")
-
+    logging.info(f"已提交搜索关键词: {keyword}")

@@ -12,7 +12,8 @@
 import re
 from datetime import datetime
 
-from xbot import print, web
+from xbot import web
+from xbot.app import logging
 
 
 def table_action(action, client_id, client_secret, base_id, user_id, sheet, params=None):
@@ -120,4 +121,4 @@ def main(args):
         sheet=sheet,
         params={"records": [{"id": record_id, "fields": {"实际价格": actual_value, "巡检状态": status, "更新时间": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}]},
     )
-    print(f"已回写实际价格: {actual_value}，状态: {status}")
+    logging.info(f"已回写实际价格: {actual_value}，状态: {status}")
