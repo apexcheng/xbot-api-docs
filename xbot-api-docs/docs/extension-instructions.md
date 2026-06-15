@@ -24,7 +24,7 @@
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | ✅ | ✅ | ✅ (仅 import) | ❌ | ✅ (3 个) |
 | `activity_6f13bae5` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
-| `activity_dae43741` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`) |
+| `activity_dae43741` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`) |
 | `activity_df0688e4` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
 | `ad_killer` | 广告杀手 | both | ✅ | ✅ | ✅ (close_ads/close_ads_win) | ✅ (_core.py) | ✅ (7 个) |
 | `web_action` | 网页扩展操作 | both | ✅ | ✅ | ✅ (18 个 process) | ❌ | ✅ (10 个业务) |
@@ -258,6 +258,9 @@
 | XPath 等待消失 | direct python | `wait_disappear_by_xpath` | —（仅模块导入） | `browser_utils.py` | `page`、`xpath`、`timeout` | `bool` |
 | 等待下载完成 | direct python | `wait_download_file` | —（仅模块导入） | `browser_utils.py` | `download_dir`、`filename`、`timeout`、`interval` | `Path` |
 | 异常详情格式化 | direct python | `format_exception_detail` | —（仅模块导入） | `exception_utils.py` | `e` | `str` |
+| 拼多多商家中心登录 | direct python | `login_pdd_seller` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
+| 千牛商家工作台登录 | direct python | `login_qianniu` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
+| 京麦商家工作台登录 | direct python | `login_jingmai` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 
 ---
 
@@ -1154,25 +1157,33 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 
 **调用方式：** direct python
 
-**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待增强和异常详情格式化，后续可继续扩展更多通用增强工具。
+**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化和商家后台登录辅助。
 
 **调用入口：**
+- `from xbot_extensions.activity_dae43741 import exception_utils, browser_utils, shop_utils`
 - `from xbot_extensions.activity_dae43741.browser_utils import wait_appear_by_xpath`
 - `from xbot_extensions.activity_dae43741.browser_utils import wait_disappear_by_xpath`
 - `from xbot_extensions.activity_dae43741.browser_utils import wait_download_file`
 - `from xbot_extensions.activity_dae43741.exception_utils import format_exception_detail`
+- `from xbot_extensions.activity_dae43741.shop_utils import login_pdd_seller`
+- `from xbot_extensions.activity_dae43741.shop_utils import login_qianniu`
+- `from xbot_extensions.activity_dae43741.shop_utils import login_jingmai`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
 - `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，查找抛异常即视为已消失，返回 `True`；超时返回 `False`
 - `wait_download_file(download_dir, filename=None, timeout=300, interval=1)`：等待下载目录中的文件下载完成；`filename` 可选，传了按指定文件名等，不传按本次新出现并稳定的文件判断
 - `format_exception_detail(e)`：返回错误信息、报错位置、当前时间、函数名、代码行，适合通知或日志汇总
+- `login_pdd_seller(account, password, profile=None)`：打开拼多多商家中心登录页，登录后按 URL 是否离开 `login` 判断结果
+- `login_qianniu(account, password, profile=None)`：打开千牛商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
+- `login_jingmai(account, password, profile=None)`：打开京麦商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
 - 原生 `wait_appear()` / `wait_disappear()` 不方便直接用于 XPath 字符串等待
 - 下载文件业务需要统一等待下载完成
 - 需要把异常对象整理成更易读的文本内容
+- 需要在编码版里直接调用商家后台登录辅助函数，并复用指定 Chrome profile
 
 **最小示例：**
 
@@ -1203,11 +1214,24 @@ except Exception as e:
     logging.error(detail)
 ```
 
+**商家后台登录示例：**
+
+```python
+from xbot_extensions.activity_dae43741 import shop_utils
+
+
+ok = shop_utils.login_pdd_seller("账号", "密码", profile="Default")
+if not ok:
+    raise RuntimeError("拼多多商家中心登录失败")
+```
+
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
 - `wait_disappear_by_xpath()` 的判定依据是“查找抛异常即视为已消失”
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
+- `shop_utils` 中的登录 XPath 会随平台页面变化，当前页面行为需运行验证
+- 商家后台登录只处理账号密码输入和提交，不处理验证码、扫码、短信、人机验证等复杂分支
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
@@ -1222,9 +1246,10 @@ except Exception as e:
 | package.json 结构 | `activity_*/package.json`、`ad_killer/package.json`、`web_action/package.json` |
 | block 定义 | `activity_*/prototype.block.json` |
 | __init__.py 包装模式 | `activity_47680f64/__init__.py`、`activity_6f13bae5/__init__.py`、`ad_killer/__init__.py`、`web_action/__init__.py` |
-| 仅模块导入型增强工具 | `activity_dae43741/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils` |
+| 仅模块导入型增强工具 | `activity_dae43741/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils` |
 | 浏览器等待增强 | `activity_dae43741/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
 | 异常详情格式化 | `activity_dae43741/exception_utils.py`：`format_exception_detail()` |
+| 商家后台登录辅助 | `activity_dae43741/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`activity_df0688e4/__init__.py` |
 | close_ads 默认值 | `ad_killer/_core.py` 第 25-28 行：`close_type` 默认 `"hidden"` |
@@ -1274,9 +1299,9 @@ except Exception as e:
 | 文件下载/移动/解压 | `activity_47680f64` | `process1`、`process2` |
 | 钉钉表格操作 | `activity_5b77c4ce` | `general_table_action`、`yd_ai_table_action` |
 | 钉钉消息通知 | `activity_6f13bae5` | `process1`、`process2`、`to_markdown_table` |
-| 电商后台登录 | `activity_7bca6d` | `process7`(淘宝)、`process6`(京东)、`process21`(拼多多) |
+| 电商后台登录 | `activity_7bca6d` / `activity_dae43741` | `activity_7bca6d` 提供成熟登录流程；`activity_dae43741.shop_utils` 提供轻量账号密码登录辅助 |
 | ERP 数据查询 | `activity_df0688e4` | `select_stock`、`select_item`、`select_order_list` |
-| XPath 等待 / 下载等待 / 异常详情格式化 | `activity_dae43741` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail` |
+| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 | `activity_dae43741` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils` |
 | 关闭网页广告 | `ad_killer` | `close_ads`、`close_ads_win` |
 | 网页元素扩展操作 | `web_action` | `process1`(滚动)、`process4`(背景色)、`select_date` |
 
