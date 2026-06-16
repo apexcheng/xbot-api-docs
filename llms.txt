@@ -36,6 +36,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - [桌面对话框与通知](xbot-api-docs/docs/notification.md): xbot.app.dialog 对话框和通知。
 - [压缩解压](xbot-api-docs/docs/xzip.md): xbot.xzip 压缩和解压。
 - [键盘鼠标](xbot-api-docs/docs/keyboard-mouse.md): 全局键盘输入、鼠标移动、点击、滚轮、剪贴板输入等。
+- [iframe2 扩展指令说明](xbot-api-docs/docs/iframe2-extension.md): 跨 iframe / frame 的 XPath 查找、点击、输入、等待和元素信息读取。
 
 ## Debug
 

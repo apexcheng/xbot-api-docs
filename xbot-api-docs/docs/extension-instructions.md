@@ -1,6 +1,6 @@
 # 影刀市场指令扩展开发指南
 
-> 分析范围：7 个常用市场指令目录
+> 分析范围：8 个常用市场指令目录
 > 分析日期：2026-06-08
 > 分析原则：不猜测，所有结论均有文件依据
 
@@ -26,6 +26,7 @@
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
 | `activity_dae43741` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`) |
 | `activity_df0688e4` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
+| `iframe2` | XPath跨域获取网页元素 | both | ✅ | ✅ | ❌ | ✅ (`_core.py`) | ✅ (`api.py`、`js_code.py`) |
 | `ad_killer` | 广告杀手 | both | ✅ | ✅ | ✅ (close_ads/close_ads_win) | ✅ (_core.py) | ✅ (7 个) |
 | `web_action` | 网页扩展操作 | both | ✅ | ✅ | ✅ (18 个 process) | ❌ | ✅ (10 个业务) |
 
@@ -190,7 +191,38 @@
 
 ---
 
-### 2.6 ad_killer — 广告杀手
+### 2.6 iframe2 — XPath跨域获取网页元素
+
+| 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
+|---|---|---|---|---|---|---|
+| A0-初始化IFrame | both | `init_iframe` | — | `api.py` | `web_page` | `iframe_instance` |
+| A1-切换IFrame | both | `to_iframe` | — | `api.py` | `iframe_instance`、`iframe_xpath`、`current_global`、`timeout` | `new_iframe_instance` |
+| B1-获取元素对象 | both | `find_ele` | — | `api.py` | `iframe_instance`、`xpath`、`current_global`、`timeout` | `web_element` |
+| B2-获取相似元素 | both | `find_all_ele` | — | `api.py` | `iframe_instance`、`xpath`、`current_global`、`timeout` | `web_element_list` |
+| C1-点击元素 | both | `click_by_xpath` | — | `api.py` | `iframe_instance`、`xpath`、`current_global`、点击参数 | — |
+| C2-填写输入框 | both | `input_by_xpath` | — | `api.py` | `iframe_instance`、`xpath`、`text`、输入参数 | — |
+| C3-等待元素 | both | `wait` | — | `api.py` | `iframe_instance`、`xpath`、`state`、`current_global`、`timeout` | `wait_result` |
+| D1-获取元素信息 | both | `get_elem_info` | — | `api.py` | `iframe_instance`、`xpath`、`op`、`current_global`、`timeout` | `attribute` |
+| D2-获取元素属性 | both | `get_elem_info` | — | `api.py` | `iframe_instance`、`xpath`、`attr_name`、`current_global`、`timeout` | `attribute` |
+
+**调用方式总结：**
+- 可视化层通过 `prototype.block.json` 暴露 A/B/C/D 分组指令，主入口是 `xbot_extensions.iframe2.*`
+- 编码版可直接调用 `api.py` 中的 `init_iframe`、`to_iframe`、`find_ele`、`find_all_ele`、`click_by_xpath`、`input_by_xpath`、`wait`、`get_elem_info`
+- `_core.py` 提供 `IframePage`、XPath 数组逐层切入、全局查找、跨域 JS 执行等核心实现
+
+**当前已确认规律：**
+- `iframe_instance` 可直接传 `web_page`，`check_obj` 会自动包装成 `IframePage`
+- `xpath` / `iframe_xpath` 支持传数组，数组模式下按层切入，不走全局查找
+- `wait` 的状态枚举按源码只确认 `appear` / `disappear`
+- `click_by_xpath` 的点击方式只确认 `单击` / `双击`
+- `input_by_xpath` 的输入方式区分 `模拟人工输入`、`剪贴板输入`、`自动化接口输入`
+
+**专题文档：**
+- [iframe2 扩展指令说明](iframe2-extension.md)
+
+---
+
+### 2.7 ad_killer — 广告杀手
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
@@ -208,7 +240,7 @@
 
 ---
 
-### 2.7 web_action — 网页扩展操作
+### 2.8 web_action — 网页扩展操作
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
@@ -256,7 +288,7 @@
 |---|---|---|---|---|---|---|
 | XPath 等待出现 | direct python | `wait_appear_by_xpath` | —（仅模块导入） | `browser_utils.py` | `page`、`xpath`、`timeout` | `WebElement` 或 `None` |
 | XPath 等待消失 | direct python | `wait_disappear_by_xpath` | —（仅模块导入） | `browser_utils.py` | `page`、`xpath`、`timeout` | `bool` |
-| 等待下载完成 | direct python | `wait_download_file` | —（仅模块导入） | `browser_utils.py` | `download_dir`、`filename`、`timeout`、`interval` | `Path` |
+| 等待下载完成 | direct python | `wait_download_file` | —（仅模块导入） | `browser_utils.py` | `download_dir`、`filename_pattern`、`timeout`、`start_time` | `Path` |
 | 异常详情格式化 | direct python | `format_exception_detail` | —（仅模块导入） | `exception_utils.py` | `e` | `str` |
 | 拼多多商家中心登录 | direct python | `login_pdd_seller` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 千牛商家工作台登录 | direct python | `login_qianniu` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
@@ -882,21 +914,26 @@ target = web_page.find_by_xpath('//input[@type="text"]', timeout=20)
 target.clipboard_input("测试关键字", delay_after=0.3)
 ```
 
-**历史项目常见的 Chrome Profile 激活模式（需运行验证）：**
+**Chrome Profile / 用户环境切换：**
 
 ```python
-from xbot_extensions.activity_4303bbee import process22 as activate
 from xbot import web
 
-activate(profile="Default", type="chrome")
+web.set_user_environment(
+    mode="chrome",
+    profile_name="Default",
+    specifield_userdata=False,
+    user_data_dir=None,
+)
+
 browser = web.create("https://example.com", mode="chrome", load_timeout=20)
 browser.wait_load_completed(timeout=15)
 ```
 
 使用建议：
 
-- 适合需要复用指定 Chrome 用户目录、维持既有登录态的任务。
-- 当前知识库还没有这组能力的正式参数手册，先按历史项目经验记录，并保留 `需运行验证` 标注。
+- 复用指定 Chrome Profile、维持既有登录态或切换浏览器用户环境时，优先使用原生 `xbot.web.set_user_environment`。
+- 这类场景统一使用原生 `xbot.web.set_user_environment`；更多参数说明见 `docs/browser.md`。
 
 ---
 
@@ -1172,7 +1209,7 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
 - `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，查找抛异常即视为已消失，返回 `True`；超时返回 `False`
-- `wait_download_file(download_dir, filename=None, timeout=300, interval=1)`：等待下载目录中的文件下载完成；`filename` 可选，传了按指定文件名等，不传按本次新出现并稳定的文件判断
+- `wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`：等待下载目录中的文件下载完成；`download_dir` 不传时默认使用当前用户下载目录，不存在则回退到 `~/下载`；`filename_pattern` 可选，传了按指定文件名关键词或 glob 表达式匹配，不传按本次新出现并稳定的文件判断；`start_time` 建议在点击下载前用 `time.time()` 记录
 - `format_exception_detail(e)`：返回错误信息、报错位置、当前时间、函数名、代码行，适合通知或日志汇总
 - `login_pdd_seller(account, password, profile=None)`：打开拼多多商家中心登录页，登录后按 URL 是否离开 `login` 判断结果
 - `login_qianniu(account, password, profile=None)`：打开千牛商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
@@ -1188,6 +1225,8 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 **最小示例：**
 
 ```python
+import time
+
 from xbot_extensions.activity_dae43741.browser_utils import (
     wait_appear_by_xpath,
     wait_disappear_by_xpath,
@@ -1205,7 +1244,8 @@ element.click()
 if not wait_disappear_by_xpath(page, '//div[@class="loading"]', timeout=20):
     raise RuntimeError("loading 未消失")
 
-file_path = wait_download_file(r"C:\Downloads", filename="result.xlsx", timeout=300)
+start_time = time.time()
+file_path = wait_download_file(filename_pattern="result.xlsx", timeout=300, start_time=start_time)
 
 try:
     page.find_by_xpath('//input[@name="keyword"]', timeout=3).input("影刀")
@@ -1301,6 +1341,7 @@ if not ok:
 | 钉钉消息通知 | `activity_6f13bae5` | `process1`、`process2`、`to_markdown_table` |
 | 电商后台登录 | `activity_7bca6d` / `activity_dae43741` | `activity_7bca6d` 提供成熟登录流程；`activity_dae43741.shop_utils` 提供轻量账号密码登录辅助 |
 | ERP 数据查询 | `activity_df0688e4` | `select_stock`、`select_item`、`select_order_list` |
+| 跨 iframe XPath 查找 / 点击 / 输入 / 等待 | `iframe2` | `init_iframe`、`to_iframe`、`find_ele`、`click_by_xpath`、`input_by_xpath`、`wait` |
 | XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 | `activity_dae43741` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils` |
 | 关闭网页广告 | `ad_killer` | `close_ads`、`close_ads_win` |
 | 网页元素扩展操作 | `web_action` | `process1`(滚动)、`process4`(背景色)、`select_date` |
@@ -1311,4 +1352,4 @@ if not ok:
 |---|---|
 | 仅 Flow（Visual） | —（所有支持 Flow 的目录也支持 Direct） |
 | 仅 Direct Python | `activity_5b77c4ce`、`activity_dae43741`、`activity_df0688e4` |
-| Flow + Direct | `activity_47680f64`、`activity_6f13bae5`、`activity_7bca6d`、`ad_killer`、`web_action` |
+| Flow + Direct | `activity_47680f64`、`activity_6f13bae5`、`activity_7bca6d`、`iframe2`、`ad_killer`、`web_action` |

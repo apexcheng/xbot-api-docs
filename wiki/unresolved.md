@@ -31,3 +31,11 @@
 - 需要验证：`show_notifycation` 的 `placement` / `level` 完整可选值，`process56` 与 `process6` 的全部入参差异，`qn_login.login()` 的 `engine` 完整可选值，`close_ads` 内置广告名单与默认规则。
 - 验证方式：按 `xbot-api-docs/docs/debug/market-extension-source.md` 定位当前项目 `xbot_extensions` 源码，查看 `__init__.py`、`_core.py`、`prototype.block.json` 等真实实现。
 - 关联文档：`xbot-api-docs/docs/notification.md`、`xbot-api-docs/docs/extension-instructions.md`
+
+## 2026-06-16 iframe2 扩展的 Shadow Root 与运行时边界
+
+- 问题：`iframe2` 已能从源码确认跨 iframe XPath 主能力，但 Shadow Root、隐藏块和不同浏览器下的真实稳定性还没有运行验证。
+- 当前判断：`check_obj` 自动包装、XPath 数组逐层切入、`wait` 返回布尔值、`execute_javascript()` 在当前 iframe html 上执行，这些可作为稳定结论；其余运行时边界不应提前泛化。
+- 需要验证：Shadow Root 相关路径是否适合当前版本稳定使用，`A2-切换至父IFrame` 隐藏块的可用性，不同浏览器模式下的兼容性，以及页面未完全加载时重试逻辑的实际表现。
+- 验证方式：在真实影刀项目里调用 `xbot_extensions.iframe2.api` 的最小示例，分别覆盖单层 iframe、多层 iframe、全局查找、Shadow Root 和加载中页面。
+- 关联文档：`xbot-api-docs/docs/iframe2-extension.md`、`wiki/iframe2-extension-notes.md`
