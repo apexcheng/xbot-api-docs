@@ -28,7 +28,14 @@ records = result.get("data", {}).get("records") or []
 platform = (record["fields"].get("平台") or {}).get("name") or ""
 ```
 
-## 3. 业务结果与通知解耦
+## 3. 返回值与后置汇总解耦
+
+- 函数返回值优先只承载当前方法的主业务结果，不要为了后续计数、日志、汇总、通知等收尾步骤，顺手多返回一个 `stats`、`summary` 或类似聚合结果。
+- 如果后置步骤需要的统计信息可以从主业务结果现场计算得到，就在最终使用处再算，不要提前耦合到扫描、采集、业务处理函数的返回值里。
+- 只有当后置所需信息无法从主业务结果可靠推导，或现算会丢失必要上下文时，才考虑保留辅助统计；保留时要先说明哪些字段不能从主结果推导。
+- 扫描、采集、业务处理函数默认返回主结果即可；后面的计数、日志、汇总优先基于主结果计算，不要默认同时返回 `stats`。
+
+## 4. 业务结果与通知解耦
 
 - `process_xxx` 只负责业务处理、表格回写，并返回通知需要的结果列表。
 - 通知层统一消费 `notify_records`，现场计算汇总、异常数和明细，不在业务层提前固化更多通知结构。
@@ -50,10 +57,12 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 }
 ```
 
-## 4. 最小改动风格
+## 5. 最小改动风格
 
 - 优先单函数完整逻辑，少抽象，少间接层。
 - 写代码前先问：是否真的需要新函数、新常量、新类、配置层、重试框架、异常体系；不需要就不要写。
+- 默认不要为了“看起来规范”拆函数；某段逻辑只在一个地方使用时，优先直接内联写在调用处，不要单独封装。
+- 只有在代码量较多、内联后明显影响主流程阅读，逻辑本身较复杂、需要单独命名降低理解成本，或后续已经明确会复用时，才考虑抽函数。
 - 一个函数如果只被引用 1 次，默认不要抽；一个函数如果只有 1 条语句，默认不要单独封装。
 - 已知入参契约明确时，不要在业务逻辑里反复做防御性判断。
 - 单次使用的常量、URL、小函数默认直接写使用处，不为“看起来更工程化”而提取。
@@ -70,20 +79,20 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 5. 删除重试、多 XPath、兼容分支后，当前需求是否仍可完成？如果是，别加。
 6. 删除新增注释后，代码是否仍能读懂？如果是，别注释。
 
-## 5. 批量任务容错边界
+## 6. 批量任务容错边界
 
 - 批量处理表格记录时，可以让单行异常生成失败结果并继续处理后续记录，避免一条脏数据中断整批任务。
 - 入口级读取失败、关键配置缺失、凭证缺失这类会影响全局正确性的错误，应直接抛错，不要伪装成单行失败。
 - 行级异常如果被捕获，必须保留关键上下文，例如记录 ID、平台、链接、账号维度或错误原因，方便后续人工排查。
 - 不要为了“不中断”吞掉异常；至少要写日志、回写失败状态或进入结果列表。
 
-## 6. 任务级缓存
+## 7. 任务级缓存
 
 - 同一轮任务中，多个记录共享同一页面、SPU、接口响应或解析结果时，可以用 `package.variables` 保存任务级缓存，减少重复打开页面和重复解析。
 - 任务开始时应显式初始化或清空缓存，避免跨轮任务误用旧数据。
 - 缓存内容只放本轮可复用的中间结果，不要存账号密码、token、Cookie 等敏感数据。
 
-## 7. 真实项目开发收尾
+## 8. 真实项目开发收尾
 
 - 真实影刀项目修改 `.py` 后，必须运行 `shadowbot_sync_tool.py --project-dir "<项目根目录>" prepare <files...>`。
 - 这一步会登记 flow 并编译；不执行的话，影刀编辑器可能感知不到新代码。
@@ -98,7 +107,7 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "C:\path\to\real_project" prepare main.py run.py
 ```
 
-## 8. 不建议继承到新项目的内容
+## 9. 不建议继承到新项目的内容
 
 - 跨文件 `from .xxx import *`：隐式依赖多，建议显式 import。
 - 动态 import 登录模块：`__import__("process7", ...)` 写法不直观，建议直接 import。
@@ -106,7 +115,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - 硬编码业务字段、店铺名、平台代码、业务 XPath：不应沉淀为通用模式。
 - 还没验证能否跨项目复用的内部辅助模式：先写 `wiki/unresolved.md` 标注“需运行验证”。
 
-## 9. 下载等待辅助方法约定
+## 10. 下载等待辅助方法约定
 
 - 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`。
 - `filename` 是可选参数：传了就按指定文件名等，不传就按“本次新出现并稳定的文件”判断。
@@ -114,7 +123,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 
 更多浏览器、元素定位、剪贴板输入、登录态和页面清理经验见 [浏览器自动化常见踩坑](browser-automation-pitfalls.md)。
 
-## 10. 市场指令源码排查
+## 11. 市场指令源码排查
 
 - 市场指令参数或返回值不明确时，先用 `inspect.signature()` 看外层签名，再用 `inspect.getfile()` 找到 `xbot_extensions` 的真实安装目录，最后看 `_core.py` 或其它实现文件。
 - 不要根据界面中文选项猜编码版参数，也不要把某一个市场指令的返回结构泛化成所有指令的通用规则。
@@ -122,7 +131,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 
 更完整的排查顺序和返回结构边界见 [市场指令排查与返回结构边界](market-extension-debug-practices.md)。
 
-## 11. 本地 pytest 测影刀代码
+## 12. 本地 pytest 测影刀代码
 
 - 本地单测影刀代码时，可以用 `types.ModuleType` 和 `sys.modules.setdefault()` 注入轻量 `xbot`、`xbot.app`、`xbot.selector`、`xbot.primitives`。
 - 这种方式适合测纯函数、数据清洗、汇总、Markdown 生成等不依赖真实界面的逻辑。
