@@ -9,8 +9,11 @@
 3. 完成方案或改动后，复核本次 diff，重点检查有没有过度优化、无关扩写、偏离最小改动。
 4. API、字段结构、市场指令参数不确定时，明确标注“需运行验证”，并回到文档或源码核实。
 5. Wiki 只写可复用经验和确认过的结论，不写账号、token、Cookie、真实业务数据；未确认事项写到 `wiki/unresolved.md`。
+6. API 方法签名、参数表和返回值表继续放在 `xbot-api-docs/docs/`；Wiki 只沉淀跨文档经验和常见踩坑。
 
 ## 2. 钉钉 AI 表格记录结构约定
+
+本节只适用于已验证的钉钉 AI 表格市场指令，不代表所有市场指令返回结构。
 
 - 记录列表统一从 `result.get("data", {}).get("records")` 取，不直接从根层 `.get("records")` 取。
 - 钉钉记录默认按 `record["fields"]` 使用；调用方已经明确是表格记录时，不要再在业务逻辑里重复做 `isinstance` 兜底。
@@ -85,6 +88,7 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 - 真实影刀项目修改 `.py` 后，必须运行 `shadowbot_sync_tool.py --project-dir "<项目根目录>" prepare <files...>`。
 - 这一步会登记 flow 并编译；不执行的话，影刀编辑器可能感知不到新代码。
 - `prepare <entry.py>` 会登记传入的入口 `.py` flow，并自动发现入口文件相对 import 的本地 helper 模块一起编译；helper 被编译不等于被登记为独立 flow。
+- `prepare` 只接收 `.py` 文件作为输入，不要把 `package.json` 之类非 Python 文件直接传给 `prepare`。
 - `prepare` 不自动备份项目；需要备份时单独运行 `backup <files...>`。
 - 测试由人类在影刀编辑器中完成，Agent 不要把“已同步”写成“已在编辑器内验证通过”。
 
@@ -108,17 +112,23 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - `filename` 是可选参数：传了就按指定文件名等，不传就按“本次新出现并稳定的文件”判断。
 - 不再为同类下载等待业务单独维护旧封装。
 
+更多浏览器、元素定位、剪贴板输入、登录态和页面清理经验见 [浏览器自动化常见踩坑](browser-automation-pitfalls.md)。
+
 ## 10. 市场指令源码排查
 
 - 市场指令参数或返回值不明确时，先用 `inspect.signature()` 看外层签名，再用 `inspect.getfile()` 找到 `xbot_extensions` 的真实安装目录，最后看 `_core.py` 或其它实现文件。
 - 不要根据界面中文选项猜编码版参数，也不要把某一个市场指令的返回结构泛化成所有指令的通用规则。
 - 对已确认的返回结构或枚举值，优先把“适用范围”写清楚，避免跨指令误用。
 
+更完整的排查顺序和返回结构边界见 [市场指令排查与返回结构边界](market-extension-debug-practices.md)。
+
 ## 11. 源表高速只读
 
 - 只读源表、无需公式刷新、无需真实界面交互时，可以优先用 `python-calamine` 直接读 `.xlsm` / `.xlsx`。
 - 常见流程是 `CalamineWorkbook.from_path()` -> 检查 `sheet_names` -> `get_sheet_by_name(...).to_python()` -> 取首行做表头 -> 重复列名按后缀去重。
 - 这类方案适合做源表清洗、汇总前的数据抓取；它不替代 `xbot.excel` 的写入、保存和真实 WPS / Excel 行为。
+
+更多 Excel、WPS、openpyxl、二维数组写入和字段边界经验见 [Excel 与表格处理经验](excel-table-practices.md)。
 
 ## 12. 本地 pytest 测影刀代码
 
