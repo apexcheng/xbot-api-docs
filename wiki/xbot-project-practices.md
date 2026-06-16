@@ -15,6 +15,7 @@
 - 记录列表统一从 `result.get("data", {}).get("records")` 取，不直接从根层 `.get("records")` 取。
 - 钉钉记录默认按 `record["fields"]` 使用；调用方已经明确是表格记录时，不要再在业务逻辑里重复做 `isinstance` 兜底。
 - 多选字段显示值按 `{"name": "...", "id": "..."}` 结构取 `.get("name")`，不要把整个字典直接当文本用。
+- 这些约定只适用于已验证的钉钉 AI 表格指令，不要默认套用到其他市场指令。
 
 示例：
 
@@ -29,6 +30,7 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 - `process_xxx` 只负责业务处理、表格回写，并返回通知需要的结果列表。
 - 通知层统一消费 `notify_records`，现场计算汇总、异常数和明细，不在业务层提前固化更多通知结构。
 - 新增平台时，优先保持“业务处理函数返回统一结果结构，通知层零改动”的模式。
+- 群通知属于收尾副作用；通知参数缺失或发送失败时，通常只记录日志并跳过，不应让已经完成的主业务结果反向变成失败。
 
 建议结果字段：
 
@@ -65,7 +67,20 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 5. 删除重试、多 XPath、兼容分支后，当前需求是否仍可完成？如果是，别加。
 6. 删除新增注释后，代码是否仍能读懂？如果是，别注释。
 
-## 5. 真实项目开发收尾
+## 5. 批量任务容错边界
+
+- 批量处理表格记录时，可以让单行异常生成失败结果并继续处理后续记录，避免一条脏数据中断整批任务。
+- 入口级读取失败、关键配置缺失、凭证缺失这类会影响全局正确性的错误，应直接抛错，不要伪装成单行失败。
+- 行级异常如果被捕获，必须保留关键上下文，例如记录 ID、平台、链接、账号维度或错误原因，方便后续人工排查。
+- 不要为了“不中断”吞掉异常；至少要写日志、回写失败状态或进入结果列表。
+
+## 6. 任务级缓存
+
+- 同一轮任务中，多个记录共享同一页面、SPU、接口响应或解析结果时，可以用 `package.variables` 保存任务级缓存，减少重复打开页面和重复解析。
+- 任务开始时应显式初始化或清空缓存，避免跨轮任务误用旧数据。
+- 缓存内容只放本轮可复用的中间结果，不要存账号密码、token、Cookie 等敏感数据。
+
+## 7. 真实项目开发收尾
 
 - 真实影刀项目修改 `.py` 后，必须运行 `shadowbot_sync_tool.py --project-dir "<项目根目录>" prepare <files...>`。
 - 这一步会登记 flow 并编译；不执行的话，影刀编辑器可能感知不到新代码。
@@ -79,7 +94,7 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "C:\path\to\real_project" prepare main.py run.py
 ```
 
-## 6. 不建议继承到新项目的内容
+## 8. 不建议继承到新项目的内容
 
 - 跨文件 `from .xxx import *`：隐式依赖多，建议显式 import。
 - 动态 import 登录模块：`__import__("process7", ...)` 写法不直观，建议直接 import。
@@ -87,19 +102,25 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - 硬编码业务字段、店铺名、平台代码、业务 XPath：不应沉淀为通用模式。
 - 还没验证能否跨项目复用的内部辅助模式：先写 `wiki/unresolved.md` 标注“需运行验证”。
 
-## 7. 下载等待辅助方法约定
+## 9. 下载等待辅助方法约定
 
 - 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`。
 - `filename` 是可选参数：传了就按指定文件名等，不传就按“本次新出现并稳定的文件”判断。
 - 不再为同类下载等待业务单独维护旧封装。
 
-## 8. 源表高速只读
+## 10. 市场指令源码排查
+
+- 市场指令参数或返回值不明确时，先用 `inspect.signature()` 看外层签名，再用 `inspect.getfile()` 找到 `xbot_extensions` 的真实安装目录，最后看 `_core.py` 或其它实现文件。
+- 不要根据界面中文选项猜编码版参数，也不要把某一个市场指令的返回结构泛化成所有指令的通用规则。
+- 对已确认的返回结构或枚举值，优先把“适用范围”写清楚，避免跨指令误用。
+
+## 11. 源表高速只读
 
 - 只读源表、无需公式刷新、无需真实界面交互时，可以优先用 `python-calamine` 直接读 `.xlsm` / `.xlsx`。
 - 常见流程是 `CalamineWorkbook.from_path()` -> 检查 `sheet_names` -> `get_sheet_by_name(...).to_python()` -> 取首行做表头 -> 重复列名按后缀去重。
 - 这类方案适合做源表清洗、汇总前的数据抓取；它不替代 `xbot.excel` 的写入、保存和真实 WPS / Excel 行为。
 
-## 9. 本地 pytest 测影刀代码
+## 12. 本地 pytest 测影刀代码
 
 - 本地单测影刀代码时，可以用 `types.ModuleType` 和 `sys.modules.setdefault()` 注入轻量 `xbot`、`xbot.app`、`xbot.selector`、`xbot.primitives`。
 - 这种方式适合测纯函数、数据清洗、汇总、Markdown 生成等不依赖真实界面的逻辑。

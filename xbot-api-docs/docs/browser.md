@@ -847,6 +847,28 @@ is_logged_in = "PDDAccessToken" in names or "pdd_user_id" in names
 - Cookie 名判断属于项目实战模式，不代表所有站点都适用；跨项目复用前建议先运行验证。
 - 页面清理逻辑只适合“当前浏览器实例由本流程统一接管”的任务，不要误关用户手工保留的工作页。
 
+### 26.6 Chrome Profile 与登录态复用
+
+需要复用登录态时，可以先激活指定 Chrome Profile，再用 `xbot.web` 打开页面。Profile 名称可以来自账号表或配置项；为空时可回退到 `"Default"`。
+
+```python
+from xbot import web
+from xbot_extensions.activity_4303bbee import process22 as activate
+
+profile = str(profile_name or "Default").strip() or "Default"
+activate(profile=profile, type="chrome")
+
+browser = web.create("https://example.com", mode="chrome", load_timeout=20)
+browser.wait_load_completed(timeout=15)
+```
+
+登录态处理建议：
+
+- 进入业务页后，先通过 URL、Cookie 或页面元素判断是否已登录，已登录就继续，不要每次无条件重登。
+- 未登录时再跳转登录页、执行登录流程，或明确返回失败交给业务层处理。
+- 如果某个平台只能依赖人工保持登录态，未登录时应显式失败，不要伪装成功或静默继续。
+- 登录态判断方式必须按目标站点实测，不要把某个站点的 Cookie 名或 URL 规则当成通用规则。
+
 ---
 
 ## 27. 排错速查
