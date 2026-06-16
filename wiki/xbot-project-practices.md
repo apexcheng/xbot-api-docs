@@ -69,6 +69,8 @@ platform = (record["fields"].get("平台") or {}).get("name") or ""
 
 - 真实影刀项目修改 `.py` 后，必须运行 `shadowbot_sync_tool.py --project-dir "<项目根目录>" prepare <files...>`。
 - 这一步会登记 flow 并编译；不执行的话，影刀编辑器可能感知不到新代码。
+- `prepare <entry.py>` 会登记传入的入口 `.py` flow，并自动发现入口文件相对 import 的本地 helper 模块一起编译；helper 被编译不等于被登记为独立 flow。
+- `prepare` 不自动备份项目；需要备份时单独运行 `backup <files...>`。
 - 测试由人类在影刀编辑器中完成，Agent 不要把“已同步”写成“已在编辑器内验证通过”。
 
 最小示例：
@@ -90,3 +92,15 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`。
 - `filename` 是可选参数：传了就按指定文件名等，不传就按“本次新出现并稳定的文件”判断。
 - 不再为同类下载等待业务单独维护旧封装。
+
+## 8. 源表高速只读
+
+- 只读源表、无需公式刷新、无需真实界面交互时，可以优先用 `python-calamine` 直接读 `.xlsm` / `.xlsx`。
+- 常见流程是 `CalamineWorkbook.from_path()` -> 检查 `sheet_names` -> `get_sheet_by_name(...).to_python()` -> 取首行做表头 -> 重复列名按后缀去重。
+- 这类方案适合做源表清洗、汇总前的数据抓取；它不替代 `xbot.excel` 的写入、保存和真实 WPS / Excel 行为。
+
+## 9. 本地 pytest 测影刀代码
+
+- 本地单测影刀代码时，可以用 `types.ModuleType` 和 `sys.modules.setdefault()` 注入轻量 `xbot`、`xbot.app`、`xbot.selector`、`xbot.primitives`。
+- 这种方式适合测纯函数、数据清洗、汇总、Markdown 生成等不依赖真实界面的逻辑。
+- 只能把它当成本地测试手段，不能把 pytest 通过直接说成“影刀编辑器内验证通过”。
