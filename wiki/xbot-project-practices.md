@@ -122,15 +122,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 
 更完整的排查顺序和返回结构边界见 [市场指令排查与返回结构边界](market-extension-debug-practices.md)。
 
-## 11. 源表高速只读
-
-- 只读源表、无需公式刷新、无需真实界面交互时，可以优先用 `python-calamine` 直接读 `.xlsm` / `.xlsx`。
-- 常见流程是 `CalamineWorkbook.from_path()` -> 检查 `sheet_names` -> `get_sheet_by_name(...).to_python()` -> 取首行做表头 -> 重复列名按后缀去重。
-- 这类方案适合做源表清洗、汇总前的数据抓取；它不替代 `xbot.excel` 的写入、保存和真实 WPS / Excel 行为。
-
-更多 Excel、WPS、openpyxl、二维数组写入和字段边界经验见 [Excel 与表格处理经验](excel-table-practices.md)。
-
-## 12. 本地 pytest 测影刀代码
+## 11. 本地 pytest 测影刀代码
 
 - 本地单测影刀代码时，可以用 `types.ModuleType` 和 `sys.modules.setdefault()` 注入轻量 `xbot`、`xbot.app`、`xbot.selector`、`xbot.primitives`。
 - 这种方式适合测纯函数、数据清洗、汇总、Markdown 生成等不依赖真实界面的逻辑。

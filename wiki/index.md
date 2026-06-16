@@ -8,7 +8,7 @@
 
 - [影刀项目协作与实战经验](xbot-project-practices.md): 沉淀知识库检索路径、最小改动约束、钉钉 AI 表格字段约定、通知解耦模式和真实项目收尾要求。
 - [浏览器自动化常见踩坑](browser-automation-pitfalls.md): 沉淀 `xbot.web`、元素操作、剪贴板输入、下载等待、登录态和页面清理的跨项目经验。
-- [Excel 与表格处理经验](excel-table-practices.md): 沉淀 Excel/WPS/openpyxl/calamine、二维数组写入和字段边界经验。
+- [Excel 与表格处理经验](excel-table-practices.md): 沉淀 `xbot.excel`、Excel/WPS、二维数组写入和字段边界经验。
 - [市场指令排查与返回结构边界](market-extension-debug-practices.md): 沉淀市场指令源码排查、编码版参数确认和返回结构适用范围。
 - [Agent 模板约定](agent-template-conventions.md): 沉淀 `templates/` 的使用边界、真实项目规则优先级和只读子 agent 职责。
 - [错误修正记录](error-book.md): 历史错误结论、正确说法、依据和影响范围。
