@@ -108,41 +108,74 @@ success_logo = package.image_selector("登录成功标记")
 
 访问应用资源文件。
 
+当前知识库按本机可见源码 `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\primitives.py` 中的 `ResourceReader` 公开方法整理；这里只记录当前可见方法，不额外推断未确认行为。
+
 ### 常用场景
 
 - 读取模板 Excel
 - 读取配置文件
 - 读取图片或临时数据文件
 
-### 示例
+### 当前可见方法
+
+- `get_path(filename) -> str`：获取资源文件路径
+- `get_text(filename, encoding='utf-8') -> str`：读取资源文件文本内容
+- `get_bytes(filename) -> bytes`：读取资源文件二进制内容
+- `copy_to(filename, dest_filename)`：复制资源文件到指定路径
+- `copy_to_clipboard(filenames)`：将资源文件加入剪贴板
+
+### `get_path()`
 
 ```python
 from . import package
 
-file_path = package.resources["模板.xlsx"]
+file_path = package.resources.get_path("模板.xlsx")
 ```
 
-### Agent 常见写法
+### `get_text()`
 
 ```python
 from . import package
 
-template_file = package.resources["模板.xlsx"]
-config_file = package.resources["config.json"]
-logo_file = package.resources["logo.png"]
+config_text = package.resources.get_text("config.json")
+```
+
+### `get_bytes()`
+
+```python
+from . import package
+
+logo_bytes = package.resources.get_bytes("logo.png")
+```
+
+### `copy_to()`
+
+```python
+from . import package
+
+package.resources.copy_to("模板.xlsx", r"D:\temp\模板.xlsx")
+```
+
+### `copy_to_clipboard()`
+
+```python
+from . import package
+
+package.resources.copy_to_clipboard(["模板.xlsx", "logo.png"])
 ```
 
 ### 典型场景
 
 - Excel 模板路径传给 `xbot.excel.open()`
-- 配置文件路径传给 JSON / 文本读取逻辑
-- 图片路径传给上传、比对或通知逻辑
+- 配置文件文本内容传给 JSON / 文本读取逻辑
+- 图片二进制内容或路径传给上传、比对或通知逻辑
 
 ### 注意事项
 
-- 具体读取方式可能随影刀版本变化。
-- 若运行结果与当前版本不一致，标注“需运行验证”。
 - `package.resources` 更适合读“跟项目一起打包”的固定文件，不适合存运行时动态生成内容。
+- 当前知识库以本机可见 `ResourceReader` 方法为准，`package.resources["xxx"]` 不应再作为可用写法保留。
+- 当前可见源码没有确认 `package.resources` 支持下标访问，不要把它当成字典使用。
+- 若运行结果与当前版本不一致，标注“需运行验证”。
 
 ---
 
@@ -237,7 +270,7 @@ query_btn.click()
 ```python
 from . import package
 
-template_file = package.resources["模板.xlsx"]
+template_file = package.resources.get_path("模板.xlsx")
 package.variables["template_file"] = template_file
 ```
 

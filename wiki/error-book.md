@@ -16,6 +16,14 @@
 
 ## 记录列表
 
+## 2026-06-17 `package.resources` 不应写成下标访问
+
+- 错误说法：`package.resources["模板.xlsx"]`、`package.resources["config.json"]` 这类下标写法可以直接使用。
+- 正确说法：当前知识库按本机可见 `xbot.primitives.ResourceReader` 方法整理，应使用 `get_path()`、`get_text()`、`get_bytes()`、`copy_to()`、`copy_to_clipboard()`；不应把 `package.resources` 当成字典使用。
+- 依据：`C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\primitives.py` 中当前可见 `ResourceReader` 公开方法为 `get_text`、`get_path`、`get_bytes`、`copy_to`、`copy_to_clipboard`，未见 `__getitem__`。
+- 影响范围：知识库中所有 `package.resources` 用法说明与示例。
+- 后续处理：统一删除 `package.resources["xxx"]` 示例，改为方法调用写法；后续若发现版本差异，再按实测结果补充“需运行验证”说明。
+
 ## 2026-06-16 钉钉 AI 表格返回结构不要套用到所有市场指令
 
 - 错误说法：封装市场指令时，可以先统一假设返回值都是 `dict`。
