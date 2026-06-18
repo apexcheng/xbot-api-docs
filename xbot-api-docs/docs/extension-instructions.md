@@ -293,6 +293,7 @@
 | 拼多多商家中心登录 | direct python | `login_pdd_seller` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 千牛商家工作台登录 | direct python | `login_qianniu` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 京麦商家工作台登录 | direct python | `login_jingmai` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
+| 支付宝登录 | direct python | `login_alipay` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 
 ---
 
@@ -1205,6 +1206,7 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 - `from xbot_extensions.activity_dae43741.shop_utils import login_pdd_seller`
 - `from xbot_extensions.activity_dae43741.shop_utils import login_qianniu`
 - `from xbot_extensions.activity_dae43741.shop_utils import login_jingmai`
+- `from xbot_extensions.activity_dae43741.shop_utils import login_alipay`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
@@ -1214,6 +1216,7 @@ select_date(web_page, date_elem, "2024-01-01", "2024-12-31", simulative=True)
 - `login_pdd_seller(account, password, profile=None)`：打开拼多多商家中心登录页，登录后按 URL 是否离开 `login` 判断结果
 - `login_qianniu(account, password, profile=None)`：打开千牛商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
 - `login_jingmai(account, password, profile=None)`：打开京麦商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
+- `login_alipay(account, password, profile=None)`：打开支付宝登录页，切到“账密登录”，输入账号密码并提交，等待页面跳转后按 URL 是否仍包含 `login` 判断结果
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
@@ -1263,6 +1266,10 @@ from xbot_extensions.activity_dae43741 import shop_utils
 ok = shop_utils.login_pdd_seller("账号", "密码", profile="Default")
 if not ok:
     raise RuntimeError("拼多多商家中心登录失败")
+
+ok = shop_utils.login_alipay("账号", "密码", profile="Default")
+if not ok:
+    raise RuntimeError("支付宝登录失败")
 ```
 
 **注意事项：**
@@ -1271,7 +1278,7 @@ if not ok:
 - `wait_disappear_by_xpath()` 的判定依据是“查找抛异常即视为已消失”
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - `shop_utils` 中的登录 XPath 会随平台页面变化，当前页面行为需运行验证
-- 商家后台登录只处理账号密码输入和提交，不处理验证码、扫码、短信、人机验证等复杂分支
+- 商家后台登录只处理账号密码输入和提交，不处理验证码、扫码、安全验证、短信验证、人机验证等复杂分支
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
@@ -1289,7 +1296,7 @@ if not ok:
 | 仅模块导入型增强工具 | `activity_dae43741/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils` |
 | 浏览器等待增强 | `activity_dae43741/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
 | 异常详情格式化 | `activity_dae43741/exception_utils.py`：`format_exception_detail()` |
-| 商家后台登录辅助 | `activity_dae43741/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()` |
+| 商家后台登录辅助 | `activity_dae43741/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()`、`login_alipay()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`activity_df0688e4/__init__.py` |
 | close_ads 默认值 | `ad_killer/_core.py` 第 25-28 行：`close_type` 默认 `"hidden"` |

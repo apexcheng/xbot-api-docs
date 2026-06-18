@@ -646,7 +646,7 @@ file_path = browser.dowload_url(
 
 注意：方法名是 `dowload_url`，不是 `download_url`。
 
-业务里凡是“下载文件后等待结果”的场景，统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`；这里的 `wait_complete` / `wait_complete_timeout` 只作为原生接口参数说明保留。
+业务里凡是“下载文件后等待结果”的场景，统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`；这里的 `wait_complete` / `wait_complete_timeout` 只作为原生接口参数说明保留。
 
 ---
 
@@ -756,9 +756,9 @@ web.set_user_environment(
 | `process` | `str` | 流程名，不要带 `.py` |
 | `package` | `str` | 一般传 `__name__` |
 | `mode` | `str` | 通常 `"chrome"` / `"edge"` |
-| `profile_name` | `str` | 浏览器用户配置名 |
+| `profile_name` | `str` | 浏览器 Profile 名 |
 | `specifield_userdata` | `bool` | 是否指定用户数据目录 |
-| `user_data_dir` | `str` / `None` | 用户数据目录 |
+| `user_data_dir` | `str` / `None` | `specifield_userdata=True` 时使用的用户数据目录 |
 
 ---
 
@@ -849,14 +849,18 @@ is_logged_in = "PDDAccessToken" in names or "pdd_user_id" in names
 
 ### 26.6 Chrome Profile 与登录态复用
 
-需要复用登录态时，可以先激活指定 Chrome Profile，再用 `xbot.web` 打开页面。Profile 名称可以来自账号表或配置项；为空时可回退到 `"Default"`。
+需要复用登录态、切换浏览器用户环境或指定 Chrome Profile 时，优先使用原生 `xbot.web.set_user_environment`。Profile 名称可以来自账号表或配置项；为空时可回退到 `"Default"`。
 
 ```python
 from xbot import web
-from xbot_extensions.activity_4303bbee import process22 as activate
 
 profile = str(profile_name or "Default").strip() or "Default"
-activate(profile=profile, type="chrome")
+web.set_user_environment(
+    mode="chrome",
+    profile_name=profile,
+    specifield_userdata=False,
+    user_data_dir=None,
+)
 
 browser = web.create("https://example.com", mode="chrome", load_timeout=20)
 browser.wait_load_completed(timeout=15)

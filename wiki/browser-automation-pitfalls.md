@@ -28,8 +28,8 @@
 
 ## 5. 下载等待优先统一辅助方法
 
-- 下载后等待文件生成，优先使用 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`。
-- `filename` 有明确文件名时再传；没有明确文件名时，按“本次新出现并稳定的文件”判断。
+- 下载后等待文件生成，优先使用 `activity_dae43741.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`。
+- `download_dir` 不传时先用当前用户下载目录，找不到再回退到 `~/下载`；`filename_pattern` 有明确文件名关键词或 glob 时再传。
 - 不要为同类下载等待重复维护旧封装，除非当前项目已有稳定约定且改动成本更低。
 
 ## 6. 登录态和页面清理

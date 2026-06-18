@@ -104,13 +104,13 @@ updated_count = total_count - len(pending_items) - missing_count
 ```python
 # 不推荐：传整 dict，只用其中少数字段
 def download_bill(item, shop_config):
-    activate(profile=shop_config.get("browser"))
+    web.set_user_environment(mode="chrome", profile_name=shop_config.get("browser"))
     login(item["account"], item["password"])
 
 
 # 推荐：参数就是函数实际依赖
 def download_bill(platform, browser, account, password, update_date):
-    activate(profile=browser)
+    web.set_user_environment(mode="chrome", profile_name=browser)
     login(account, password)
 ```
 
@@ -187,8 +187,8 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 
 ## 10. 下载等待辅助方法约定
 
-- 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir, filename=None, timeout=300, interval=1)`。
-- `filename` 是可选参数：传了就按指定文件名等，不传就按“本次新出现并稳定的文件”判断。
+- 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`。
+- `download_dir` 不传时先用当前用户下载目录，找不到再回退到 `~/下载`；`filename_pattern` 是可选参数，传了就按指定文件名关键词或 glob 匹配，不传就按“本次新出现并稳定的文件”判断。
 - 不再为同类下载等待业务单独维护旧封装。
 
 更多浏览器、元素定位、剪贴板输入、登录态和页面清理经验见 [浏览器自动化常见踩坑](browser-automation-pitfalls.md)。
