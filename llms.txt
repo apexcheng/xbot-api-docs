@@ -41,7 +41,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 ## Debug
 
 - [市场指令源码排查](xbot-api-docs/docs/debug/market-extension-source.md): 市场指令参数不明确、可视化能跑但编码版异常时的源码排查方法。
-- [市场指令扩展开发](xbot-api-docs/docs/extension-instructions.md): 市场指令目录结构、调用规则、参数映射和开发指南；已收录 `activity_dae43741` 这类 xbot 增强工具。
+- [市场指令扩展开发](xbot-api-docs/docs/extension-instructions.md): 市场指令目录结构、调用规则、参数映射和开发指南；已收录 `activity_excel_v2` Excel 扩展操作、`activity_dae43741` 这类 xbot 增强工具。
 
 ## Optional
 

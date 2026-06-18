@@ -1,6 +1,6 @@
 # 影刀市场指令扩展开发指南
 
-> 分析范围：8 个常用市场指令目录
+> 分析范围：9 个常用市场指令目录
 > 分析日期：2026-06-08
 > 分析原则：不猜测，所有结论均有文件依据
 
@@ -26,6 +26,7 @@
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
 | `activity_dae43741` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`) |
 | `activity_df0688e4` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
+| `activity_excel_v2` | Excel扩展操作 | flow | ✅ | ✅ | ✅ (包装入口 + 模块导入) | ❌ | ✅ (Visual / Code flow 对应 .py + 工具模块) |
 | `iframe2` | XPath跨域获取网页元素 | both | ✅ | ✅ | ❌ | ✅ (`_core.py`) | ✅ (`api.py`、`js_code.py`) |
 | `ad_killer` | 广告杀手 | both | ✅ | ✅ | ✅ (close_ads/close_ads_win) | ✅ (_core.py) | ✅ (7 个) |
 | `web_action` | 网页扩展操作 | both | ✅ | ✅ | ✅ (18 个 process) | ❌ | ✅ (10 个业务) |
@@ -282,7 +283,7 @@
 
 ---
 
-### 2.8 activity_dae43741 — 增强工具2026
+### 2.9 activity_dae43741 — 增强工具2026
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
@@ -294,6 +295,58 @@
 | 千牛商家工作台登录 | direct python | `login_qianniu` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 京麦商家工作台登录 | direct python | `login_jingmai` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 支付宝登录 | direct python | `login_alipay` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
+
+---
+
+### 2.10 activity_excel_v2 — Excel扩展操作
+
+| 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
+|---|---|---|---|---|---|---|
+| 批量向下填充(公式) | flow | `fill_down_formula` | `fill_down_formula()` | `fill_down_formula.py` | excel_instance、formula_content、column、begin_row、end_row、sheet_name、数组公式 | — |
+| 批量向右填充(公式) | flow | `fill_right_formula` | `fill_right_formula()` | `fill_right_formula.py` | excel_instance、formula_content、row、begin_column、end_column、sheet_name、array_formula_mode | — |
+| 自动向下填充 | flow | `process31` | `process31()` | `process31.py` | excel_instance、begin_row、begin_column、end_row、end_column、填充类型、sheet_name | — |
+| 空白单元格填充(向上填充) | flow | `process36` | `process36()` | `process36.py` | excel_instance、begin_row、begin_column、end_row、end_column、sheet_name | — |
+| 公式转换成值 | flow | `process52` | `process52()` | `process52.py` | excel_instance、dim、set_range、sheet_name | — |
+| 新建注释 | flow | `process53` | `process53()` | `process53.py` | excel_instance、row_num、column_name、comment、sheet_name | — |
+| 分列 | flow | `process19` | `process19()` | `process19.py` | excel_instance、column、分隔符设置、行列范围、sheet_name、destination_column、field_info | — |
+| 区域截图 | flow | `process24` | `process24()` | `process24.py` | excel_instance、begin_row、begin_column、end_row、end_column、save_path、sheet_name | image_save_path |
+| 内容替换 | flow | `process26` | `process26()` | `process26.py` | excel_instance、search_text、replace_text、替换范围、替换区域、lookat、sheet_name、case_sensitive | — |
+| 获取单元格超链接 | flow | `process32` | `process32()` | `process32.py` | excel_instance、col_name、row_num、sheet_name | hyperlink |
+| 设置单元格超链接 | flow | `process33` | `process33()` | `process33.py` | excel_instance、row_num、col_name、address、sheet_name、subaddress、screentip、texttodisplay | — |
+| 合并单元格 / 取消单元格合并 | flow | `process34` | `process34()` | `process34.py` | excel_instance、is_merge、begin_row、begin_column、end_row、end_column、sheet_name | — |
+| 读取单元格注释 | flow | `process37` | `process37()` | `process37.py` | excel_instance、column、row、sheet_name | comment |
+| 导出单元格的图片 | flow | `process42` | `process42()` | `process42.py` | excel_instance、sheet_name、column_name、row_number、folder_path | pic_path |
+| 删除单元格的图片 | flow | `process45` | `process45()` | `process45.py` | Excel对象、Sheet页名称、行号、列名 | — |
+| 区域文本转数字 | flow | `text_format_to_num` | `text_format_to_num()` | `text_format_to_num.py` | excel_instance、begin_row、begin_column、end_row、end_column、sheet_name | — |
+| 区域数字转文本 | flow | `num_format_to_text` | `num_format_to_text()` | `num_format_to_text.py` | excel_instance、begin_row、begin_column、end_row、end_column、sheet_name | — |
+| 获取背景色 | flow | `process54` | `process54()` | `process54.py` | excel_instance、dim、target_range、sheet_name | background_color |
+| 获取合并单元格区域 | flow | `process55` | `process55()` | `process55.py` | excel_instance、row、column、sheet_name | is_merge、merge_range |
+| 筛选 | flow | `filter` | `filter()` | `filter.py` | excel_instance、row、column、select_content、select_type、sheet_name、operator、select_content2、select_type2 | — |
+| 清除筛选 | flow | `process16` | `process16()` | `process16.py` | excel_instance、column_name、sheet_name | — |
+| 删除筛选内容 | flow | `process20` | `process20()` | `process20.py` | excel_instance、begin_row、end_row、removefiltermode、sheet_name | — |
+| 读取筛选内容 | flow | `process21` | `process21()` | `process21.py` | excel_instance、begin_row、content_type、sheet_name、using_text、using_text_cols、data_columns | filter_content |
+| 筛选颜色 | flow | `process38` | `process38()` | `process38.py` | excel_instance、xl_filter、column_name、row_num、rgb、sheet_name | — |
+| 数字列名转换 | flow | `process23` | `process23()` | `process23.py` | text_input、convert_type | convert_result |
+| 查找数据所在列 | flow | `process27` | `process27()` | `process27.py` | excel_instance、row、search_text、find_all、lookat、sheet_name、num_flag、look_in | column_name |
+| 查找数据所在行 | flow | `process28` | `process28()` | `process28.py` | excel_instance、column、search_text、find_all、lookat、sheet_name | 查找结果 |
+| 生成字典(数值累加) | flow | `process29` | `process29()` | `process29.py` | excel_instance、key_column、value_column、begin_row、end_row、sheet_name | result_dict |
+| 生成字典(列表拼接) | flow | `process30` | `process30()` | `process30.py` | excel_instance、key_column、value_column、begin_row、end_row、sheet_name | result_dict |
+| 单元格填充图片 | flow | `process18` | `process18()` | `process18.py` | excel_instance、image_path、row_num、column_name、row_height、colnum_width、sheet_name、lockaspectratio、placement、compress | — |
+| 删除所有图片 | flow | `process44` | `process44()` | `process44.py` | excel_instance、sheet_name | — |
+| 隐藏 / 取消隐藏 Sheet 页 | flow | `process46` | `process46()` | `process46.py` | Excel对象、Sheet页名称、设置为 | — |
+| 获取隐藏的 Sheet 页 | flow | `process47` | `process47()` | `process47.py` | Excel对象 | 隐藏的工作表名列表 |
+| 合并计算 | flow | `process48` | `process48()` | `process48.py` | Excel对象、行号、列名、函数、所引用的位置、Sheet页名称、创建指向数据源的链接、最左侧、首列 | — |
+| 设置/取消密码 | flow | `process49` | `process49()` | `process49.py` | Excel对象、打开密码、编辑密码 | — |
+| 自动换行 | flow | `process51` | `process51()` | `process51.py` | Excel对象、自动换行范围、自动换行区域、operation、Sheet页名称 | — |
+| 冻结首行 | flow | `process56` | `process56()` | `process56.py` | excel_instance、kind、area、sheet_name | — |
+| 设置切片器 | flow | `process57` | `process57()` | `process57.py` | excel_instance、slicercache_name、item_name、selected | — |
+| 刷新透视表 | flow | `refresh_pivot_table` | —（模块导入） | `refresh_pivot_table.py` | excel_instance、sheet_name | — |
+| 执行文本宏 | flow | `process58` | `process58()` | `process58.py` | excel_instance、macro_name、macro_string | — |
+
+**调用方式总结：**
+- 公开指令均来自 `prototype.block.json` 中 `hidden=false` 的 block，共 40 个。
+- 编码版优先通过 `xbot_extensions.activity_excel_v2.<入口函数>(...)` 调用 `__init__.py` 包装入口，再由 `xbot_visual.process.run()` 执行对应 Visual flow；`refresh_pivot_table` 是模块导入型入口，按 `refresh_pivot_table.main(args)` 调用。
+- `utils`、`validators`、`invoke_modules`、`tmp`、`test_*` 等模块属于内部工具或测试模块，不作为公开指令记录。
 
 ---
 
@@ -1284,6 +1337,85 @@ if not ok:
 
 ---
 
+### 4.9 Excel扩展操作 (activity_excel_v2)
+
+**目录/指令名：** `activity_excel_v2` / Excel扩展操作
+
+**调用方式：** flow
+
+**用途：** 补充原生 Excel 操作之外的常见表格处理能力，如公式填充、筛选、文本数字转换、图片操作、合并单元格、透视表刷新等。
+
+**调用入口：**
+- Visual flow 包装入口：`xbot_extensions.activity_excel_v2.<入口函数>(...)`
+- Code flow 模块入口：`xbot_extensions.activity_excel_v2.refresh_pivot_table.main(args)`
+- 常用入口：`fill_down_formula()`、`fill_right_formula()`、`filter()`、`text_format_to_num()`、`num_format_to_text()`、`process16()` 等
+
+**参数说明：**
+- `excel_instance` / `Excel对象`：待处理 Excel 对象。
+- `sheet_name` / `Sheet页名称`：Sheet 名称；多数指令可选，通常默认当前激活 Sheet。
+- 行列参数按指令定义传入，如 `row`、`begin_row`、`end_row`、`column`、`column_name`、`begin_column`、`end_column`。
+- 具体入口函数、参数顺序和返回值以 `prototype.block.json` 与 `__init__.py` 为准，不根据可视化中文界面猜测编码版参数。
+
+**典型调用方式：**
+```python
+from xbot_extensions.activity_excel_v2 import (
+    fill_down_formula,
+    filter,
+    process21,
+    process56,
+)
+
+# 向下填充公式
+fill_down_formula(
+    excel_instance=workbook,
+    formula_content="=A2+B2",
+    column="C",
+    begin_row="2",
+    end_row="-1",
+    sheet_name="",
+    数组公式=False,
+)
+
+# 按内容筛选后读取筛选结果
+filter(
+    excel_instance=workbook,
+    row="1",
+    column="A",
+    select_content="已完成",
+    select_type="={0}",
+    sheet_name="",
+    operator="7",
+    select_content2="",
+    select_type2="",
+)
+
+filter_content = process21(
+    excel_instance=workbook,
+    begin_row="2",
+    sheet_name="",
+    content_type="data",
+    using_text=True,
+    using_text_cols="",
+    data_columns="",
+)
+
+# 冻结首行
+process56(
+    excel_instance=workbook,
+    sheet_name="",
+    kind="ROW",
+    area="1",
+)
+```
+
+**注意事项：**
+- 这是市场扩展能力，不是原生 `xbot.excel` 内置 API；能用原生 `xbot.excel` 清晰完成的任务仍优先查 `docs/excel.md`。
+- 该扩展大多数编码版入口是 `__init__.py` 中的包装函数，调用后进入 Visual flow；`refresh_pivot_table` 是 Code flow 模块入口；不要把内部工具模块或测试模块当作公开调用入口。
+- `process45`、`process46`、`process47` 等入口在源码中使用中文参数名，编码版调用前建议按当前安装版本再次用 `inspect.signature()` 核对。
+- 本节仅根据源码结构和 block 元数据整理，未在影刀编辑器内运行验证。
+
+---
+
 ## 五、证据引用
 
 ### 5.1 文件路径汇总
@@ -1293,6 +1425,9 @@ if not ok:
 | package.json 结构 | `activity_*/package.json`、`ad_killer/package.json`、`web_action/package.json` |
 | block 定义 | `activity_*/prototype.block.json` |
 | __init__.py 包装模式 | `activity_47680f64/__init__.py`、`activity_6f13bae5/__init__.py`、`ad_killer/__init__.py`、`web_action/__init__.py` |
+| Excel扩展操作公开指令 | `activity_excel_v2/prototype.block.json`：`hidden=false` 的 40 个公开 block |
+| Excel扩展操作包装入口 | `activity_excel_v2/__init__.py`：`fill_down_formula()`、`filter()`、`process16()` 等包装函数；`refresh_pivot_table` 为模块导入 |
+| Excel扩展操作分组 | `activity_excel_v2/package.json` flows 列表中的 `A_单元格填充`、`B_单元格操作`、`C_筛选`、`D_其他` |
 | 仅模块导入型增强工具 | `activity_dae43741/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils` |
 | 浏览器等待增强 | `activity_dae43741/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
 | 异常详情格式化 | `activity_dae43741/exception_utils.py`：`format_exception_detail()` |
@@ -1346,6 +1481,7 @@ if not ok:
 | 文件下载/移动/解压 | `activity_47680f64` | `process1`、`process2` |
 | 钉钉表格操作 | `activity_5b77c4ce` | `general_table_action`、`yd_ai_table_action` |
 | 钉钉消息通知 | `activity_6f13bae5` | `process1`、`process2`、`to_markdown_table` |
+| Excel 公式填充 / 筛选 / 单元格扩展操作 | `activity_excel_v2` | `fill_down_formula`、`filter`、`process21`、`process56` |
 | 电商后台登录 | `activity_7bca6d` / `activity_dae43741` | `activity_7bca6d` 提供成熟登录流程；`activity_dae43741.shop_utils` 提供轻量账号密码登录辅助 |
 | ERP 数据查询 | `activity_df0688e4` | `select_stock`、`select_item`、`select_order_list` |
 | 跨 iframe XPath 查找 / 点击 / 输入 / 等待 | `iframe2` | `init_iframe`、`to_iframe`、`find_ele`、`click_by_xpath`、`input_by_xpath`、`wait` |
@@ -1357,6 +1493,6 @@ if not ok:
 
 | 调用类型 | 目录 |
 |---|---|
-| 仅 Flow（Visual） | —（所有支持 Flow 的目录也支持 Direct） |
+| 仅 Flow | `activity_excel_v2` |
 | 仅 Direct Python | `activity_5b77c4ce`、`activity_dae43741`、`activity_df0688e4` |
 | Flow + Direct | `activity_47680f64`、`activity_6f13bae5`、`activity_7bca6d`、`iframe2`、`ad_killer`、`web_action` |
