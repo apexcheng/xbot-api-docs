@@ -1,6 +1,6 @@
 # 市场指令排查与返回结构边界
 
-本文沉淀影刀市场指令在编码版调用时的排查顺序和踩坑边界，不替代 `xbot-api-docs/docs/debug/market-extension-source.md` 和 `xbot-api-docs/docs/extension-instructions.md` 的完整说明。
+本文沉淀影刀市场指令在编码版调用时的排查顺序和踩坑边界，不替代 `xbot-api-docs/docs/debug/market-extension-source.md`、`xbot-api-docs/docs/extension-instructions.md` 总入口和 `xbot-api-docs/docs/extensions/` 拆分页说明。
 
 ## 1. 适用场景
 
