@@ -16,6 +16,14 @@
 
 ## 记录列表
 
+## 2026-06-18 影刀项目日志禁止使用 Python 标准 `logging`
+
+- 错误说法：影刀项目里写日志可以沿用 `import logging` + `logging.basicConfig()` + `logger = logging.getLogger(__name__)` 这种 Python 标准库写法。
+- 正确说法：影刀项目里写日志时，Python 标准 `logging` 属于错误实现，必须拒绝使用并改为 `from xbot.app import logging`。出现 `import logging`、`logging.basicConfig(...)`、`logging.getLogger(...)`、`logger.info(...)`、`logger.warning(...)`、`logger.error(...)`、`logger.exception(...)` 都应视为需要修正的错误模式。影刀 API 是模块级单例，方法只接受单一 `text` 参数（`logging.info(text)`、`logging.warning(text)`、`logging.error(text)`），需要动态内容时使用 f-string；异常堆栈用 `logging.error(f"...\n{traceback.format_exc()}")`。
+- 依据：`xbot-api-docs/docs/logging.md` 明确说明 Python 内置 `print()` 不会自动进入影刀日志面板，标准 `logging` 同理；影刀 API 提供的级别为 `trace / debug / info / success / warning / error`，另有 `export(save_path)` 导出文件。
+- 影响范围：所有在真实影刀项目里写过或将要写日志的 Python 文件。`logger = logging.getLogger(...)` 配 `logger.info("x=%s", v)` 这种 printf 风格在影刀进程里不仅不会进日志面板，多写的参数还可能被忽略或报 TypeError。
+- 后续处理：知识库顶层 `AGENTS.md` 增补「影刀日志规则」段落，明确 API 与签名；项目级 `xbot_robot/.claude/CLAUDE.md` 同步加规则；扫描已有真实影刀项目代码，发现 stdlib `logging` 引用时按本次经验替换。
+
 ## 2026-06-17 `package.resources` 不应写成下标访问
 
 - 错误说法：`package.resources["模板.xlsx"]`、`package.resources["config.json"]` 这类下标写法可以直接使用。

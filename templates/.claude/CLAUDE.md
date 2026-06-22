@@ -8,9 +8,15 @@
 
 如果项目根目录同时存在 `AGENTS.md`，则以根目录 `AGENTS.md` 为主规则入口；本文件用于让 Claude Code 读取同一套核心协作偏好。
 
+影刀 xbot / AI 开发知识库默认位于 `~\Desktop\影刀xAI开发指南`，该目录用于查规则、查 API、查示例和调用 `shadowbot_sync_tool.py`，不是实际业务项目源码目录。
+
+真实开发时，Claude Code 应直接在影刀项目目录工作；知识库目录和影刀项目目录不是同一个目录，不要把 `~\Desktop\影刀xAI开发指南` 当成业务项目根目录。
+
 适用场景：真实影刀项目中的代码生成、代码修改、Bug 修复、流程补全、影刀编码版开发。
 
 核心目标：**最小改动、简单直接、可读可维护、不要猜 API、不要无关重构。**
+
+影刀项目写日志时，**禁止使用 Python 标准 `logging`**；只允许使用 `from xbot.app import logging`。出现 `import logging`、`logging.basicConfig(...)`、`logging.getLogger(...)`、`logger.exception(...)` 都视为错误实现，因为标准 `logging` 不会进入影刀日志面板。
 
 ---
 

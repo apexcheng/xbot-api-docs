@@ -23,7 +23,7 @@
 - 压缩解压：`docs/xzip.md`
 - 基础对象与全局变量：`docs/package.md`
 - 市场指令源码排查：`docs/debug/market-extension-source.md`
-- 市场指令扩展开发：`docs/extension-instructions.md`
+- 市场指令扩展开发：`docs/extension-instructions.md`（总入口），各指令详情见 `docs/extensions/`
 
 ## 使用提示
 

@@ -145,6 +145,41 @@ price = fields.get("价格")
 5. 不要把大量业务工具函数堆在 `run.py`，但也不要为了单次使用的小逻辑过度拆函数，简单逻辑可以直接内联在当前流程中。
 6. 单文件较长且函数较多时，可以用中文分块注释做导航，但不要借机重排无关代码。
 
+## 影刀日志强制规则
+
+1. 当前项目是影刀项目，**禁止使用 Python 标准 `logging`**。
+2. 只要出现以下写法，都视为错误实现，必须改为 `from xbot.app import logging`：
+   - `import logging`
+   - `logging.basicConfig(...)`
+   - `logging.getLogger(...)`
+   - `logger.info(...)` / `logger.warning(...)` / `logger.error(...)`
+   - `logger.exception(...)`
+3. 影刀项目里写日志只允许使用 `from xbot.app import logging`。
+4. 原因：Python 标准 `logging` 输出到 stdout / stderr，**不会进影刀日志面板**，事后排查困难。
+5. 影刀日志模块本身就是单例，不需要 `logger = logging.getLogger(__name__)`，直接调用模块方法即可。
+6. 影刀日志方法只接受单一 `text` 参数：`logging.info(text)` / `logging.warning(text)` / `logging.error(text)`。不要写 printf 风格的 `logging.info("x=%s", v)`，多写参数会被忽略或抛 TypeError。
+7. 需要动态内容时使用 f-string：`logging.info(f"行数={n}")`。
+8. 影刀 API 没有 `logger.exception`，需要堆栈时在 `except` 里手动拼 `traceback.format_exc()` 传入 `logging.error`。
+9. 影刀 API 没有 `logging.basicConfig`，不要写 `logging.basicConfig(...)`，影刀自带初始化。
+10. 影刀 API 提供的级别：`trace / debug / info / success / warning / error`；需要导出文件用 `logging.export(save_path)`。
+
+反例（会绕过影刀日志面板）：
+
+```python
+import logging
+logger = logging.getLogger(__name__)
+logger.info("x=%s", v)
+```
+
+正例：
+
+```python
+from xbot.app import logging
+logging.info(f"x={v}")
+```
+
+完整 API 参考见 `xbot-api-docs/docs/logging.md`；历史踩坑见 `wiki/error-book.md` 中 2026-06-18 条目。
+
 ## 排查与修改原则
 
 处理 bug 或异常时，按以下顺序：
