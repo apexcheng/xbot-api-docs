@@ -102,7 +102,7 @@ glv['my_var'] = 'value'
 | `xbot.web` | 普通网页自动化主线 | 原生 `WebBrowser` / `WebElement` |
 | `xbot_visual.web` | 影刀可视化组件内部 | 多数为原生对象 |
 
-重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。Agent 编码场景里如果只有 XPath 字符串，不建议直接依赖原生 `wait_appear(xpath_str, ...)`；可改看市场扩展文档里的 `activity_dae43741.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
+重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。Agent 编码场景里如果只有 XPath 字符串，不建议直接依赖原生 `wait_appear(xpath_str, ...)`；可改看市场扩展文档里的 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
 
 ---
 
@@ -646,7 +646,7 @@ file_path = browser.dowload_url(
 
 注意：方法名是 `dowload_url`，不是 `download_url`。
 
-业务里凡是“下载文件后等待结果”的场景，统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`；这里的 `wait_complete` / `wait_complete_timeout` 只作为原生接口参数说明保留。
+业务里凡是“下载文件后等待结果”的场景，统一优先使用市场扩展 `xbot_enhance_tools.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`；这里的 `wait_complete` / `wait_complete_timeout` 只作为原生接口参数说明保留。
 
 ---
 
@@ -782,8 +782,8 @@ element.click(delay_after=0.3)
 
 ```python
 # 历史项目里可能看到类似写法，但不要默认当前环境可用
-# 如需等待 XPath 字符串，优先参考 activity_dae43741.browser_utils
-from xbot_extensions.activity_dae43741.browser_utils import wait_appear_by_xpath
+# 如需等待 XPath 字符串，优先参考 xbot_enhance_tools.browser_utils
+from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath
 
 element = wait_appear_by_xpath(page, '//button[contains(., "查询")]', timeout=10)
 if not element:
@@ -879,11 +879,11 @@ browser.wait_load_completed(timeout=15)
 
 | 报错 / 现象 | 常见原因 | 处理 |
 |---|---|---|
-| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 不要依赖 `wait_for_element`；XPath 等待改看 `activity_dae43741.browser_utils.*`，选择器等待再考虑原生 `wait_appear()` |
+| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 不要依赖 `wait_for_element`；XPath 等待改看 `xbot_enhance_tools.browser_utils.*`，选择器等待再考虑原生 `wait_appear()` |
 | `mode="Chrome"` 不稳定或报错 | 字符串大小写错误 | 改成 `mode="chrome"` |
 | `download_url` 不存在 | 源码拼写是 `dowload_url` | 调用 `browser.dowload_url(...)` |
 | `dowload_timeout` 拼写奇怪 | 源码就是这个拼写 | 按源码传 `dowload_timeout` |
 | 元素匹配多个 | 单元素查找要求唯一 | 改选择器，或用 `find_all*` 后自己取 |
 | 中文输入异常 | 输入法干扰 | 改用 `clipboard_input()` |
-| 下载后文件还没生成 | 没等下载完成 | 业务里统一改用 `activity_dae43741.browser_utils.wait_download_file(...)` |
+| 下载后文件还没生成 | 没等下载完成 | 业务里统一改用 `xbot_enhance_tools.browser_utils.wait_download_file(...)` |
 | `dialog_result="OK"` 不确定 | 源码注释是小写 `ok` / `cancel` | 建议传 `"ok"` / `"cancel"` |

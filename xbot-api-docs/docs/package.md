@@ -278,7 +278,7 @@ package.variables["template_file"] = template_file
 
 ```python
 from . import package
-from xbot_extensions.activity_df0688e4.core import build_payload, gy_call
+from xbot_extensions.guanyi_erp_api.core import build_payload, gy_call
 
 payload = build_payload(
     method="gy.erp.stock.get",

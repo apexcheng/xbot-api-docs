@@ -1,4 +1,4 @@
-# 增强工具2026 (activity_dae43741)
+# 增强工具2026 (xbot_enhance_tools)
 
 > 调用类型：`direct python`  
 > 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py 中的公开函数；__init__.py 仅导入模块。  
@@ -7,22 +7,22 @@
 
 ---
 
-**目录/指令名：** `activity_dae43741` / 增强工具2026
+**目录/指令名：** `xbot_enhance_tools` / 增强工具2026
 
 **调用方式：** direct python
 
 **用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化和商家后台登录辅助。
 
 **调用入口：**
-- `from xbot_extensions.activity_dae43741 import exception_utils, browser_utils, shop_utils`
-- `from xbot_extensions.activity_dae43741.browser_utils import wait_appear_by_xpath`
-- `from xbot_extensions.activity_dae43741.browser_utils import wait_disappear_by_xpath`
-- `from xbot_extensions.activity_dae43741.browser_utils import wait_download_file`
-- `from xbot_extensions.activity_dae43741.exception_utils import format_exception_detail`
-- `from xbot_extensions.activity_dae43741.shop_utils import login_pdd_seller`
-- `from xbot_extensions.activity_dae43741.shop_utils import login_qianniu`
-- `from xbot_extensions.activity_dae43741.shop_utils import login_jingmai`
-- `from xbot_extensions.activity_dae43741.shop_utils import login_alipay`
+- `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils`
+- `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath`
+- `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_disappear_by_xpath`
+- `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_download_file`
+- `from xbot_extensions.xbot_enhance_tools.exception_utils import format_exception_detail`
+- `from xbot_extensions.xbot_enhance_tools.shop_utils import login_pdd_seller`
+- `from xbot_extensions.xbot_enhance_tools.shop_utils import login_qianniu`
+- `from xbot_extensions.xbot_enhance_tools.shop_utils import login_jingmai`
+- `from xbot_extensions.xbot_enhance_tools.shop_utils import login_alipay`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
@@ -46,12 +46,12 @@
 ```python
 import time
 
-from xbot_extensions.activity_dae43741.browser_utils import (
+from xbot_extensions.xbot_enhance_tools.browser_utils import (
     wait_appear_by_xpath,
     wait_disappear_by_xpath,
     wait_download_file,
 )
-from xbot_extensions.activity_dae43741.exception_utils import format_exception_detail
+from xbot_extensions.xbot_enhance_tools.exception_utils import format_exception_detail
 from xbot.app import logging
 
 
@@ -76,7 +76,7 @@ except Exception as e:
 **商家后台登录示例：**
 
 ```python
-from xbot_extensions.activity_dae43741 import shop_utils
+from xbot_extensions.xbot_enhance_tools import shop_utils
 
 
 ok = shop_utils.login_pdd_seller("账号", "密码", profile="Default")

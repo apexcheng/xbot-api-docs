@@ -1,4 +1,4 @@
-# 钉钉企业机器人消息_v2 (activity_6f13bae5)
+# 钉钉企业机器人消息_v2 (dingtalk_bot_message)
 
 > 调用类型：`both`  
 > 主要入口：通过 __init__.py 的 process1/2/3 调用 flow；to_markdown_table.py 可直接调用。  
@@ -7,16 +7,16 @@
 
 ---
 
-**目录/指令名：** `activity_6f13bae5` / 钉钉企业机器人消息_v2
+**目录/指令名：** `dingtalk_bot_message` / 钉钉企业机器人消息_v2
 
 **调用方式：** both
 
 **用途：** 发送钉钉私聊消息、群聊消息、生成 markdown 表格
 
 **调用入口：**
-- Flow：`xbot_extensions.activity_6f13bae5.process1(app_key, app_secret, title, message_type, content, user_mobiles)`
-- Flow：`xbot_extensions.activity_6f13bae5.process2(app_key, app_secret, open_conversation_id, title, message_type, content, webhook_url, webhook_secret, at_mobiles, at_all)`
-- Direct：`xbot_extensions.activity_6f13bae5.to_table_format.to_markdown_table(data, max_cell_length)`
+- Flow：`xbot_extensions.dingtalk_bot_message.process1(app_key, app_secret, title, message_type, content, user_mobiles)`
+- Flow：`xbot_extensions.dingtalk_bot_message.process2(app_key, app_secret, open_conversation_id, title, message_type, content, webhook_url, webhook_secret, at_mobiles, at_all)`
+- Direct：`xbot_extensions.dingtalk_bot_message.to_table_format.to_markdown_table(data, max_cell_length)`
 
 **参数说明：**
 - `message_type`：消息类型（`text` / `markdown` / `image`）
@@ -35,14 +35,14 @@
 **典型调用方式：**
 ```python
 # 发送私聊消息
-xbot_extensions.activity_6f13bae5.process1(
+xbot_extensions.dingtalk_bot_message.process1(
     app_key="xxx", app_secret="xxx",
     title="通知", message_type="markdown",
     content="## 标题\n内容", user_mobiles=["13800138000"]
 )
 
 # 生成 markdown 表格
-from xbot_extensions.activity_6f13bae5.to_table_format import to_markdown_table
+from xbot_extensions.dingtalk_bot_message.to_table_format import to_markdown_table
 md = to_markdown_table(
     data=[["a", "b"], ["1", "2"]],
     max_cell_length=100
@@ -52,7 +52,7 @@ md = to_markdown_table(
 **项目里的 Markdown 群通知模式：**
 
 ```python
-from xbot_extensions.activity_6f13bae5 import process2 as send_group_message
+from xbot_extensions.dingtalk_bot_message import process2 as send_group_message
 from xbot.app import logging
 
 try:

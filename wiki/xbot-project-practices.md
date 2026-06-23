@@ -187,7 +187,7 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 
 ## 10. 下载等待辅助方法约定
 
-- 下载文件业务统一优先使用市场扩展 `activity_dae43741.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`。
+- 下载文件业务统一优先使用市场扩展 `xbot_enhance_tools.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`。
 - `download_dir` 不传时先用当前用户下载目录，找不到再回退到 `~/下载`；`filename_pattern` 是可选参数，传了就按指定文件名关键词或 glob 匹配，不传就按“本次新出现并稳定的文件”判断。
 - 不再为同类下载等待业务单独维护旧封装。
 

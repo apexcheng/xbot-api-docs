@@ -13,7 +13,7 @@
 - `project-entry-skeleton.py`：影刀项目入口骨架，说明固定导入、`main(args)` 和 `package.variables`
 - `browser-bing-search.py`：最小浏览器搜索示例，演示打开页面、找元素、输入、点击
 - `dingtalk-ai-table-records.py`：钉钉 AI 表格最小读写示例，演示读取 `data.records`、按 `record["fields"]` 取值和回写记录
-- `dingtalk-markdown-notify.py`：钉钉群 Markdown 通知示例，演示 `activity_6f13bae5.process2` 的最小调用
+- `dingtalk-markdown-notify.py`：钉钉群 Markdown 通知示例，演示 `dingtalk_bot_message.process2` 的最小调用
 - `browser-price-check-single-row.py`：单行商品抓价并回写表格示例，演示 `xbot.web` 抓价、价格解析和钉钉 AI 表格更新
 
 ## 运行前提

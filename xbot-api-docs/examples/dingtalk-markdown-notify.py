@@ -2,7 +2,7 @@
 
 运行前提：
 - 本文件应放在影刀项目代码目录中运行
-- 当前项目已安装市场指令：钉钉企业机器人消息_v2（activity_6f13bae5）
+- 当前项目已安装市场指令：钉钉企业机器人消息_v2（dingtalk_bot_message）
 - `args` 中的 app_key、app_secret、open_conversation_id 由影刀编辑器提前配置
 """
 
@@ -27,7 +27,7 @@ def send_markdown_to_group(app_key, app_secret, open_conversation_id, title, con
         logging.warning("钉钉群通知参数缺失，已跳过发送。")
         return
 
-    from xbot_extensions.activity_6f13bae5 import process2 as send_group_message
+    from xbot_extensions.dingtalk_bot_message import process2 as send_group_message
 
     send_group_message(
         app_key=app_key,

@@ -22,10 +22,10 @@
 |---|---|---|---|---|---|---|---|
 | `activity_47680f64` | 小工具指令集 | both | ✅ | ✅ | ✅ (processN 包装) | ❌ | ✅ (5 个业务 + 5 个 process) |
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | ✅ | ✅ | ✅ (仅 import) | ❌ | ✅ (3 个) |
-| `activity_6f13bae5` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
+| `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
-| `activity_dae43741` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`) |
-| `activity_df0688e4` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
+| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`) |
+| `guanyi_erp_api` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
 | `activity_excel_v2` | Excel扩展操作 | flow | ✅ | ✅ | ✅ (包装入口 + 模块导入) | ❌ | ✅ (Visual / Code flow 对应 .py + 工具模块) |
 | `iframe2` | XPath跨域获取网页元素 | both | ✅ | ✅ | ❌ | ✅ (`_core.py`) | ✅ (`api.py`、`js_code.py`) |
 | `ad_killer` | 广告杀手 | both | ✅ | ✅ | ✅ (close_ads/close_ads_win) | ✅ (_core.py) | ✅ (7 个) |
@@ -88,7 +88,7 @@
 
 ---
 
-### 2.3 activity_6f13bae5 — 钉钉企业机器人消息_v2
+### 2.3 dingtalk_bot_message — 钉钉企业机器人消息_v2
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
@@ -168,7 +168,7 @@
 
 ---
 
-### 2.5 activity_df0688e4 — C-ERP API
+### 2.5 guanyi_erp_api — C-ERP API
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
@@ -283,7 +283,7 @@
 
 ---
 
-### 2.9 activity_dae43741 — 增强工具2026
+### 2.9 xbot_enhance_tools — 增强工具2026
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
@@ -443,7 +443,7 @@ def process1(参数1, 参数2):
 - `core.py` / `_core.py` 通常包含真实业务类和方法
 - `__init__.py` 只是包装层，真实逻辑在 core 中
 - 例：`ad_killer._core.py` 中的 `AdKiller.close_ads()` 是真实关闭逻辑
-- 例：`activity_df0688e4.core.py` 中的 `make_sign()`、`build_payload()`、`gy_call()` 是管易 API 签名和请求封装
+- 例：`guanyi_erp_api.core.py` 中的 `make_sign()`、`build_payload()`、`gy_call()` 是管易 API 签名和请求封装
 
 ### 3.5 独立 .py 文件作为直接调用入口
 
@@ -471,13 +471,13 @@ def main(args):
 |---|---|---|---|
 | `activity_47680f64` | 小工具指令集 | both | [activity-47680f64.md](extensions/activity-47680f64.md) |
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | [activity-5b77c4ce.md](extensions/activity-5b77c4ce.md) |
-| `activity_6f13bae5` | 钉钉企业机器人消息_v2 | both | [activity-6f13bae5.md](extensions/activity-6f13bae5.md) |
+| `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | [dingtalk-bot-message.md](extensions/dingtalk-bot-message.md) |
 | `activity_7bca6d` | 登录扩展操作 | both | [activity-7bca6d.md](extensions/activity-7bca6d.md) |
-| `activity_df0688e4` | C-ERP API | direct python | [activity-df0688e4.md](extensions/activity-df0688e4.md) |
+| `guanyi_erp_api` | C-ERP API | direct python | [guanyi-erp-api.md](extensions/guanyi-erp-api.md) |
 | `iframe2` | XPath跨域获取网页元素 | both | [iframe2-extension.md](iframe2-extension.md) |
 | `ad_killer` | 广告杀手 | both | [ad-killer.md](extensions/ad-killer.md) |
 | `web_action` | 网页扩展操作 | both | [web-action.md](extensions/web-action.md) |
-| `activity_dae43741` | 增强工具2026 | direct python | [activity-dae43741.md](extensions/activity-dae43741.md) |
+| `xbot_enhance_tools` | 增强工具2026 | direct python | [xbot-enhance-tools.md](extensions/xbot-enhance-tools.md) |
 | `activity_excel_v2` | Excel扩展操作 | flow | [activity-excel-v2.md](extensions/activity-excel-v2.md) |
 
 ---
@@ -490,25 +490,25 @@ def main(args):
 |---|---|
 | package.json 结构 | `activity_*/package.json`、`ad_killer/package.json`、`web_action/package.json` |
 | block 定义 | `activity_*/prototype.block.json` |
-| __init__.py 包装模式 | `activity_47680f64/__init__.py`、`activity_6f13bae5/__init__.py`、`ad_killer/__init__.py`、`web_action/__init__.py` |
+| __init__.py 包装模式 | `activity_47680f64/__init__.py`、`dingtalk_bot_message/__init__.py`、`ad_killer/__init__.py`、`web_action/__init__.py` |
 | Excel扩展操作公开指令 | `activity_excel_v2/prototype.block.json`：`hidden=false` 的 40 个公开 block |
 | Excel扩展操作包装入口 | `activity_excel_v2/__init__.py`：`fill_down_formula()`、`filter()`、`process16()` 等包装函数；`refresh_pivot_table` 为模块导入 |
 | Excel扩展操作分组 | `activity_excel_v2/package.json` flows 列表中的 `A_单元格填充`、`B_单元格操作`、`C_筛选`、`D_其他` |
-| 仅模块导入型增强工具 | `activity_dae43741/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils` |
-| 浏览器等待增强 | `activity_dae43741/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
-| 异常详情格式化 | `activity_dae43741/exception_utils.py`：`format_exception_detail()` |
-| 商家后台登录辅助 | `activity_dae43741/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()`、`login_alipay()` |
+| 仅模块导入型增强工具 | `xbot_enhance_tools/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils` |
+| 浏览器等待增强 | `xbot_enhance_tools/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
+| 异常详情格式化 | `xbot_enhance_tools/exception_utils.py`：`format_exception_detail()` |
+| 商家后台登录辅助 | `xbot_enhance_tools/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()`、`login_alipay()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
-| 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`activity_df0688e4/__init__.py` |
+| 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`guanyi_erp_api/__init__.py` |
 | close_ads 默认值 | `ad_killer/_core.py` 第 25-28 行：`close_type` 默认 `"hidden"` |
 | AdKiller 类定义 | `ad_killer/_core.py` 第 22-65 行 |
-| core.py 签名封装 | `activity_df0688e4/core.py` 第 30-45 行：`make_sign()`、`build_payload()` |
-| 钉钉机器人参数 | `activity_6f13bae5/__init__.py:process1` 第 5-25 行 |
+| core.py 签名封装 | `guanyi_erp_api/core.py` 第 30-45 行：`make_sign()`、`build_payload()` |
+| 钉钉机器人参数 | `dingtalk_bot_message/__init__.py:process1` 第 5-25 行 |
 | 通用表格操作参数 | `activity_5b77c4ce/prototype.block.json`：`general_table_action` block |
 | 智能日期选择器 | `web_action/select_date.py`：`select_date()` 函数 |
 | 通用下拉框 | `web_action/auto_drop_selector.py`：`set_dropdown()` 函数 |
 | 元素核心操作 | `web_action/element_core.py`：`hide_element`、`show_element`、`remove_element` 等 |
-| 管易 API 地址 | `activity_df0688e4/core.py` 第 24 行：`API_URL = "http://api.guanyierp.com/rest/erp_open"` |
+| 管易 API 地址 | `guanyi_erp_api/core.py` 第 24 行：`API_URL = "http://api.guanyierp.com/rest/erp_open"` |
 | 钉钉 AI 表格 action 枚举 | `activity_5b77c4ce/prototype.block.json`：`general_table_action` inputs[0] editor.options |
 | 登录扩展操作分组 | `activity_7bca6d/package.json` flows 列表中的 groupName 字段 |
 | 广告杀手内置配置 | `ad_killer/ad_conf.py`：`ad_conf` 字典 |
@@ -546,12 +546,12 @@ def main(args):
 |---|---|---|
 | 文件下载/移动/解压 | `activity_47680f64` | `process1`、`process2` |
 | 钉钉表格操作 | `activity_5b77c4ce` | `general_table_action`、`yd_ai_table_action` |
-| 钉钉消息通知 | `activity_6f13bae5` | `process1`、`process2`、`to_markdown_table` |
+| 钉钉消息通知 | `dingtalk_bot_message` | `process1`、`process2`、`to_markdown_table` |
 | Excel 公式填充 / 筛选 / 单元格扩展操作 | `activity_excel_v2` | `fill_down_formula`、`filter`、`process21`、`process56` |
-| 电商后台登录 | `activity_7bca6d` / `activity_dae43741` | `activity_7bca6d` 提供成熟登录流程；`activity_dae43741.shop_utils` 提供轻量账号密码登录辅助 |
-| ERP 数据查询 | `activity_df0688e4` | `select_stock`、`select_item`、`select_order_list` |
+| 电商后台登录 | `activity_7bca6d` / `xbot_enhance_tools` | `activity_7bca6d` 提供成熟登录流程；`xbot_enhance_tools.shop_utils` 提供轻量账号密码登录辅助 |
+| ERP 数据查询 | `guanyi_erp_api` | `select_stock`、`select_item`、`select_order_list` |
 | 跨 iframe XPath 查找 / 点击 / 输入 / 等待 | `iframe2` | `init_iframe`、`to_iframe`、`find_ele`、`click_by_xpath`、`input_by_xpath`、`wait` |
-| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 | `activity_dae43741` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils` |
+| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 | `xbot_enhance_tools` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils` |
 | 关闭网页广告 | `ad_killer` | `close_ads`、`close_ads_win` |
 | 网页元素扩展操作 | `web_action` | `process1`(滚动)、`process4`(背景色)、`select_date` |
 
@@ -560,5 +560,5 @@ def main(args):
 | 调用类型 | 目录 |
 |---|---|
 | 仅 Flow | `activity_excel_v2` |
-| 仅 Direct Python | `activity_5b77c4ce`、`activity_dae43741`、`activity_df0688e4` |
-| Flow + Direct | `activity_47680f64`、`activity_6f13bae5`、`activity_7bca6d`、`iframe2`、`ad_killer`、`web_action` |
+| 仅 Direct Python | `activity_5b77c4ce`、`xbot_enhance_tools`、`guanyi_erp_api` |
+| Flow + Direct | `activity_47680f64`、`dingtalk_bot_message`、`activity_7bca6d`、`iframe2`、`ad_killer`、`web_action` |

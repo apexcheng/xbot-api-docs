@@ -1,4 +1,4 @@
-# C-ERP API (activity_df0688e4)
+# C-ERP API (guanyi_erp_api)
 
 > 调用类型：`direct python`  
 > 主要入口：直接调用各业务 .py 或 core.py 中的函数；__init__.py 仅做模块导入。  
@@ -7,19 +7,19 @@
 
 ---
 
-**目录/指令名：** `activity_df0688e4` / C-ERP API
+**目录/指令名：** `guanyi_erp_api` / C-ERP API
 
 **调用方式：** direct python
 
 **用途：** 管易 ERP / C-ERP 的库存查询、商品查询、订单查询
 
 **调用入口：**
-- `xbot_extensions.activity_df0688e4.select_stock.main(args)`
-- `xbot_extensions.activity_df0688e4.select_item.main(args)`
-- `xbot_extensions.activity_df0688e4.select_order_list.main(args)`
-- `xbot_extensions.activity_df0688e4.select_order_dteail.main(args)`
-- `xbot_extensions.activity_df0688e4.select_combine_item.main(args)`
-- `xbot_extensions.activity_df0688e4.select_item_by_sku_code.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_stock.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_item.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_order_list.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_order_dteail.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_combine_item.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_item_by_sku_code.main(args)`
 
 **参数说明：**
 - `app_key`、`session_key`、`secret`：ERP 接口凭证（来自 `package.variables`）
@@ -38,8 +38,8 @@
 
 **典型调用方式：**
 ```python
-from xbot_extensions.activity_df0688e4 import select_stock
-from xbot_extensions.activity_df0688e4.core import build_payload, gy_call
+from xbot_extensions.guanyi_erp_api import select_stock
+from xbot_extensions.guanyi_erp_api.core import build_payload, gy_call
 
 # 通过 flow 调用（参数通过 package.variables 传入）
 select_stock.main(args)
@@ -56,7 +56,7 @@ result = gy_call(payload)
 
 ```python
 from . import package
-from xbot_extensions.activity_df0688e4.core import build_payload, gy_call
+from xbot_extensions.guanyi_erp_api.core import build_payload, gy_call
 
 payload = build_payload(
     method="gy.erp.order.get",

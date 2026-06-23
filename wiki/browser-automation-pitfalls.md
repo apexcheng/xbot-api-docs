@@ -23,12 +23,12 @@
 ## 4. 历史包装层需要运行验证
 
 - 历史项目里出现的 `wait_for_element()`、自定义 `page.xxx()` 等包装层，不要直接当成当前稳定能力。
-- 如果只有 XPath 字符串等待需求，优先查 `activity_dae43741.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`，并按当前项目已安装扩展验证。
+- 如果只有 XPath 字符串等待需求，优先查 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`，并按当前项目已安装扩展验证。
 - 不确定对象是否支持某方法时，先查当前文档、源码或用最小流程运行验证。
 
 ## 5. 下载等待优先统一辅助方法
 
-- 下载后等待文件生成，优先使用 `activity_dae43741.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`。
+- 下载后等待文件生成，优先使用 `xbot_enhance_tools.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`。
 - `download_dir` 不传时先用当前用户下载目录，找不到再回退到 `~/下载`；`filename_pattern` 有明确文件名关键词或 glob 时再传。
 - 不要为同类下载等待重复维护旧封装，除非当前项目已有稳定约定且改动成本更低。
 
