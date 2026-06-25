@@ -24,6 +24,7 @@
 - 基础对象与全局变量：`docs/package.md`
 - 市场指令源码排查：`docs/debug/market-extension-source.md`
 - 市场指令扩展开发：`docs/extension-instructions.md`（总入口），各指令详情见 `docs/extensions/`
+- 增强工具2026：`docs/extensions/xbot-enhance-tools.md`（含 `win_utils.is_win_element_clickable()`）
 
 ## 使用提示
 

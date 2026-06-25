@@ -24,7 +24,7 @@
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | ✅ | ✅ | ✅ (仅 import) | ❌ | ✅ (3 个) |
 | `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
-| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`) |
+| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`、`win_utils.py`) |
 | `guanyi_erp_api` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
 | `activity_excel_v2` | Excel扩展操作 | flow | ✅ | ✅ | ✅ (包装入口 + 模块导入) | ❌ | ✅ (Visual / Code flow 对应 .py + 工具模块) |
 | `iframe2` | XPath跨域获取网页元素 | both | ✅ | ✅ | ❌ | ✅ (`_core.py`) | ✅ (`api.py`、`js_code.py`) |
@@ -295,6 +295,7 @@
 | 千牛商家工作台登录 | direct python | `login_qianniu` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 京麦商家工作台登录 | direct python | `login_jingmai` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 支付宝登录 | direct python | `login_alipay` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
+| Win 元素可点击判断 | direct python | `is_win_element_clickable` | —（仅模块导入） | `win_utils.py` | `element` | `bool` |
 
 ---
 
@@ -494,10 +495,11 @@ def main(args):
 | Excel扩展操作公开指令 | `activity_excel_v2/prototype.block.json`：`hidden=false` 的 40 个公开 block |
 | Excel扩展操作包装入口 | `activity_excel_v2/__init__.py`：`fill_down_formula()`、`filter()`、`process16()` 等包装函数；`refresh_pivot_table` 为模块导入 |
 | Excel扩展操作分组 | `activity_excel_v2/package.json` flows 列表中的 `A_单元格填充`、`B_单元格操作`、`C_筛选`、`D_其他` |
-| 仅模块导入型增强工具 | `xbot_enhance_tools/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils` |
+| 仅模块导入型增强工具 | `xbot_enhance_tools/__init__.py`：仅导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils`；`win_utils.py` 已在扩展 flows 中出现，当前源码里的 `__init__.py` 尚未导入该模块 |
 | 浏览器等待增强 | `xbot_enhance_tools/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
 | 异常详情格式化 | `xbot_enhance_tools/exception_utils.py`：`format_exception_detail()` |
 | 商家后台登录辅助 | `xbot_enhance_tools/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()`、`login_alipay()` |
+| Windows 元素判断辅助 | `xbot_enhance_tools/win_utils.py`：`is_win_element_clickable()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`guanyi_erp_api/__init__.py` |
 | close_ads 默认值 | `ad_killer/_core.py` 第 25-28 行：`close_type` 默认 `"hidden"` |
@@ -551,7 +553,7 @@ def main(args):
 | 电商后台登录 | `activity_7bca6d` / `xbot_enhance_tools` | `activity_7bca6d` 提供成熟登录流程；`xbot_enhance_tools.shop_utils` 提供轻量账号密码登录辅助 |
 | ERP 数据查询 | `guanyi_erp_api` | `select_stock`、`select_item`、`select_order_list` |
 | 跨 iframe XPath 查找 / 点击 / 输入 / 等待 | `iframe2` | `init_iframe`、`to_iframe`、`find_ele`、`click_by_xpath`、`input_by_xpath`、`wait` |
-| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 | `xbot_enhance_tools` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils` |
+| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 / Windows 元素可点击判断 | `xbot_enhance_tools` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils`、`is_win_element_clickable` |
 | 关闭网页广告 | `ad_killer` | `close_ads`、`close_ads_win` |
 | 网页元素扩展操作 | `web_action` | `process1`(滚动)、`process4`(背景色)、`select_date` |
 
