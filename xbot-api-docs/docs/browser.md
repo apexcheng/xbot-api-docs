@@ -680,8 +680,11 @@ path = element.screenshot(
 ## 23. 网络监听和请求
 
 ```python
-browser.start_monitor_network(url="/api/", use_wildcard=False, resource_type="XHR|Fetch")
-responses = browser.get_responses(url="/api/", use_wildcard=False, resource_type="XHR|Fetch")
+# 开始监听必须放在触发页面请求之前；URL 不需要写完整，尽量用通配符提高命中率
+browser.start_monitor_network(url="*client.action*", use_wildcard=True, resource_type="XHR|Fetch")
+
+# 已在 start_monitor_network 里限定 URL 时，读取时通常只按资源类型取数即可
+responses = browser.get_responses(resource_type="XHR|Fetch")
 browser.stop_monitor_network()
 
 result = browser.http_request(
@@ -706,6 +709,15 @@ result = browser.http_request(
 | `save_filename` | `str` / `None` | `None` | 保存响应文件路径 |
 | `connect_timeout` | `int` | `30` | 连接超时秒数 |
 | `dowload_timeout` | `int` | `300` | 等待下载/响应超时秒数；源码拼写是 `dowload_timeout` |
+
+`start_monitor_network()` / `get_responses()` 说明：
+
+- 两个方法都支持 `url`、`use_wildcard`、`resource_type` 过滤；`resource_type` 可用 `|` 连接多个类型，例如 `"XHR|Fetch"`。
+- 监听要在点击、刷新、滚动、加载更多等触发请求动作之前开启。
+- 指定 URL 时优先使用通配符，例如 `url="*client.action*", use_wildcard=True`；不要强依赖完整 URL，避免查询参数或域名变化导致匹配不到。
+- 如果 `start_monitor_network()` 已经指定了 URL 过滤，后续 `get_responses(resource_type="XHR|Fetch")` 通常不必重复传 URL。
+- `get_responses()` 返回 `list[dict]`。单条记录常见键包括：`url`、`type`、`headers`、`body`、`base64Encoded`、`status`、`requestHeaders`、`requestBody`、`method`，读取方式如 `item["body"]`。
+- `body` 的具体内容形态、非 JSON 响应和异常请求表现，仍建议以真实运行日志为准，需运行验证。
 
 ---
 
