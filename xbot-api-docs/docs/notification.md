@@ -70,6 +70,36 @@
 
 - `storage_key` 不为空时，源码会尝试读取/保存历史输入。
 - 对话框配置结构较复杂，建议按源码注释逐项填写。
+- **下拉/列表类控件（`Select`、`MultiSelect`、`List`、`MultiList`）的 `options` 不能用纯字符串数组**。`dialog.py` 源码注释里 `options: ["选项1", "选项2"]` 的示例已过时；所有影刀版本都应按对象数组写：`{"value": ..., "display": ...}`。控件级默认值 `value` 必须等于某个选项的 `value`。
+  - 来源：`dnfile` 解析 `shadowbot-6.2.18/ShadowBot.Shell.ShadowBotToolkit.dll`，确认 `OptionItem` 只声明 `Value`、`Display` 两个属性；JSON 键按其它字段（`nullText`、`isTextEditable`）的驼峰小写规律写为 `value` / `display`。
+
+### 示例
+
+下拉框 `options` 的正确写法（对象数组，非字符串数组）：
+
+```python
+from xbot.app.dialog import show_custom_dialog
+
+dialog_settings = {
+    "dialogTitle": "采集参数",
+    "settings": {
+        "editors": [
+            {"type": "TextBox", "label": "链接", "VariableName": "url",
+             "value": None, "nullText": "请输入链接"},
+            {"type": "Select", "label": "浏览器类型", "VariableName": "browser_type",
+             "value": "chrome",  # 必须等于某个选项的 value
+             "options": [{"value": "chrome", "display": "chrome"},
+                         {"value": "edge", "display": "edge"}]},
+        ],
+        "buttons": [
+            {"type": "Button", "label": "确定", "theme": "red", "hotkey": "Enter"},
+            {"type": "Button", "label": "取消", "theme": "white", "hotkey": "Esc"},
+        ],
+    },
+}
+result = show_custom_dialog(dialog_settings)
+# result["browser_type"] 取到选项的 value（如 "chrome"）
+```
 
 ---
 

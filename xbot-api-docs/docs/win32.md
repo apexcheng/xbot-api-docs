@@ -268,6 +268,24 @@
 
 - `find_related_element(selector, timeout=20)`：在当前元素内部继续找子元素
 
+### 7.5 判断元素是否在屏幕可点击范围内
+
+适用场景：元素能通过选择器定位到，但可能在滚动区域外、窗口外或当前屏幕外，直接点击容易失败。
+
+判断思路：
+
+```python
+window = win32.get_active()
+element = window.find("你的元素选择器", timeout=3)
+
+if element.is_displayed() and element.is_enabled():
+    element.click()
+else:
+    win32.mouse_wheel(wheel_direction="down", wheel_times=3)
+```
+
+如需进一步判断元素是否在屏幕范围内，可结合 `element.get_bounding()` 和 `win32.get_screen_size()` 计算元素中心点是否落在屏幕内。该判断只能说明“元素自身状态正常、位置大致可点”，不能保证元素没有被弹窗、遮罩或其他窗口覆盖；遮挡场景仍需结合实际页面状态处理。`Win32Element.get_bounding()` 返回结构需在当前影刀版本中运行验证。
+
 ---
 
 ## 8. Image 常用方法
