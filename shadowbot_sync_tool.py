@@ -310,6 +310,27 @@ def _discover_helper_modules(project_dir, entry_files):
     return unique
 
 
+def _discover_unregistered_python_files(project_dir, package_data):
+    """Find project Python files that are not registered as Code flows.
+
+    :param pathlib.Path project_dir: Target project directory.
+    :param dict package_data: Package metadata.
+    :return list[str]: Unregistered Python file names.
+    """
+    registered = {
+        f"{flow.get('filename')}.py"
+        for flow in package_data.get("flows", [])
+        if flow.get("filename")
+    }
+    files = []
+    for py_file in sorted(project_dir.glob("*.py")):
+        if py_file.name == "package.py":
+            continue
+        if py_file.name not in registered:
+            files.append(py_file.name)
+    return files
+
+
 def command_prepare(args):
     """Run the common external-edit workflow.
 
@@ -322,8 +343,11 @@ def command_prepare(args):
     helpers = _discover_helper_modules(project_dir, args.files)
 
     package_data = load_package_json(project_dir)
+    all_flow_files = list(dict.fromkeys(
+        args.files + _discover_unregistered_python_files(project_dir, package_data)
+    ))
     results = []
-    for file_name in args.files:
+    for file_name in all_flow_files:
         results.append(ensure_code_flow(package_data, file_name, args.group))
     save_package_json(project_dir, package_data)
 
