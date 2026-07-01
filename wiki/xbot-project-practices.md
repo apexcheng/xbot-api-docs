@@ -206,3 +206,17 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - 本地单测影刀代码时，可以用 `types.ModuleType` 和 `sys.modules.setdefault()` 注入轻量 `xbot`、`xbot.app`、`xbot.selector`、`xbot.primitives`。
 - 这种方式适合测纯函数、数据清洗、汇总、Markdown 生成等不依赖真实界面的逻辑。
 - 只能把它当成本地测试手段，不能把 pytest 通过直接说成“影刀编辑器内验证通过”。
+
+## 13. 项目迁移先对齐元数据，再打开编辑器
+
+- 从旧项目迁移到新影刀项目时，不要只复制业务 `.py` 文件后直接打开编辑器；先确认 `package.json`、`.dev/workspace.state.json`、flow 入口和项目 `uuid` 相关元数据一致。
+- 如果新项目显示损坏、打开后变回空项目，优先排查是否仍保留空项目的 `module1` 工作区状态、`internaldependencies` / `internalautodependencies` 是否不一致，以及旧项目的 `package.sigstore` 是否被带入新项目。
+- 外部修复元数据前先关闭影刀编辑器中的该项目，避免编辑器把内存中的空项目状态重新写回目录，覆盖刚修好的文件。
+- 迁移不稳定时，优先以新建空项目为底座，只迁移必要源码、资源和已确认 flow；不要整包继承旧项目里的运行态缓存、签名缓存和编辑器状态文件。
+
+## 14. 同步和提交只纳入必要项目文件
+
+- `shadowbot_sync_tool.py prepare` 的 `--project-dir` 应指向包含 `package.json` 的真实 `xbot_robot` 项目根目录，不要传上一级应用 UUID 目录。
+- `.idea/`、`__pycache__/`、本地运行缓存和编辑器临时状态默认不作为影刀项目交付内容提交。
+- `.dev/`、`package.sigstore`、`workspace.state.json` 这类文件不要默认“一起提交”；只有确认它们是当前任务必须同步的项目元数据时，才纳入改动。
+- 提交前优先复核 diff 是否只包含源码、资源、flow 登记和必要元数据；看到来源不明的大量编辑器状态变化时，先停下来确认，不要顺手入库。
