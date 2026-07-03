@@ -20,18 +20,20 @@ developer_instructions = """
 优先查看：
 
 1. AGENTS.md
-2. README.md
-3. CLAUDE.md
-4. llms.txt
-5. 项目开发步骤.md
-6. docs/
-7. wiki/
-8. knowledge/
-9. xbot-api-docs/AGENTS.md
-10. xbot-api-docs/llms.txt
-11. xbot-api-docs/docs/
-12. xbot-api-docs/examples/
-13. 当前项目已有代码
+2. 当前项目已有代码
+3. xbot-api-docs/AGENTS.md
+4. xbot-api-docs/llms.txt
+5. xbot-api-docs/docs/
+6. xbot-api-docs/examples/
+7. README.md
+8. CLAUDE.md
+9. llms.txt
+10. docs/
+11. knowledge/
+12. wiki/error-book.md
+13. wiki/unresolved.md
+
+说明：`wiki/` 只作为历史错误和待验证事项的归档来源，不作为默认编码依据。除非主 Agent 明确询问历史错误、待验证事项或 API 文档没有答案，否则不要主动查 `wiki/`。
 
 专项查询规则：
 

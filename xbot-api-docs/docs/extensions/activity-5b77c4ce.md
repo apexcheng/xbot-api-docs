@@ -318,9 +318,12 @@ records = table_action(
 ).get("data", {}).get("records") or []
 ```
 
-补充约定：
+## 经验
 
 - 项目里更推荐先统一封装 `yd_ai_table_action()`，再让业务层读取 `data.records`。
-- 记录结构进入业务逻辑后，优先直接按 `record["fields"]` 使用；多选字段显示值取 `.get("name")`。
+- 获取多行记录时，记录列表默认从 `result.get("data", {}).get("records")` 取，不要直接从顶层 `.get("records")` 取。
+- 记录结构进入业务逻辑后，优先直接按 `record["fields"]` 使用；调用方已经明确是表格记录时，不要再反复做 `isinstance` 兜底。
+- 多选字段或选项字段常见结构为 `{"name": "...", "id": "..."}`，显示值取 `.get("name")`，不要把整个字典直接当文本用。
+- 这些结构约定只适用于已验证的钉钉 AI 表格指令，不要泛化到所有市场指令。
 
 ---

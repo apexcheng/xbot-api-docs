@@ -289,7 +289,19 @@ payload = build_payload(
 result = gy_call(payload)
 ```
 
-## 7. 快速建议
+## 7. 经验
+
+- `package.resources` 只用于访问随应用打包的固定资源，不适合保存运行时动态生成内容。
+- 当前可见 `ResourceReader` 公开方法是 `get_path()`、`get_text()`、`get_bytes()`、`copy_to()`、`copy_to_clipboard()`；不要把 `package.resources` 当字典使用，也不要写 `package.resources["模板.xlsx"]`。
+- 需要从模板补齐缺失 Excel 文件时，优先用 `package.resources.get_path()` 获取模板路径，或用 `package.resources.copy_to()` 复制模板到目标路径。
+- 同一轮任务中，多个记录共享同一页面、SPU、接口响应或解析结果时，可以用 `package.variables` 保存任务级缓存，减少重复打开页面和重复解析。
+- 任务开始时应显式初始化或清空任务级缓存，避免跨轮任务误用旧数据。
+- 缓存内容只放本轮可复用的中间结果，不要存账号密码、token、Cookie 等敏感数据。
+- Agent 写代码时，优先复用项目里已有元素名、资源名、变量名；不要凭感觉新造名字。
+
+---
+
+## 8. 快速建议
 
 - 需要引用元素时，用 `package.selector()`。
 - 需要引用图片时，用 `package.image_selector()`。

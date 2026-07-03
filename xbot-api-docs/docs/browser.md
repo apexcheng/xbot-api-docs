@@ -102,7 +102,7 @@ glv['my_var'] = 'value'
 | `xbot.web` | 普通网页自动化主线 | 原生 `WebBrowser` / `WebElement` |
 | `xbot_visual.web` | 影刀可视化组件内部 | 多数为原生对象 |
 
-重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。Agent 编码场景里如果只有 XPath 字符串，不建议直接依赖原生 `wait_appear(xpath_str, ...)`；可改看市场扩展文档里的 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
+重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。Agent 编码场景里如果只有 XPath 字符串，优先看市场扩展文档里的 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
 
 ---
 
@@ -212,8 +212,6 @@ web.close_all(mode="chrome", task_kill=False, ignore_beforeunload=False)
 | `find_all_by_css(css_selector, timeout=20)` | 按 CSS 查找多个元素 |
 | `find_by_xpath(xpath_selector, timeout=20)` | 按 XPath 查找单个元素 |
 | `find_all_by_xpath(xpath_selector, timeout=20)` | 按 XPath 查找多个元素 |
-| `wait_appear(selector_or_element, timeout=20)` | 等待元素出现 |
-| `wait_disappear(selector_or_element, timeout=20)` | 等待元素消失 |
 | `scroll_to(location, ...)` | 滚动页面 |
 | `execute_javascript(code, argument=None, execution_world="ISOLATED")` | 执行 JavaScript |
 | `handle_javascript_dialog(dialog_result, text=None, wait_appear_timeout=20)` | 处理 JS 弹窗 |
@@ -289,16 +287,22 @@ elements = browser.find_all_by_xpath('//div[@class="item"]', timeout=10)
 ## 11. 等待元素
 
 ```python
-ok = browser.wait_appear(my_selector, timeout=10)
-ok = browser.wait_disappear(loading_selector, timeout=30)
+from xbot_extensions.xbot_enhance_tools.browser_utils import (
+    wait_appear_by_xpath,
+    wait_disappear_by_xpath,
+)
+
+element = wait_appear_by_xpath(browser, '//button[contains(., "查询")]', timeout=10)
+loading_done = wait_disappear_by_xpath(browser, '//div[@class="loading"]', timeout=30)
 ```
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
-| `selector_or_element` | `str` / `Selector` / `WebElement` | 必填 | 要等待的元素 |
+| `page` | `WebBrowser` | 必填 | 当前网页对象 |
+| `xpath` | `str` | 必填 | 要等待的 XPath |
 | `timeout` | `int` / `float` | `20` | 等待秒数 |
 
-返回：`True` / `False`。
+返回：`wait_appear_by_xpath()` 找到时返回元素，超时返回 `None`；`wait_disappear_by_xpath()` 消失返回 `True`，超时返回 `False`。
 
 ---
 
@@ -776,17 +780,18 @@ web.set_user_environment(
 
 ## 26. 常用模板
 
-### 26.1 原生等待后点击
+### 26.1 XPath 等待后点击
 
 ```python
 from xbot import web
+from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath
 
 browser = web.get_active(mode="chrome")
 
-if not browser.wait_appear(my_selector, timeout=10):
+element = wait_appear_by_xpath(browser, '//button[contains(., "查询")]', timeout=10)
+if not element:
     raise RuntimeError("目标元素未出现")
 
-element = browser.find(my_selector, timeout=1)
 element.click(delay_after=0.3)
 ```
 
@@ -887,11 +892,27 @@ browser.wait_load_completed(timeout=15)
 
 ---
 
-## 27. 排错速查
+## 27. 经验
+
+- 涉及浏览器、URL、页面元素、Cookie、下载、网络监听等网页业务时，默认使用 `xbot.web` 和浏览器对象能力；除非用户明确要求接口方式，不要改用 `requests`、`httpx`、`aiohttp`、`urllib` 绕过浏览器。
+- 需要页面登录态、Cookie、JS 渲染、下载对话框或页面事件时，更应走浏览器能力，不要把网页当成普通 HTTP 接口猜。
+- 能用 XPath、CSS、元素库或页面对象定位时，不要先写坐标点击；坐标受分辨率、缩放、窗口位置影响，只适合作为确实无法定位元素时的最后手段。
+- XPath 失效时，优先人工修正定位规则，不要在代码里堆多个未验证候选 XPath 做兜底。
+- 中文、长文本、输入法不稳定的场景，优先用元素的 `clipboard_input()`；全局 `send_keys()` 更适合快捷键或当前焦点明确的短输入。
+- 历史项目中的 `wait_for_element()`、自定义 `page.xxx()` 等包装层，不要直接当成当前稳定能力；只有 XPath 字符串等待需求时，优先使用 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
+- 下载后等待文件生成，优先使用 `xbot_enhance_tools.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`；不要为同类下载等待重复维护旧封装。
+- 登录流程建议先判断是否已登录，未登录再跳登录页；登录态判断必须按目标站点实测，不要把某个站点的 Cookie 名、URL 规则或按钮文案当成通用规则。
+- 页面清理只适合“当前浏览器实例由本流程统一接管”的任务，不要误关用户手工保留的工作页。
+- 需要监听接口响应时，优先按稳定片段设置通配规则，例如 `start_monitor_network(url="*client.action*", use_wildcard=True, resource_type="XHR|Fetch")`；监听和读取响应时的 `resource_type` 要保持一致。
+- 排查浏览器问题时，先确认对象是否来自 `xbot.web`，再确认字符串参数、元素定位、iframe、弹窗、登录态和页面加载状态，最后再考虑坐标、图像识别或项目专用包装层。
+
+---
+
+## 28. 排错速查
 
 | 报错 / 现象 | 常见原因 | 处理 |
 |---|---|---|
-| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 不要依赖 `wait_for_element`；XPath 等待改看 `xbot_enhance_tools.browser_utils.*`，选择器等待再考虑原生 `wait_appear()` |
+| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 不要依赖 `wait_for_element`；XPath 等待改看 `xbot_enhance_tools.browser_utils.*` |
 | `mode="Chrome"` 不稳定或报错 | 字符串大小写错误 | 改成 `mode="chrome"` |
 | `download_url` 不存在 | 源码拼写是 `dowload_url` | 调用 `browser.dowload_url(...)` |
 | `dowload_timeout` 拼写奇怪 | 源码就是这个拼写 | 按源码传 `dowload_timeout` |

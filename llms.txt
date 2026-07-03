@@ -20,9 +20,9 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 - [AGENTS.md](AGENTS.md): 当前知识库仓库的稳定 Agent 主规则入口。
 - [xbot-api-docs/AGENTS.md](xbot-api-docs/AGENTS.md): xbot API 子目录的补充规则。
 
-## LLM Wiki
+## Maintenance Notes
 
-- [Wiki 总入口](wiki/index.md): 跨文档知识整理、常见问题、错误修正和待验证事项。
+- [Wiki 归档入口](wiki/index.md): 只保留历史错误和待验证事项，不作为默认编码依据。
 - [错误修正记录](wiki/error-book.md): 记录历史错误结论、正确说法、依据和影响范围。
 - [待验证事项](wiki/unresolved.md): 记录还没有运行验证、源码验证或业务确认的内容。
 
@@ -46,7 +46,6 @@ python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.
 
 ## Optional
 
-- [templates/AGENTS.md](templates/AGENTS.md): 可复制到真实影刀项目根目录的通用 Agent 规则模板。
-- [templates/.claude/CLAUDE.md](templates/.claude/CLAUDE.md): 可复制到真实影刀项目 `.claude/CLAUDE.md` 的 Claude Code 规则模板。
-- [templates/.codex/agents/](templates/.codex/agents/): 可复制到真实影刀项目 `.codex/agents/` 的 Codex 只读子 agent 模板。
+- [.claude/CLAUDE.md](.claude/CLAUDE.md): Claude Code 轻量入口，主规则仍以根目录 `AGENTS.md` 为准。
+- [.codex/agents/](.codex/agents/): 可复制到真实影刀项目 `.codex/agents/` 的 Codex 只读子 agent 模板。
 - [待优化清单.md](待优化清单.md): 后续需要补充、修正或验证的事项。

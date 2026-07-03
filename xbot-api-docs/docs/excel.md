@@ -568,7 +568,22 @@ workbook = xbot.excel.open(
 
 ---
 
-## 17. 排错速查
+## 17. 经验
+
+- `kind` 等字符串参数大小写敏感，按文档传 `kind="wps"`、`kind="office"`、`kind="openpyxl"`，不要写 `"WPS"`、`"PWS"`、`"Office"` 或界面中文展示值。
+- 影刀项目默认优先使用 `xbot.excel` 处理 Excel / WPS 文件；涉及公式刷新、界面交互、宏、另存、格式、文件占用、真实 Office / WPS 行为时，不要为了图快改用其它后台读写库。
+- 表格大量写入时，优先整理成二维数组后用 `set_range()` 批量写入，减少逐单元格操作；写入前先明确表头、起始单元格和目标区域。
+- 需要写入真实 Excel / WPS 工作簿时，建议先用 `workbook.workbook.ReadOnly` 判断是否只读；第一次只读可能是本机残留进程占用，可关闭后 kill 本机 WPS / Excel 进程再二次打开判断，第二次仍只读再判定可能被他人占用。
+- `kind="wps"` 对应 `xbot.excel.kill_excel_process("wps", True)`；`kind="office"` 对应 `xbot.excel.kill_excel_process("office", True)`。
+- 字段名来自当前业务表时，不要抽成跨项目通用常量；当前项目已约定字段结构时，业务逻辑直接按约定取值，不要反复写 `isinstance` 和空结构兜底。
+- 用户需要看到 WPS / Excel 写入过程时，可用 `xbot.win32.get(title="*文件名*", use_wildcard=True)` 激活窗口，再用表格对象能力选中新增行；不要优先坐标点击或猜窗口句柄。
+- 本地脚本或 pytest 通过，只能说明后台数据处理逻辑可用；涉及 WPS / Office 界面、公式刷新、宏、弹窗、文件占用时，最终仍需在影刀编辑器或真实运行环境验证。
+- 按日期批量扫描表格时，如果业务要求日期连续，遇到缺失文件优先从模板资源复制补齐；模板路径应通过 `package.resources.get_path()` 或 `copy_to()` 获取，不要写 `package.resources["xxx"]`。
+- 平台导出 ZIP 后如果包含多个 `.xlsx`，不要随手取第一个文件；优先按业务文件名关键词、表头结构、sheet 名识别目标报表，无法判断时应抛出明确异常或进入失败结果。
+
+---
+
+## 18. 排错速查
 
 | 现象 | 常见原因 | 处理 |
 |---|---|---|

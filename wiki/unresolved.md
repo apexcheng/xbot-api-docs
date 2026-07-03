@@ -38,4 +38,4 @@
 - 当前判断：`check_obj` 自动包装、XPath 数组逐层切入、`wait` 返回布尔值、`execute_javascript()` 在当前 iframe html 上执行，这些可作为稳定结论；其余运行时边界不应提前泛化。
 - 需要验证：Shadow Root 相关路径是否适合当前版本稳定使用，`A2-切换至父IFrame` 隐藏块的可用性，不同浏览器模式下的兼容性，以及页面未完全加载时重试逻辑的实际表现。
 - 验证方式：在真实影刀项目里调用 `xbot_extensions.iframe2.api` 的最小示例，分别覆盖单层 iframe、多层 iframe、全局查找、Shadow Root 和加载中页面。
-- 关联文档：`xbot-api-docs/docs/iframe2-extension.md`、`wiki/iframe2-extension-notes.md`
+- 关联文档：`xbot-api-docs/docs/iframe2-extension.md`
