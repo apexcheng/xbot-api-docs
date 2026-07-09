@@ -1,7 +1,6 @@
 .obsidian/
-.claude/
-!templates/.claude/
-!templates/.claude/CLAUDE.md
+.claude/*
+!.claude/CLAUDE.md
 __pycache__/
 .idea/
 *.pyb

@@ -344,7 +344,11 @@ def command_prepare(args):
 
     package_data = load_package_json(project_dir)
     all_flow_files = list(dict.fromkeys(
-        args.files + _discover_unregistered_python_files(project_dir, package_data)
+        args.files + [
+            file_name
+            for file_name in _discover_unregistered_python_files(project_dir, package_data)
+            if file_name not in helpers
+        ]
     ))
     results = []
     for file_name in all_flow_files:
