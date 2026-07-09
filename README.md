@@ -13,7 +13,7 @@ Agent 在真实影刀项目目录完成开发或修改后，必须再运行本�
 最小示例：
 
 ```powershell
-python C:\Users\Administrator\Desktop\影刀xAI开发指南\shadowbot_sync_tool.py --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```
 
 ## 怎么使用
