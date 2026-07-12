@@ -37,6 +37,7 @@ python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" --project-dir "
 - [压缩解压](xbot-api-docs/docs/xzip.md): xbot.xzip 压缩和解压。
 - [键盘鼠标](xbot-api-docs/docs/keyboard-mouse.md): 全局键盘输入、鼠标移动、点击、滚轮、剪贴板输入等。
 - [iframe2 扩展指令说明](xbot-api-docs/docs/iframe2-extension.md): 跨 iframe / frame 的 XPath 查找、点击、输入、等待和元素信息读取。
+- [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md): 数据表、字段、记录、`filter`、分页、附件，以及 `HTTP 500 unknownError` 排查。
 
 ## Debug
 

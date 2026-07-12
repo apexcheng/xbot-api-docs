@@ -144,11 +144,101 @@ result = yd_ai_table_action(
 - `params.sheet`（必填）
 - `params.max_results`（可选，1~100）
 - `params.next_token`（可选）：分页游标
+- `params.extra_body`（可选）：传筛选条件等额外请求体参数
 
 **获取多行记录分页**
 - `action="获取多行记录分页"`
 - `params.sheet`（必填）
 - `params.page_size`（可选）、`params.max_pages`（可选）
+- `params.extra_body`（可选）：传筛选条件等额外请求体参数
+
+###### 记录筛选 `filter`
+
+已验证的筛选结构：
+
+```python
+params = {
+    "page_size": 1,
+    "max_pages": 1,
+    "extra_body": {
+        "filter": {
+            "combination": "and",
+            "conditions": [
+                {
+                    "field": "平台",
+                    "operator": "equal",
+                    "value": ["淘宝"],
+                },
+                {
+                    "field": "订单号",
+                    "operator": "equal",
+                    "value": ["3300000000000000000"],
+                },
+                {
+                    "field": "商品ID",
+                    "operator": "equal",
+                    "value": ["900000000000"],
+                },
+            ],
+        }
+    },
+}
+```
+
+调用示例：
+
+```python
+result = yd_ai_table_action(
+    action="获取多行记录分页",
+    client_id=client_id,
+    client_secret=client_secret,
+    base_id=base_id,
+    user_id=user_id,
+    sheet="评价收集明细",
+    params=params,
+)
+```
+
+已验证规则：
+
+| 项目 | 正确用法 |
+|---|---|
+| 顶层参数名 | 使用单数 `filter`，不要写成 `filters` |
+| 条件组合 | `combination: "and"` |
+| 条件列表 | `conditions` |
+| 字段 | 可传字段名称或字段 ID |
+| 文本 / 单选匹配 | 使用 `operator: "equal"` |
+| `value` | 必须是列表，即使只有一个值 |
+| 单选字段值 | 显示名称或选项 ID 均已验证可用 |
+
+错误示例：
+
+```python
+# 错误：filters 复数可能被接口静默忽略，结果相当于未筛选
+{"filters": {"combination": "and", "conditions": [...]}}
+
+# 错误：value 不是列表，会返回 JSON Array parsing error
+{"field": "订单号", "operator": "equal", "value": "3300000000000000000"}
+```
+
+存在性查询或查重只需要确认是否有记录时，推荐：
+
+```python
+{
+    "page_size": 1,
+    "max_pages": 1,
+    "extra_body": {"filter": {...}},
+}
+```
+
+不要因为订单号位数长或包含连字符，就判断 `filter` 无法查询。已实测 16 位、19 位纯数字订单号和带连字符订单号均可正常命中。
+
+当前接口存在两个已验证的稳定性问题：
+
+1. 携带 `filter` 时，较大的 `maxResults` / `page_size` 更容易触发 `HTTP 500 unknownError`。对于只需要判断记录是否存在的查询，优先设置为 `1`。
+2. 筛选结果为零条时，接口有时返回正常空数组，有时错误返回 `HTTP 500 unknownError`。因此 `500` 不一定表示 `filter` 结构错误，也可能是零匹配触发的钉钉后端异常。
+
+如果需要获取所有满足条件的记录，不要直接假设较大 `page_size` 稳定可用；应先在当前表和当前租户中运行验证，再决定分页参数和重试策略。
 
 **获取记录**
 - `action="获取记录"`
@@ -258,6 +348,8 @@ result = yd_ai_table_action(
 **注意事项：**
 - `sheet`、`field`、`record_id` 虽然支持"名称或 ID"，但**推荐优先传 ID**
 - `更新多行记录` 时每条记录必须带 `id`（或 `recordId` / `record_id`）
+- 使用记录筛选时，顶层参数必须是单数 `filter`，每个条件的 `value` 必须是列表
+- 存在性查询优先使用 `page_size=1`、`max_pages=1`；不要把订单号长度误判为筛选失败原因
 - `__init__.py` 没有包装函数，直接调用 `general_table_action.py` 中的 `main()` 或 import `croe.py` 的函数
 - 如需更精细控制，可直接 import `croe.py` 中的函数
 
@@ -324,6 +416,7 @@ records = table_action(
 - 获取多行记录时，记录列表默认从 `result.get("data", {}).get("records")` 取，不要直接从顶层 `.get("records")` 取。
 - 记录结构进入业务逻辑后，优先直接按 `record["fields"]` 使用；调用方已经明确是表格记录时，不要再反复做 `isinstance` 兜底。
 - 多选字段或选项字段常见结构为 `{"name": "...", "id": "..."}`，显示值取 `.get("name")`，不要把整个字典直接当文本用。
+- `filter` 查询返回 `HTTP 500 unknownError` 时，先检查是否零匹配、是否把 `page_size` 设置过大，再判断是否为结构错误。
 - 这些结构约定只适用于已验证的钉钉 AI 表格指令，不要泛化到所有市场指令。
 
 ---
