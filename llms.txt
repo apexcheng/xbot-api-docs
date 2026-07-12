@@ -1,52 +1,115 @@
-# 影刀 xbot / AI 开发知识库
+# 影刀 xbot AI Agent 开发知识库
 
-> 面向 Codex、Claude Code、OpenClaw 等 AI Agent 的影刀 xbot 编码版开发知识库，包含 API 参数、开发限制、排错方法、示例和常见坑点。
+> 面向 Claude Code、OpenAI Codex、OpenClaw、Cursor 和其他 AI Agent 的影刀 xbot 编码版开发知识库。包含 API 导航、开发规则、浏览器自动化、Excel / WPS、Windows 自动化、市场指令、排错方法、示例和历史错误修正。
 
-本仓库不是真实影刀项目根目录。实际开发影刀项目时，应打开真实影刀项目根目录工作；本仓库只作为规则、API、示例和排错资料来源。
+Repository: https://github.com/apexcheng/yingdao-xbot-ai-agent
 
-## 开发后必做
+English overview: [README_EN.md](README_EN.md)
 
-- Agent 在真实影刀项目目录完成代码修改后，必须运行本仓库根目录的 `shadowbot_sync_tool.py` 做同步收尾。
-- `shadowbot_sync_tool.py` 不在真实影刀项目目录里，默认位于当前知识库根目录。
-- 不要假设当前工作目录就是知识库根目录；调用时应明确区分“知识库工具路径”和“真实项目目录”。
-- 最小示例：
+## Repository Role
+
+本仓库是影刀 xbot 开发知识库，不是真实影刀应用目录。
+
+实际开发时必须区分：
+
+- 知识库目录：保存规则、API、示例、排错资料和 `shadowbot_sync_tool.py`
+- 真实项目目录：保存当前影刀应用实际运行的代码和资源
+
+Agent 应在真实项目目录修改业务代码，只从本仓库读取知识和工具。
+
+## Required Reading Order
+
+1. [AGENTS.md](AGENTS.md)：当前知识库的稳定 Agent 主规则。
+2. [docs/getting-started.md](docs/getting-started.md)：知识库与真实项目的使用流程。
+3. 根据任务读取下面的公开专题文档。
+4. 再读取 `xbot-api-docs/docs/` 中对应的技术文档。
+5. 检查真实项目现有代码，不要仅根据通用 Python 经验猜测 xbot API。
+
+## Public Documentation
+
+- [文档中心](docs/README.md)：面向开发者和搜索引擎的总入口。
+- [影刀 xbot 快速开始](docs/getting-started.md)：首次使用、目录区分、TASK.md 和同步流程。
+- [AI Agent 开发工作流](docs/ai-agent-development.md)：Claude Code、Codex、Cursor 的推荐工作方式。
+- [xbot API 导航指南](docs/xbot-api-guide.md)：按业务任务定位正确 API 文档。
+- [影刀浏览器自动化指南](docs/browser-automation.md)：网页、元素、等待、滚动、下载、Cookie、网络监听和 iframe。
+- [影刀 Excel / WPS 自动化指南](docs/excel-automation.md)：工作簿、Sheet、表头、读写、长数字、保存和文件占用。
+- [影刀开发排错指南](docs/troubleshooting.md)：xbot、页面、表格、市场指令、钉钉 AI 表格和 Agent 代码排错。
+- [常见问题 FAQ](docs/faq.md)：影刀编码版、Agent、同步工具和常见异常问答。
+- [贡献指南](CONTRIBUTING.md)：验证等级、脱敏、错误修正和文档结构。
+
+## Development Completion Requirement
+
+Agent 在真实影刀项目目录完成代码修改后，必须运行本仓库根目录的 `shadowbot_sync_tool.py` 做同步收尾。
+
+`shadowbot_sync_tool.py` 不在真实影刀项目目录里。调用时必须明确工具路径和真实项目路径。
+
+最小示例：
 
 ```powershell
-python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
 ```
+
+同步成功后仍需在影刀编辑器中实际运行验证。
 
 ## Agent Rules
 
-- [AGENTS.md](AGENTS.md): 当前知识库仓库的稳定 Agent 主规则入口。
-- [xbot-api-docs/AGENTS.md](xbot-api-docs/AGENTS.md): xbot API 子目录的补充规则。
+- [AGENTS.md](AGENTS.md)：当前知识库仓库的稳定 Agent 主规则入口。
+- [xbot-api-docs/AGENTS.md](xbot-api-docs/AGENTS.md)：xbot API 子目录补充规则。
+- [.claude/CLAUDE.md](.claude/CLAUDE.md)：Claude Code 轻量入口，主规则仍以根目录 `AGENTS.md` 为准。
+- [.codex/agents/](.codex/agents/)：可复制到真实影刀项目的 Codex 只读子 Agent 模板。
 
-## Maintenance Notes
+## Core xbot API Docs
 
-- [Wiki 归档入口](wiki/index.md): 只保留历史错误和待验证事项，不作为默认编码依据。
-- [错误修正记录](wiki/error-book.md): 记录历史错误结论、正确说法、依据和影响范围。
-- [待验证事项](wiki/unresolved.md): 记录还没有运行验证、源码验证或业务确认的内容。
+- [基础对象与全局变量](xbot-api-docs/docs/package.md)：元素库、图像库、资源文件、全局变量的常用写法。
+- [浏览器操作](xbot-api-docs/docs/browser.md)：xbot.web、浏览器对象、元素查找、点击、输入、下载、Cookie、网络监听等。
+- [表格操作](xbot-api-docs/docs/excel.md)：Excel / WPS 创建、读取、写入、Sheet、区域和格式操作。
+- [Windows 自动化](xbot-api-docs/docs/win32.md)：xbot.win32 窗口、鼠标、键盘和桌面自动化。
+- [日志记录](xbot-api-docs/docs/logging.md)：xbot.app.logging 日志输出和导出。
+- [桌面对话框与通知](xbot-api-docs/docs/notification.md)：xbot.app.dialog 对话框和通知。
+- [压缩解压](xbot-api-docs/docs/xzip.md)：xbot.xzip 压缩和解压。
+- [键盘鼠标](xbot-api-docs/docs/keyboard-mouse.md)：全局键盘输入、鼠标移动、点击、滚轮和剪贴板输入。
+- [iframe2 扩展指令](xbot-api-docs/docs/iframe2-extension.md)：跨 iframe / frame 的 XPath 查找、点击、输入、等待和元素信息读取。
 
-## Core Docs
+## Extensions and Marketplace Commands
 
-- [基础对象与全局变量](xbot-api-docs/docs/package.md): 元素库、图像库、资源文件、全局变量的常用写法。
-- [浏览器操作](xbot-api-docs/docs/browser.md): xbot.web、浏览器对象、元素查找、点击、输入、下载、Cookie、网络监听等。
-- [表格操作](xbot-api-docs/docs/excel.md): Excel/WPS 创建、读取、写入、Sheet、区域和格式操作。
-- [Windows 自动化](xbot-api-docs/docs/win32.md): xbot.win32 窗口、鼠标、键盘和桌面自动化。
-- [日志记录](xbot-api-docs/docs/logging.md): xbot.app.logging 日志输出和导出。
-- [桌面对话框与通知](xbot-api-docs/docs/notification.md): xbot.app.dialog 对话框和通知。
-- [压缩解压](xbot-api-docs/docs/xzip.md): xbot.xzip 压缩和解压。
-- [键盘鼠标](xbot-api-docs/docs/keyboard-mouse.md): 全局键盘输入、鼠标移动、点击、滚轮、剪贴板输入等。
-- [iframe2 扩展指令说明](xbot-api-docs/docs/iframe2-extension.md): 跨 iframe / frame 的 XPath 查找、点击、输入、等待和元素信息读取。
-- [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md): 数据表、字段、记录、`filter`、分页、附件，以及 `HTTP 500 unknownError` 排查。
+- [市场指令扩展开发](xbot-api-docs/docs/extension-instructions.md)：市场指令目录结构、调用规则和参数映射总入口。
+- [市场指令源码排查](xbot-api-docs/docs/debug/market-extension-source.md)：市场指令参数不明确、可视化能运行但编码版异常时的源码排查方法。
+- [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md)：数据表、字段、记录、filter、分页、附件和 `HTTP 500 unknownError` 排查。
+- [影刀增强工具](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)：浏览器等待、下载等待、异常格式化、商家登录辅助和 Windows 元素辅助。
 
-## Debug
+## Debug and Knowledge Maintenance
 
-- [市场指令源码排查](xbot-api-docs/docs/debug/market-extension-source.md): 市场指令参数不明确、可视化能跑但编码版异常时的源码排查方法。
-- [市场指令扩展开发](xbot-api-docs/docs/extension-instructions.md): 市场指令目录结构、调用规则和参数映射总入口；各指令详情已拆分到 `xbot-api-docs/docs/extensions/`。
-- [增强工具2026](xbot-api-docs/docs/extensions/xbot-enhance-tools.md): `xbot_enhance_tools` 的浏览器等待、下载等待、异常格式化、商家登录辅助和 `win_utils.is_win_element_clickable()`。
+- [影刀开发排错指南](docs/troubleshooting.md)：通用最小复现和分层排错流程。
+- [Wiki 归档入口](wiki/index.md)：历史错误和待验证事项入口，不作为默认编码依据。
+- [错误修正记录](wiki/error-book.md)：记录旧错误结论、正确说法、依据和影响范围。
+- [待验证事项](wiki/unresolved.md)：记录尚未经过运行验证、源码验证或业务确认的内容。
+- [待优化清单](待优化清单.md)：后续需要补充、修正或验证的事项。
 
-## Optional
+## Evidence Levels
 
-- [.claude/CLAUDE.md](.claude/CLAUDE.md): Claude Code 轻量入口，主规则仍以根目录 `AGENTS.md` 为准。
-- [.codex/agents/](.codex/agents/): 可复制到真实影刀项目 `.codex/agents/` 的 Codex 只读子 agent 模板。
-- [待优化清单.md](待优化清单.md): 后续需要补充、修正或验证的事项。
+Agent 写入技术结论时应区分：
+
+1. 已在真实影刀环境运行验证
+2. 已从实际市场指令或扩展源码确认
+3. 有真实项目或仓库稳定代码作为依据
+4. 只有文档说明，尚未运行验证
+5. 仅根据错误现象推测
+
+第 4、5 类必须明确标记为待验证，不得写成稳定事实。
+
+## Search Intent Map
+
+用户搜索以下问题时，优先读取对应入口：
+
+- “影刀怎么开发”“影刀编码版教程”：`docs/getting-started.md`
+- “影刀 AI Agent”“Claude Code 影刀”“Codex 影刀”：`docs/ai-agent-development.md`
+- “影刀 xbot API”：`docs/xbot-api-guide.md`
+- “影刀浏览器自动化”“影刀网页元素”：`docs/browser-automation.md`
+- “影刀 Excel”“影刀 WPS”：`docs/excel-automation.md`
+- “影刀报错”“unknownError”“市场指令报错”：`docs/troubleshooting.md`
+- “钉钉 AI 表格 filter”：`xbot-api-docs/docs/extensions/activity-5b77c4ce.md`
+- “可视化能运行编码版失败”：`xbot-api-docs/docs/debug/market-extension-source.md`
+
+## Search Keywords
+
+影刀、影刀编码版、影刀开发、影刀教程、影刀 xbot、影刀 API、影刀 RPA、RPA 自动化、浏览器自动化、网页自动化、Excel 自动化、WPS 自动化、Windows 自动化、钉钉 AI 表格、市场指令、AI Agent、智能体开发、Claude Code、OpenAI Codex、Cursor、Yingdao、Yingdao xbot、Yingdao RPA、xbot API、RPA automation、Agent Coding、browser automation、Excel automation、Python automation。
