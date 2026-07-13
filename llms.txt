@@ -74,7 +74,7 @@ python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" --project-dir "
 
 - [市场指令扩展开发](xbot-api-docs/docs/extension-instructions.md)：市场指令目录结构、调用规则和参数映射总入口。
 - [市场指令源码排查](xbot-api-docs/docs/debug/market-extension-source.md)：市场指令参数不明确、可视化能运行但编码版异常时的源码排查方法。
-- [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md)：数据表、字段、记录、filter、分页、附件和 `HTTP 500 unknownError` 排查。
+- [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md)：调用入口、参数、返回结构、数据表、字段、记录、filter、分页、附件和常见限制。
 - [影刀增强工具](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)：浏览器等待、下载等待、异常格式化、商家登录辅助和 Windows 元素辅助。
 
 ## Debug and Knowledge Maintenance
@@ -107,7 +107,7 @@ Agent 写入技术结论时应区分：
 - “影刀浏览器自动化”“影刀网页元素”：`docs/browser-automation.md`
 - “影刀 Excel”“影刀 WPS”：`docs/excel-automation.md`
 - “影刀报错”“unknownError”“市场指令报错”：`docs/troubleshooting.md`
-- “钉钉 AI 表格 filter”：`xbot-api-docs/docs/extensions/activity-5b77c4ce.md`
+- “钉钉 AI 表格”“钉钉 AI 表格用法”“钉钉 AI 表格读写”“钉钉 AI 表格 filter”：`xbot-api-docs/docs/extensions/activity-5b77c4ce.md`
 - “可视化能运行编码版失败”：`xbot-api-docs/docs/debug/market-extension-source.md`
 
 ## Search Keywords

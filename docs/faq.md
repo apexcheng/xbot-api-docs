@@ -151,11 +151,34 @@ python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" ^
 - [市场指令扩展开发](../xbot-api-docs/docs/extension-instructions.md)
 - [市场指令源码排查](../xbot-api-docs/docs/debug/market-extension-source.md)
 
-## 钉钉 AI 表格 filter 怎么排查？
+## 钉钉 AI 表格 filter 怎么写？
 
 查看 [钉钉 AI 表格文档](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md)。
 
-建议先验证：
+最小结构示例：
+
+```python
+params = {
+    "page_size": 1,
+    "max_pages": 1,
+    "extra_body": {
+        "filter": {
+            "combination": "and",
+            "conditions": [
+                {"field": "订单号", "operator": "equal", "value": ["3300000000000000000"]},
+            ],
+        }
+    },
+}
+```
+
+注意：
+
+1. 顶层参数名使用单数 `filter`，不要写成 `filters`
+2. `conditions` 中每个条件的 `value` 必须是列表
+3. 只做存在性查询时，优先用 `page_size=1` 和 `max_pages=1`
+
+返回异常或结果不符合预期时，再按下面顺序检查：
 
 1. 无 filter 的查询
 2. 单条件 filter

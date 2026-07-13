@@ -27,7 +27,7 @@ xbot-api-docs/docs/
 | 跨 iframe 操作 | [`iframe2-extension.md`](../xbot-api-docs/docs/iframe2-extension.md) | XPath 查找、点击、输入、等待和信息读取 |
 | 市场指令扩展 | [`extension-instructions.md`](../xbot-api-docs/docs/extension-instructions.md) | 扩展目录、参数映射和调用入口 |
 | 市场指令源码排查 | [`market-extension-source.md`](../xbot-api-docs/docs/debug/market-extension-source.md) | 编码版异常、参数不明和源码调查 |
-| 钉钉 AI 表格 | [`activity-5b77c4ce.md`](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md) | 数据表、字段、记录、filter、分页和异常排查 |
+| 钉钉 AI 表格 | [`activity-5b77c4ce.md`](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md) | 调用入口、参数、返回结构、数据表、字段、记录、filter、分页和附件 |
 | 影刀增强工具 | [`xbot-enhance-tools.md`](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md) | 浏览器等待、下载等待、异常格式化等 |
 
 ## 按常见搜索问题定位
@@ -52,9 +52,13 @@ xbot-api-docs/docs/
 
 先查 [`extension-instructions.md`](../xbot-api-docs/docs/extension-instructions.md)，再按 [`market-extension-source.md`](../xbot-api-docs/docs/debug/market-extension-source.md) 的方法确认真实参数结构和调用映射。
 
+### 钉钉 AI 表格怎么读写记录？
+
+先查看 [`activity-5b77c4ce.md`](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md) 的“用法速查”和“典型调用方式”。常用入口是 `xbot_extensions.activity_5b77c4ce.croe.yd_ai_table_action()`，记录列表通常从 `result.get("data", {}).get("records")` 读取。
+
 ### 钉钉 AI 表格 filter 怎么写？
 
-查看 [`activity-5b77c4ce.md`](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md)。不要因为订单号很长就默认判断为长度问题，应以实际 filter 结构、字段类型和接口返回为依据。
+查看 [`activity-5b77c4ce.md`](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md) 的“记录筛选 `filter`”。`filter` 是用法问题时优先查结构示例；只有接口返回异常或结果不符合预期时，再按稳定性限制排查。不要因为订单号很长就默认判断为长度问题，应以实际 filter 结构、字段类型和接口返回为依据。
 
 ## AI Agent 查 API 的推荐顺序
 

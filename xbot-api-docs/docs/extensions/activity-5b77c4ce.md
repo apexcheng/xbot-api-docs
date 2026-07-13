@@ -1,8 +1,8 @@
 # 钉钉AI表格 (activity_5b77c4ce)
 
-> 调用类型：`direct python`  
-> 主要入口：直接调用 general_table_action.py 中的 main()；__init__.py 仅做模块导入。  
-> 来源说明：本页由原 extension-instructions.md 的 4.2 节拆出；返回结构和 action 枚举以当前源码或实测为准。  
+> 调用类型：`direct python`
+> 主要入口：直接调用 general_table_action.py 中的 main()；__init__.py 仅做模块导入。
+> 来源说明：本页由原 extension-instructions.md 的 4.2 节拆出；返回结构和 action 枚举以当前源码或实测为准。
 > 返回：[市场指令扩展开发指南](../extension-instructions.md)
 
 ---
@@ -50,6 +50,21 @@ result = yd_ai_table_action(
 **身份参数：** `user_id`、`operator_id`、`sender_union_id` 至少传一个。普通使用直接传 `user_id`。
 
 ---
+
+## 用法速查
+
+Agent 查询钉钉 AI 表格时，先按本节确认调用入口、参数和返回结构；只有返回异常或结果不符合预期时，再看后面的稳定性说明。
+
+| 需求 | 优先查看 | 关键点 |
+|---|---|---|
+| 调用市场指令 | 通用调用格式、通用参数 | 常用 `yd_ai_table_action()`；至少传 `action`、`client_id`、`client_secret` 和身份参数 |
+| 读取记录 | 获取多行记录 / 获取多行记录分页 | 记录列表从 `result.get("data", {}).get("records")` 取 |
+| 新增记录 | 新增记录 / 新增多行记录 | `params.record` 或 `params.records` 放业务字段 |
+| 更新记录 | 更新记录 / 更新多行记录 | 单行用 `record_id` + `fields`；多行每条记录带 `id` 和 `fields` |
+| 条件查询 | 记录筛选 `filter` | `extra_body.filter.conditions`；每个条件的 `value` 必须是列表 |
+| 附件字段 | 附件操作 | 上传后用返回的 `attachment` 写入附件字段 |
+
+只有出现返回异常、字段命中不符合预期、分页结果异常时，再看本文后面的稳定性说明和错误示例。
 
 #### Action 详解
 
