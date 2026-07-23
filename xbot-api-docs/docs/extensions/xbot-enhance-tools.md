@@ -23,6 +23,7 @@
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_qianniu`
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_jingmai`
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_alipay`
+- `from xbot_extensions.xbot_enhance_tools.shop_utils import login_douyin_seller`
 - `from xbot_extensions.xbot_enhance_tools.win_utils import is_win_element_clickable`
 
 **当前能力：**
@@ -34,6 +35,7 @@
 - `login_qianniu(account, password, profile=None)`：打开千牛商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
 - `login_jingmai(account, password, profile=None)`：打开京麦商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
 - `login_alipay(account, password, profile=None)`：打开支付宝登录页，切到“账密登录”，输入账号密码并提交，等待页面跳转后按 URL 是否仍包含 `login` 判断结果
+- `login_douyin_seller(account, password, profile=None)`：打开抖音电商后台 `https://fxg.jinritemai.com/login`，切换到邮箱登录，输入邮箱和密码，必要时勾选协议并提交；按 URL 是否离开 `login` 判断结果
 - `is_win_element_clickable(element)`：判断 `Win32Window.find()` / `find_all()` 返回的 Win 元素是否显示、可用、矩形有效，且中心点落在当前屏幕范围内；满足时返回 `True`，否则返回 `False`
 
 **适用场景：**
@@ -89,6 +91,10 @@ if not ok:
 ok = shop_utils.login_alipay("账号", "密码", profile="Default")
 if not ok:
     raise RuntimeError("支付宝登录失败")
+
+ok = shop_utils.login_douyin_seller("邮箱账号", "密码", profile="Default")
+if not ok:
+    raise RuntimeError("抖音店铺登录失败")
 ```
 
 **Windows 元素可点击判断示例：**
@@ -110,6 +116,7 @@ element.click()
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - `shop_utils` 中的登录 XPath 会随平台页面变化，当前页面行为需运行验证
 - 商家后台登录只处理账号密码输入和提交，不处理验证码、扫码、安全验证、短信验证、人机验证等复杂分支
+- 抖音登录使用邮箱账号；协议勾选仅在页面显示未勾选状态时处理，登录后的跳转和风控页面仍需在实际环境确认
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - `is_win_element_clickable()` 只判断元素当前状态和中心点是否在屏幕范围内，不会自动滚动、激活窗口或处理遮挡；复杂窗口状态仍需运行验证
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
