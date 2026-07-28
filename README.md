@@ -12,6 +12,16 @@
 
 简体中文 | [English](README_EN.md)
 
+## 💬 开源社区交流群
+
+欢迎加入 **影刀 xbot AI Agent 开源交流群**，一起交流影刀编码版、xbot API、RPA 自动化和 AI Agent 开发。
+
+**QQ群：1090266830**
+
+<img src="assets/qq-group.svg" alt="影刀 xbot AI Agent 开源交流群二维码" width="240">
+
+> 本群为开源社区交流群，非影刀官方交流群。
+
 ## 项目简介
 
 `yingdao-xbot-ai-agent` 是一个面向 **影刀 xbot AI Agent 开发** 的知识库，帮助开发者使用 Claude Code、OpenAI Codex、Cursor 或其他 AI 编程工具开发、维护和排查影刀自动化项目。
