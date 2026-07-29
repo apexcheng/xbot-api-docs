@@ -476,6 +476,7 @@ def main(args):
 | `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | [dingtalk-bot-message.md](extensions/dingtalk-bot-message.md) |
 | `activity_7bca6d` | 登录扩展操作 | both | [activity-7bca6d.md](extensions/activity-7bca6d.md) |
 | `guanyi_erp_api` | C-ERP API | direct python | [guanyi-erp-api.md](extensions/guanyi-erp-api.md) |
+| `activity_a90a8311` | C-ERP可视化版 | flow | [activity-a90a8311-cerp-visual.md](extensions/activity-a90a8311-cerp-visual.md) |
 | `iframe2` | XPath跨域获取网页元素 | both | [iframe2-extension.md](iframe2-extension.md) |
 | `ad_killer` | 广告杀手 | both | [ad-killer.md](extensions/ad-killer.md) |
 | `web_action` | 网页扩展操作 | both | [web-action.md](extensions/web-action.md) |
