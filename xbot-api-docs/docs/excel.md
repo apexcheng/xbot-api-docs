@@ -384,6 +384,46 @@ sheet.set_range(1, "A", [["姓名", "年龄"], ["张三", 18]])
 | `write_as_text_cols` | `str` | `"C,F"` | 指定哪些列按文本写入，避免数字字符串被转成数字 |
 | `content` | 任意 / `list` / `list[list]` | `"hello"`、`[1,2]`、`[[1,2]]` | 写入内容 |
 
+### 11.3 WPS 批量写入以 `=` 开头的文本
+
+通过 `kind="wps"` 调用 `sheet.set_range()` 写入二维数组时，字符串只要以 `=` 开头，WPS 就可能把它当成公式解析。内容不是合法公式时，影刀侧可能只得到没有明确字段信息的 COM 异常：
+
+```text
+pywintypes.com_error: (-2147352567, '发生意外。', ..., -1880948725)
+```
+
+这种问题有以下特征：
+
+- 同一份数据总是在包含异常文本的固定批次失败。
+- 延迟写入、重新打开 WPS、换新工作簿和连续重试都不能解决。
+- 把失败批次单独写入仍然失败。
+- 即使用 `csv.reader` 把全部值读取为字符串，只要原值仍以 `=` 开头，WPS 依然会尝试按公式处理。
+
+写入前应把**本来就是业务文本、但以 `=` 开头**的值加上英文单引号：
+
+```python
+def escape_wps_formula_text(data):
+    cleaned_data = []
+
+    for row in data:
+        cleaned_row = []
+        for value in row:
+            if isinstance(value, str) and value.startswith("="):
+                value = "'" + value
+            cleaned_row.append(value)
+        cleaned_data.append(cleaned_row)
+
+    return cleaned_data
+
+
+data = escape_wps_formula_text(data)
+sheet.set_range(1, "A", data)
+```
+
+本次在影刀 + WPS 环境实测，增加英文单引号后可一次性写入数千行数据，单元格显示内容仍以 `=` 开头，不会把英文单引号显示出来。
+
+注意：只处理确定属于文本的字段。真正需要执行的 Excel / WPS 公式不能加英文单引号，否则会按普通文本保存。
+
 ---
 
 ## 12. 行列和区域操作
@@ -573,6 +613,7 @@ workbook = xbot.excel.open(
 - `kind` 等字符串参数大小写敏感，按文档传 `kind="wps"`、`kind="office"`、`kind="openpyxl"`，不要写 `"WPS"`、`"PWS"`、`"Office"` 或界面中文展示值。
 - 影刀项目默认优先使用 `xbot.excel` 处理 Excel / WPS 文件；涉及公式刷新、界面交互、宏、另存、格式、文件占用、真实 Office / WPS 行为时，不要为了图快改用其它后台读写库。
 - 表格大量写入时，优先整理成二维数组后用 `set_range()` 批量写入，减少逐单元格操作；写入前先明确表头、起始单元格和目标区域。
+- WPS 批量写入业务文本前，应检查字符串是否以 `=` 开头；这类值可能被当成公式并触发模糊 COM 异常。确定是文本时，在前面增加英文单引号后再写入，不要先误判为分批大小或 WPS 随机不稳定。
 - 需要写入真实 Excel / WPS 工作簿时，建议先用 `workbook.workbook.ReadOnly` 判断是否只读；第一次只读可能是本机残留进程占用，可关闭后 kill 本机 WPS / Excel 进程再二次打开判断，第二次仍只读再判定可能被他人占用。
 - `kind="wps"` 对应 `xbot.excel.kill_excel_process("wps", True)`；`kind="office"` 对应 `xbot.excel.kill_excel_process("office", True)`。
 - 字段名来自当前业务表时，不要抽成跨项目通用常量；当前项目已约定字段结构时，业务逻辑直接按约定取值，不要反复写 `isinstance` 和空结构兜底。
@@ -592,4 +633,5 @@ workbook = xbot.excel.open(
 | `openpyxl` 读取不到显示文本 | `openpyxl` 不支持 `using_text=True` | 改用 `office` / `wps` |
 | 写入数字字符串变成数字 | Excel 自动识别类型 | 用 `write_as_text_cols="C,F"` 或写入前加文本标记 |
 | 大量写入很慢 | 循环逐单元格写入 | 改用 `set_range()` 一次性写二维数组 |
+| WPS `set_range()` 固定批次报 `发生意外` / `-1880948725` | 某个业务文本以 `=` 开头，被 WPS 当成非法公式 | 二分定位到具体单元格；确认是文本后改为 `"'" + value` 再一次性写入 |
 | 宏无法执行 | `openpyxl` 不支持宏执行 | 改用 `office` 或 `wps` |
