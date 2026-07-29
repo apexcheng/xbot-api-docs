@@ -12,15 +12,11 @@
 
 简体中文 | [English](README_EN.md)
 
-## 💬 开源社区交流群
+## 💬 联系作者
 
-欢迎加入 **影刀 xbot AI Agent 开源交流群**，一起交流影刀编码版、xbot API、RPA 自动化和 AI Agent 开发。
+如需交流影刀编码版、xbot API、RPA 自动化和 AI Agent 开发，可联系作者。
 
-**QQ群：1090266830**
-
-<img src="assets/qq-group.svg" alt="影刀 xbot AI Agent 开源交流群二维码" width="240">
-
-> 本群为开源社区交流群，非影刀官方交流群。
+**联系作者 QQ：1677880403**
 
 ## 项目简介
 
