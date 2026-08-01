@@ -15,7 +15,7 @@
 常见真实项目路径类似：
 
 ```text
-%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>
+%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot
 ```
 
 实际路径应以本机当前应用为准。
@@ -131,10 +131,12 @@
 示例：
 
 ```powershell
-python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" ^
-  prepare main.py
+python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
+  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
+  prepare
 ```
+
+`prepare` 自动扫描该目录下的 Python 文件，不接收文件列表。项目路径必须是包含 `package.json` 的 `xbot_robot` 根目录。
 
 ## 市场指令可视化能运行，编码版为什么失败？
 

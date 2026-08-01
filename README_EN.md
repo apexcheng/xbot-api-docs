@@ -98,10 +98,12 @@ The repository includes conventions for Claude Code, OpenAI Codex and other agen
 After modifying a real Yingdao project, run the synchronization helper from this knowledge-base repository:
 
 ```powershell
-python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
+  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
+  prepare
 ```
 
-The helper belongs to this repository, not to the real Yingdao project directory.
+The helper belongs to this repository, not to the real Yingdao project directory. `prepare` scans Python files directly under the project root and does not accept a file list.
 
 ## Search keywords
 

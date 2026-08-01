@@ -46,8 +46,12 @@ Agent 在真实影刀项目目录完成代码修改后，必须运行本仓库�
 最小示例：
 
 ```powershell
-python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" prepare main.py
+python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
+  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
+  prepare
 ```
+
+`prepare` 自动扫描真实项目根目录下的 Python 文件，不接收文件列表。`--project-dir` 必须指向包含 `package.json` 的 `xbot_robot` 目录。
 
 同步成功后仍需在影刀编辑器中实际运行验证。
 

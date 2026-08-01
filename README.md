@@ -79,10 +79,10 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 真实项目常见位置类似：
 
 ```text
-%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>
+%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot
 ```
 
-实际路径应以当前应用为准，不要仅根据目录名称猜测。
+实际路径应以当前应用为准，并确认该目录中存在 `package.json`。
 
 ### 3. 告诉 AI Agent 两个目录
 
@@ -178,15 +178,16 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 Agent 在真实影刀项目目录完成修改后，需要运行本仓库根目录中的 `shadowbot_sync_tool.py`：
 
 ```powershell
-python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" ^
-  prepare main.py
+python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
+  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
+  prepare
 ```
 
 必须区分：
 
 - `shadowbot_sync_tool.py` 位于知识库目录
-- `--project-dir` 指向真实影刀项目目录
+- `--project-dir` 指向真实包含 `package.json` 的影刀项目根目录
+- `prepare` 自动扫描项目根目录下的 Python 文件，不接收文件列表
 - 同步成功不等于业务验证成功
 - 最终仍需回到影刀编辑器内实际运行
 

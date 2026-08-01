@@ -27,7 +27,7 @@ yingdao-xbot-ai-agent/
 这是影刀应用实际运行的项目目录，常见位置类似：
 
 ```text
-%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>
+%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot
 ```
 
 真实业务代码、流程文件和应用资源应在这里修改。
@@ -150,15 +150,15 @@ Agent 应优先读取：
 Agent 在真实项目中完成代码修改后，运行知识库根目录中的同步工具：
 
 ```powershell
-python "C:\path\to\yingdao-xbot-ai-agent\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>" ^
-  prepare main.py
+python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
+  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
+  prepare
 ```
 
-也可以根据工具支持的参数和当前项目文件调整命令，但必须明确：
+`prepare` 会自动扫描项目根目录下的 Python 文件，不需要也不支持手动传入文件列表。必须明确：
 
 - 工具路径属于知识库
-- `--project-dir` 指向真实影刀项目
+- `--project-dir` 指向真实包含 `package.json` 的影刀项目根目录
 - 同步完成后仍需要在影刀编辑器中运行验证
 
 ## 最终验收清单

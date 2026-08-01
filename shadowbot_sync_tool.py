@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 ROOT_DIR = Path(__file__).resolve().parent
+EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py"}
 
 
 def resolve_project_dir(project_dir=None):
@@ -116,18 +117,26 @@ def ensure_code_flow(package_data, file_name, group_name=None):
         target_group_name = ensure_group_exists(package_data, group_name)
 
     if existing_flow:
-        existing_flow["name"] = flow_name
-        existing_flow["filename"] = flow_name
-        existing_flow["kind"] = "Code"
-        existing_flow["opened"] = False
+        changed = False
+        updates = {
+            "name": flow_name,
+            "filename": flow_name,
+            "kind": "Code",
+            "opened": False,
+            "enableCopilot": False,
+        }
         if group_name is not None:
-            existing_flow["groupName"] = target_group_name
-        existing_flow["enableCopilot"] = False
+            updates["groupName"] = target_group_name
+        for key, value in updates.items():
+            if existing_flow.get(key) != value:
+                existing_flow[key] = value
+                changed = True
         return {
             "file": py_name,
             "flow": flow_name,
             "group": existing_flow.get("groupName"),
             "action": "updated",
+            "changed": changed,
         }
 
     new_flow = {
@@ -144,6 +153,7 @@ def ensure_code_flow(package_data, file_name, group_name=None):
         "flow": flow_name,
         "group": new_flow.get("groupName"),
         "action": "created",
+        "changed": True,
     }
 
 
@@ -193,9 +203,28 @@ def compile_files(project_dir, files):
     :return pathlib.Path: Python executable used for compilation.
     """
     python_exe = find_shadowbot_python()
-    command = [str(python_exe), "-m", "py_compile", *files]
-    subprocess.run(command, cwd=project_dir, check=True)
+    if files:
+        command = [str(python_exe), "-m", "py_compile", *files]
+        subprocess.run(command, cwd=project_dir, check=True)
     return python_exe
+
+
+def scan_project_python_files(project_dir):
+    """Scan Python files directly under the project root.
+
+    :param pathlib.Path project_dir: Target project directory.
+    :return tuple[list[str], list[str], list[str]]: Scanned, excluded and valid file names.
+    """
+    scanned_files = sorted(path.name for path in project_dir.glob("*.py"))
+    excluded_files = [
+        file_name for file_name in scanned_files
+        if file_name in EXCLUDED_PYTHON_FILES
+    ]
+    valid_files = [
+        file_name for file_name in scanned_files
+        if file_name not in EXCLUDED_PYTHON_FILES
+    ]
+    return scanned_files, excluded_files, valid_files
 
 
 def show_flow(package_data, file_name):
@@ -244,128 +273,43 @@ def command_compile(args):
     print(f"compiled_with={python_exe}")
 
 
-def _find_imported_modules(src_text):
-    """Return module stem names found in source text import statements."""
-    imported = set()
-    for line in src_text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith(("from ", "import ")):
-            try:
-                parts = stripped.split()
-                if stripped.startswith("from "):
-                    # from . import package or from .module import name
-                    if len(parts) >= 2:
-                        name = parts[1].lstrip(".").split(".")[0]
-                        if name and name not in (
-                            "xbot", "xbot_extensions", "package",
-                            "sys", "os", "re", "json", "datetime", "typing",
-                        ):
-                            imported.add(name)
-                else:  # import module
-                    name = parts[1].split(".")[0].split("(")[0].strip()
-                    if name and name not in (
-                        "xbot", "xbot_extensions", "package",
-                        "sys", "os", "re", "json", "datetime", "typing",
-                    ):
-                        imported.add(name)
-            except Exception:
-                pass
-    return imported
-
-
-def _discover_helper_modules(project_dir, entry_files):
-    """Find non-entry *.py files that are imported by entry files.
-
-    An entry file like run.py imports helpers with relative imports
-    (e.g. from .constants import ...).  We find all .py files in project_dir,
-    check which ones are imported by any entry file, and return those that
-    are not entry_files themselves.
-    """
-    entry_stems = {Path(f).stem for f in entry_files}
-    # Scan every .py in the project_dir to build a name->filename map
-    name_to_file = {}
-    for py_file in project_dir.glob("*.py"):
-        stem = py_file.stem
-        if stem not in name_to_file:
-            name_to_file[stem] = py_file.name
-
-    helpers = []
-    for fname in entry_files:
-        src_path = project_dir / fname
-        if not src_path.exists():
-            continue
-        src = src_path.read_text(encoding="utf-8")
-        imported = _find_imported_modules(src)
-        for name in imported:
-            if name in name_to_file and name not in entry_stems:
-                helpers.append(name_to_file[name])
-
-    # Deduplicate while preserving order
-    seen = set()
-    unique = []
-    for h in helpers:
-        if h not in seen:
-            seen.add(h)
-            unique.append(h)
-    return unique
-
-
-def _discover_unregistered_python_files(project_dir, package_data):
-    """Find project Python files that are not registered as Code flows.
-
-    :param pathlib.Path project_dir: Target project directory.
-    :param dict package_data: Package metadata.
-    :return list[str]: Unregistered Python file names.
-    """
-    registered = {
-        f"{flow.get('filename')}.py"
-        for flow in package_data.get("flows", [])
-        if flow.get("filename")
-    }
-    files = []
-    for py_file in sorted(project_dir.glob("*.py")):
-        if py_file.name == "package.py":
-            continue
-        if py_file.name not in registered:
-            files.append(py_file.name)
-    return files
-
-
 def command_prepare(args):
     """Run the common external-edit workflow.
 
-    It ensures the flows exist and compiles them.
-    Helper modules imported by entry .py files are automatically discovered and compiled too.
+    It scans root Python files, ensures Code flows exist and compiles all valid files.
     """
     project_dir = resolve_project_dir(args.project_dir)
-
-    # Discover helper modules imported by the entry files
-    helpers = _discover_helper_modules(project_dir, args.files)
-
     package_data = load_package_json(project_dir)
-    all_flow_files = list(dict.fromkeys(
-        args.files + [
-            file_name
-            for file_name in _discover_unregistered_python_files(project_dir, package_data)
-            if file_name not in helpers
-        ]
-    ))
-    results = []
-    for file_name in all_flow_files:
-        results.append(ensure_code_flow(package_data, file_name, args.group))
-    save_package_json(project_dir, package_data)
+    scanned_files, excluded_files, valid_files = scan_project_python_files(project_dir)
+    created_flows = []
+    updated_flows = []
+    package_changed = False
 
-    # Compile entry files + discovered helpers
-    to_compile = list(dict.fromkeys(args.files + helpers))
-    python_exe = compile_files(project_dir, to_compile)
+    for file_name in valid_files:
+        existing_flow = show_flow(package_data, file_name)
+        if existing_flow and existing_flow.get("kind") != "Code":
+            continue
 
-    for result in results:
-        print(
-            f"{result['action']} flow:"
-            f" file={result['file']}, flow={result['flow']}, group={result['group']}"
+        result = ensure_code_flow(
+            package_data,
+            file_name,
+            args.group if existing_flow is None else None,
         )
-    if helpers:
-        print(f"helpers_compiled={helpers}")
+        package_changed = package_changed or result["changed"]
+        if result["action"] == "created":
+            created_flows.append(file_name)
+        else:
+            updated_flows.append(file_name)
+
+    python_exe = compile_files(project_dir, valid_files)
+    if package_changed:
+        save_package_json(project_dir, package_data)
+
+    print(f"scanned_files={len(scanned_files)}")
+    print(f"excluded_files={excluded_files}")
+    print(f"created_flows={created_flows}")
+    print(f"updated_flows={updated_flows}")
+    print(f"compiled_files={valid_files}")
     print(f"compiled_with={python_exe}")
 
 
@@ -411,10 +355,13 @@ def build_parser():
 
     parser_prepare = subparsers.add_parser(
         "prepare",
-        help="外部改完代码后的常用收尾：登记 flow、编译",
+        help="扫描项目根目录 Python 文件，登记 flow 并统一编译",
     )
-    parser_prepare.add_argument("files", nargs="+", help="刚刚修改过的 .py 文件")
-    parser_prepare.add_argument("--group", default=None, help="flow 分组名；不传则保留已有分组")
+    parser_prepare.add_argument(
+        "--group",
+        default=None,
+        help="新登记 flow 的统一分组名；不传则使用空分组",
+    )
     parser_prepare.set_defaults(func=command_prepare)
 
     parser_show_flow = subparsers.add_parser("show-flow", help="查看某个 .py 文件对应的 flow 配置")
