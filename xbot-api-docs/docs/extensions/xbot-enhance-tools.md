@@ -1,7 +1,7 @@
 # 增强工具2026 (xbot_enhance_tools)
 
 > 调用类型：`direct python`  
-> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py 中的公开函数；__init__.py 仅导入模块。
+> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、ntfy_message.py 中的公开函数；__init__.py 仅导入模块。
 > 来源说明：本页由原 extension-instructions.md 的 4.8 节拆出；网页登录和下载等待需运行验证。  
 > 返回：[市场指令扩展开发指南](../extension-instructions.md)
 
@@ -11,10 +11,10 @@
 
 **调用方式：** direct python
 
-**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助和 Windows 元素可点击判断。
+**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断，以及 ntfy 消息发送与接收。
 
 **调用入口：**
-- `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils, win_utils`
+- `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils, win_utils, ntfy_message`
 - `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath`
 - `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_disappear_by_xpath`
 - `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_download_file`
@@ -25,6 +25,8 @@
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_alipay`
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_douyin_seller`
 - `from xbot_extensions.xbot_enhance_tools.win_utils import is_win_element_clickable`
+- `from xbot_extensions.xbot_enhance_tools.ntfy_message import send_ntfy_message`
+- `from xbot_extensions.xbot_enhance_tools.ntfy_message import receive_ntfy_message`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
@@ -37,6 +39,8 @@
 - `login_alipay(account, password, profile=None)`：打开支付宝登录页，切到“账密登录”，输入账号密码并提交，等待页面跳转后按 URL 是否仍包含 `login` 判断结果
 - `login_douyin_seller(account, password, profile=None)`：打开抖音电商后台 `https://fxg.jinritemai.com/login`，切换到邮箱登录，输入邮箱和密码，必要时勾选协议并提交；按 URL 是否离开 `login` 判断结果
 - `is_win_element_clickable(element)`：判断 `Win32Window.find()` / `find_all()` 返回的 Win 元素是否显示、可用、矩形有效，且中心点落在当前屏幕范围内；满足时返回 `True`，否则返回 `False`
+- `send_ntfy_message(message, topic, server="https://ntfy.sh")`：向指定 ntfy topic 发送纯文本消息；成功返回 `True`，失败抛出异常
+- `receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=15)`：从指定 ntfy topic 拉取一条消息；有消息时返回包含 `id`、`time`、`message` 的字典，无消息时返回 `None`
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
@@ -45,6 +49,7 @@
 - 需要把异常对象整理成更易读的文本内容
 - 需要在编码版里直接调用商家后台登录辅助函数，并复用指定 Chrome profile
 - 点击 Windows 元素前，需要先判断元素当前是否适合直接点击
+- 需要在 iOS 快捷指令与影刀 RPA 之间传递短信、验证码或其他文本消息
 
 **最小示例：**
 
@@ -109,6 +114,26 @@ if not is_win_element_clickable(element):
 element.click()
 ```
 
+**ntfy 消息发送与接收示例：**
+
+```python
+from xbot_extensions.xbot_enhance_tools.ntfy_message import (
+    receive_ntfy_message,
+    send_ntfy_message,
+)
+
+
+send_ntfy_message("验证码 382914", topic="your-private-topic")
+
+message = receive_ntfy_message(
+    topic="your-private-topic",
+    since="10m",
+    timeout=15,
+)
+if message:
+    print(message["message"])
+```
+
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
@@ -119,6 +144,9 @@ element.click()
 - 抖音登录使用邮箱账号；协议勾选仅在页面显示未勾选状态时处理，登录后的跳转和风控页面仍需在实际环境确认
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - `is_win_element_clickable()` 只判断元素当前状态和中心点是否在屏幕范围内，不会自动滚动、激活窗口或处理遮挡；复杂窗口状态仍需运行验证
+- `ntfy_message.py` 依赖 `requests`，当前市场指令项目已登记该依赖
+- 使用公共 `ntfy.sh` 时，topic 即消息地址的一部分，应使用难以猜测的私有 topic，避免传递账号密码等高敏感信息
+- `receive_ntfy_message()` 使用 ntfy JSON 流接口轮询，并返回读取到的第一条消息；是否需要去重或持久化消费进度由调用方处理
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
 ---
