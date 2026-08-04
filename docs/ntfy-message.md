@@ -1,12 +1,21 @@
-# ntfy 消息发送与接收
+# 增强工具2026：ntfy 消息发送与接收
 
-基于 [ntfy.sh](https://ntfy.sh) 的消息发送与接收模块，支持中文，用于 RPA 场景中 iOS 快捷指令短信内容传递。
+基于 [ntfy.sh](https://ntfy.sh) 的消息发送与接收功能，支持中文，用于 RPA 场景中 iOS 快捷指令与影刀之间传递短信内容。
+
+该功能不是新增在某个普通影刀应用中的独立工具文件，而是新增在市场指令 **“增强工具2026”** 的源码项目中。
 
 ## 文件位置
 
 ```text
-ntfy_message.py
+C:\Users\Administrator\AppData\Local\ShadowBot\users\859019956984664066\apps\8f2c6521-41ea-4654-8f7d-b36acd08b892\xbot_robot\ntfy_message.py
 ```
+
+市场指令信息：
+
+- 名称：`增强工具2026`
+- 项目 UUID：`8f2c6521-41ea-4654-8f7d-b36acd08b892`
+- 扩展代码：`xbot_enhance_tools`
+- 模块路径：`xbot_extensions.xbot_enhance_tools.ntfy_message`
 
 ## 依赖
 
@@ -47,16 +56,12 @@ def receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=1
 
 ```
 iOS 快捷指令 → ntfy topic
-→ 影刀调用 receive_ntfy_message
+→ 影刀通过“增强工具2026”调用 receive_ntfy_message
 → 获取短信内容
 ```
 
-## 影刀同步工具
+## 开发与同步说明
 
-新增 Python 文件后，需运行 `shadowbot_dev_tool.py prepare` 同步：
+`ntfy_message.py` 属于“增强工具2026”市场指令源码。修改功能时，应直接在上述市场指令项目中开发和同步，不要把该文件复制到普通影刀应用，也不要在普通应用中运行 `shadowbot_dev_tool.py prepare <文件名.py>`。
 
-```bash
-python shadowbot_dev_tool.py prepare <文件名.py>
-```
-
-工具会自动备份、登记 flow 到 `package.json` 并编译。
+当前项目已经在 `package.json`、`__init__.py` 和市场指令原型文件中登记 `ntfy_message`。后续修改现有功能时，只需维护该市场指令项目中的源码，并按“增强工具2026”的正常发布流程更新市场指令。
