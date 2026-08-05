@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 ROOT_DIR = Path(__file__).resolve().parent
-EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py"}
+EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py", "shadowbot_sync_tool.py"}
 
 
 def resolve_project_dir(project_dir=None):

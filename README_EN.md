@@ -33,8 +33,9 @@ This repository provides those materials in a structure that can be read by both
 
 1. Read [`AGENTS.md`](AGENTS.md) for stable repository and development rules.
 2. Inspect the existing code in the real Yingdao project.
-3. Only when adding or unable to confirm an xbot API, marketplace extension, or page behavior, use [`llms.txt`](llms.txt) to locate the relevant documentation.
-4. Open [`docs/getting-started.md`](docs/getting-started.md) for the beginner workflow.
+3. Copy the contents of [`project-template/`](project-template/) into the real Yingdao project root.
+4. Confirm that the fixed knowledge-base path `C:\Users\Administrator\Desktop\影刀xAI开发指南` exists. Stop and ask the user for the correct path if it does not.
+5. Only when adding or unable to confirm an xbot API, marketplace extension, or page behavior, use [`llms.txt`](llms.txt) to locate the relevant documentation.
 
 ## Documentation
 
@@ -57,7 +58,7 @@ Describe the business goal
         ↓
 Locate the real Yingdao project directory
         ↓
-Read AGENTS.md and inspect existing project code
+Copy project-template files and read the project AGENTS.md
         ↓
 Create TASK.md for complex work
         ↓
@@ -65,7 +66,7 @@ Use llms.txt only for new or uncertain API, extension, or page behavior
         ↓
 Make the smallest required change
         ↓
-Run shadowbot_sync_tool.py only when adding files
+Run shadowbot_sync_tool.py when adding files or when the user explicitly asks to sync Yingdao
         ↓
 Validate inside Yingdao
 ```
@@ -94,15 +95,13 @@ The repository includes conventions for Claude Code, OpenAI Codex and other agen
 
 ## Important rule
 
-Run the synchronization helper only when adding files to a real Yingdao project. Do not run it when only modifying existing files:
+The synchronization helper is stored in the real Yingdao project root. Run it after adding files. Phrases such as “sync Yingdao” or “run Yingdao sync” also mean running this command, even when only existing files changed:
 
 ```powershell
-python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
-  prepare
+python shadowbot_sync_tool.py prepare
 ```
 
-The helper belongs to this repository, not to the real Yingdao project directory. `prepare` scans Python files directly under the project root and does not accept a file list.
+Copy the helper from `project-template/` into the real project. `prepare` scans Python files directly under the project root and does not accept a file list.
 
 ## Search keywords
 

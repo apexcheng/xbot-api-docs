@@ -40,8 +40,9 @@
 2. [xbot API 导航指南](xbot-api-guide.md)
 3. 先检查真实项目现有代码
 4. 仅当新增或无法确认 API、市场指令、页面行为时，选择对应文档
-5. 新增文件时执行 `shadowbot_sync_tool.py`
-6. 回到影刀编辑器内验证
+5. 把 `project-template/` 内容复制到真实项目根目录
+6. 新增文件或用户明确要求同步影刀时执行 `shadowbot_sync_tool.py`
+7. 回到影刀编辑器内验证
 
 ### 使用 AI Agent 的开发者
 

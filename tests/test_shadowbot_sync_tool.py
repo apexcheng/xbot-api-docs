@@ -2,10 +2,14 @@ import contextlib
 import io
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+
+PROJECT_TEMPLATE_DIR = Path(__file__).resolve().parents[1] / "project-template"
+sys.path.insert(0, str(PROJECT_TEMPLATE_DIR))
 
 import shadowbot_sync_tool
 
@@ -55,6 +59,7 @@ class PrepareCommandTests(unittest.TestCase):
                 "process1.py",
                 "package.py",
                 "__init__.py",
+                "shadowbot_sync_tool.py",
             ):
                 (project_dir / file_name).write_text("value = 1\n", encoding="utf-8")
 
@@ -92,8 +97,11 @@ class PrepareCommandTests(unittest.TestCase):
                 )
                 self.assertTrue(compiled, file_name)
 
-            self.assertIn("scanned_files=6", first_output)
-            self.assertIn("excluded_files=['__init__.py', 'package.py']", first_output)
+            self.assertIn("scanned_files=7", first_output)
+            self.assertIn(
+                "excluded_files=['__init__.py', 'package.py', 'shadowbot_sync_tool.py']",
+                first_output,
+            )
             self.assertIn("created_flows=['low_stock_lock.py', 'tools.py']", first_output)
             self.assertIn("updated_flows=['run.py']", first_output)
             self.assertIn(
@@ -163,10 +171,14 @@ class PrepareCommandTests(unittest.TestCase):
             self.write_package_json(project_dir, {"flows": [], "flow_groups": []})
             (project_dir / "package.py").write_text("value = 1\n", encoding="utf-8")
             (project_dir / "__init__.py").write_text("value = 1\n", encoding="utf-8")
+            (project_dir / "shadowbot_sync_tool.py").write_text(
+                "value = 1\n",
+                encoding="utf-8",
+            )
 
             output = self.run_prepare(project_dir)
 
-            self.assertIn("scanned_files=2", output)
+            self.assertIn("scanned_files=3", output)
             self.assertIn("created_flows=[]", output)
             self.assertIn("compiled_files=[]", output)
 

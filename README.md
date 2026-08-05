@@ -52,8 +52,7 @@
 
 - `AGENTS.md`：稳定开发规则入口
 - `llms.txt`：面向 Agent 的文档索引
-- `.claude/CLAUDE.md`：Claude Code 轻量入口
-- `.codex/agents/`：Codex 只读子 Agent 模板
+- `project-template/`：复制到真实影刀项目根目录的 `AGENTS.md`、`.claude`、`.codex` 和同步工具
 - `TASK.md` 工作流：适用于复杂、多文件和多阶段任务
 
 ### 真实问题排错
@@ -84,19 +83,33 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 
 实际路径应以当前应用为准，并确认该目录中存在 `package.json`。
 
-### 3. 告诉 AI Agent 两个目录
+### 3. 复制项目模板
+
+把 `project-template/` 目录中的内容复制到真实影刀项目根目录，使以下文件与 `package.json` 同级：
 
 ```text
-知识库目录：C:\path\to\yingdao-xbot-ai-agent
-真实项目目录：C:\path\to\shadowbot-project
-
-先读取知识库中的 AGENTS.md，
-再检查真实项目现有代码，只修改与当前需求直接相关的内容。
-仅当新增或无法确认 xbot API、市场指令、页面行为时，
-再按 llms.txt 定位相关文档。
+AGENTS.md
+.claude/
+.codex/
+shadowbot_sync_tool.py
 ```
 
-### 4. 根据任务读取文档
+`.claude/settings.local.json` 不属于模板，因为它是本机权限配置。
+
+### 4. 告诉 AI Agent 两个目录
+
+```text
+知识库目录：C:\Users\Administrator\Desktop\影刀xAI开发指南
+真实项目目录：C:\path\to\shadowbot-project
+
+先读取真实项目根目录中的 AGENTS.md。
+开始任务时先确认知识库目录存在；若不存在，立即停止并让我补充正确路径。
+再检查真实项目现有代码，只修改与当前需求直接相关的内容。
+仅当新增或无法确认 xbot API、市场指令、页面行为时，
+再按知识库中的 llms.txt 定位相关文档。
+```
+
+### 5. 根据任务读取文档
 
 | 任务 | 文档入口 |
 | --- | --- |
@@ -116,7 +129,9 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
           ↓
 确认知识库与真实项目目录
           ↓
-读取 AGENTS.md
+复制 project-template 内容到真实项目根目录
+          ↓
+读取项目根目录 AGENTS.md，并确认固定知识库路径存在
           ↓
 复杂任务创建 TASK.md
           ↓
@@ -126,7 +141,7 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
           ↓
 实施最小必要修改
           ↓
-新增文件时运行 shadowbot_sync_tool.py
+新增文件或用户明确要求“同步影刀”时运行 shadowbot_sync_tool.py
           ↓
 在影刀环境实际验证
           ↓
@@ -175,21 +190,21 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 - [错误修正记录](wiki/error-book.md)
 - [待验证事项](wiki/unresolved.md)
 
-## 新增文件后的同步
+## 影刀同步
 
-只有真实影刀项目新增文件时，才运行本仓库根目录中的 `shadowbot_sync_tool.py`；仅修改已有文件时不运行：
+`shadowbot_sync_tool.py` 位于真实影刀项目根目录，与 `package.json` 同级。
+
+项目新增文件后需要执行；用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行下面的命令，即使本次只修改了已有文件：
 
 ```powershell
-python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
-  prepare
+python shadowbot_sync_tool.py prepare
 ```
 
 必须区分：
 
-- `shadowbot_sync_tool.py` 位于知识库目录
-- `--project-dir` 指向真实包含 `package.json` 的影刀项目根目录
+- 命令在真实影刀项目根目录执行
 - `prepare` 自动扫描项目根目录下的 Python 文件，不接收文件列表
+- “同步影刀”不是 Git commit、Git push 或普通文件复制
 - 同步成功不等于业务验证成功
 - 最终仍需回到影刀编辑器内实际运行
 
@@ -204,6 +219,11 @@ CONTRIBUTING.md              # 贡献与验证规范
 docs/                        # 入门、工作流、专题和 FAQ
 .claude/CLAUDE.md            # Claude Code 入口
 .codex/agents/               # Codex 子 Agent 模板
+project-template/            # 复制到真实影刀项目根目录的完整模板
+  AGENTS.md
+  .claude/CLAUDE.md
+  .codex/agents/
+  shadowbot_sync_tool.py
 xbot-api-docs/
   AGENTS.md                  # API 子目录补充规则
   docs/                      # xbot API 技术文档
@@ -211,7 +231,6 @@ xbot-api-docs/
 wiki/
   error-book.md              # 历史错误修正
   unresolved.md              # 待验证事项
-shadowbot_sync_tool.py       # 真实项目新增文件后的同步工具
 待优化清单.md                # 后续补充和验证事项
 ```
 

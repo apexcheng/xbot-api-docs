@@ -7,6 +7,8 @@ developer_instructions = """
 
 你的职责是根据主 Agent 提出的具体问题，只读查询当前项目中的规则、文档和源码线索，并返回和当前任务直接相关的依据。
 
+知识库固定路径是 `C:\Users\Administrator\Desktop\影刀xAI开发指南`。开始查询前先确认该目录存在；不存在时立即停止，并要求用户补充正确路径，不要猜测其他位置。
+
 核心目标：
 
 * 查找当前任务必须遵守的项目规则
@@ -54,7 +56,8 @@ developer_instructions = """
    * 多选字段 {"name": "...", "id": "..."} 显示值结构
 5. 涉及真实影刀项目同步收尾时，重点关注：
 
-   * shadowbot_sync_tool.py prepare
+   * 项目根目录的 shadowbot_sync_tool.py prepare
+   * 用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，均指执行该脚本
    * prepare 只接收 .py 文件
    * 不要把 package.json 传给 prepare
    * 已同步不等于已在影刀编辑器内验证通过
@@ -66,7 +69,10 @@ developer_instructions = """
    * 影刀日志只用 from xbot.app import logging
    * 影刀日志方法只传一个字符串参数
    * 需要堆栈时用 traceback.format_exc() 拼到 logging.error(...)
-   * run.py 保持主流程简洁，复用逻辑优先放 tools.py
+   * 代码保持自上而下阅读
+   * 除代码量较多外，只调用一次的代码不要封装函数
+   * 简单功能不要使用不必要的高级语法
+   * 不为未来需求预留当前未使用的扩展设计
 7. 涉及 API、页面行为、XPath、市场指令参数不确定时，优先返回：
 
    * 需运行验证

@@ -122,21 +122,19 @@
 - 同步目标文件不正确
 - 影刀编辑器仍在使用旧内容
 
-请确认真实项目路径；如果新增了文件，再按仓库规则执行 `shadowbot_sync_tool.py`。
+请确认真实项目路径；如果新增了文件或用户明确要求同步影刀，再在项目根目录执行 `shadowbot_sync_tool.py`。
 
 ## shadowbot_sync_tool.py 在哪里运行？
 
-工具位于本知识库根目录，但 `--project-dir` 应指向真实影刀项目。只有新增文件时才需要执行；仅修改已有文件时不运行。
+工具应从知识库的 `project-template/` 复制到真实影刀项目根目录，与 `package.json` 同级。新增文件后需要执行；用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时也必须执行。
 
 示例：
 
 ```powershell
-python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
-  prepare
+python shadowbot_sync_tool.py prepare
 ```
 
-`prepare` 自动扫描该目录下的 Python 文件，不接收文件列表。项目路径必须是包含 `package.json` 的 `xbot_robot` 根目录。
+命令在包含 `package.json` 的真实项目根目录执行。`prepare` 自动扫描该目录下的 Python 文件，不接收文件列表。
 
 ## 市场指令可视化能运行，编码版为什么失败？
 

@@ -12,8 +12,8 @@ English overview: [README_EN.md](README_EN.md)
 
 实际开发时必须区分：
 
-- 知识库目录：保存规则、API、示例、排错资料和 `shadowbot_sync_tool.py`
-- 真实项目目录：保存当前影刀应用实际运行的代码和资源
+- 知识库目录：固定为 `C:\Users\Administrator\Desktop\影刀xAI开发指南`，保存规则、API、示例、排错资料和项目模板
+- 真实项目目录：保存当前影刀应用实际运行的代码、资源和 `shadowbot_sync_tool.py`
 
 Agent 应在真实项目目录修改业务代码，只从本仓库读取知识和工具。
 
@@ -38,28 +38,27 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 
 ## New File Sync Requirement
 
-只有真实影刀项目新增文件时，才运行本仓库根目录的 `shadowbot_sync_tool.py`；仅修改已有文件时不运行。
+`project-template/` 中的 `AGENTS.md`、`.claude`、`.codex` 和 `shadowbot_sync_tool.py` 应复制到真实影刀项目根目录。
 
-`shadowbot_sync_tool.py` 不在真实影刀项目目录里。调用时必须明确工具路径和真实项目路径。
+真实影刀项目新增文件后运行同步脚本。用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行该脚本，即使只修改了已有文件。
 
 最小示例：
 
 ```powershell
-python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
-  --project-dir "%LOCALAPPDATA%\ShadowBot\users\<user_id>\apps\<app_id>\xbot_robot" ^
-  prepare
+python shadowbot_sync_tool.py prepare
 ```
 
-`prepare` 自动扫描真实项目根目录下的 Python 文件，不接收文件列表。`--project-dir` 必须指向包含 `package.json` 的 `xbot_robot` 目录。
+命令应在包含 `package.json` 的真实项目根目录执行。`prepare` 自动扫描项目根目录下的 Python 文件，不接收文件列表。
 
 同步成功后仍需在影刀编辑器中实际运行验证。
 
 ## Agent Rules
 
 - [AGENTS.md](AGENTS.md)：当前知识库仓库的稳定 Agent 主规则入口。
+- [project-template/AGENTS.md](project-template/AGENTS.md)：复制到真实影刀项目的规则模板。
+- [project-template/.claude/CLAUDE.md](project-template/.claude/CLAUDE.md)：真实项目 Claude Code 模板。
+- [project-template/.codex/agents/](project-template/.codex/agents/)：真实项目 Codex 只读子 Agent 模板。
 - [xbot-api-docs/AGENTS.md](xbot-api-docs/AGENTS.md)：xbot API 子目录补充规则。
-- [.claude/CLAUDE.md](.claude/CLAUDE.md)：Claude Code 轻量入口，主规则仍以根目录 `AGENTS.md` 为准。
-- [.codex/agents/](.codex/agents/)：可复制到真实影刀项目的 Codex 只读子 Agent 模板。
 
 ## Core xbot API Docs
 

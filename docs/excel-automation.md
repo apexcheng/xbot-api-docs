@@ -172,7 +172,7 @@
 ```text
 请在真实影刀项目中实现 Excel / WPS 自动化。
 
-知识库目录：...\yingdao-xbot-ai-agent
+知识库目录：C:\Users\Administrator\Desktop\影刀xAI开发指南
 真实项目目录：...
 输入文件：...
 目标 Sheet：...
@@ -194,7 +194,7 @@
 4. 不修改无关表格逻辑。
 5. 失败时不要覆盖原有正确数据。
 6. 保存后验证输出文件可以正常打开。
-7. 仅在新增文件时运行 shadowbot_sync_tool.py，并说明 Excel / WPS 验证环境。
+7. 新增文件或用户明确要求同步影刀时，在项目根目录运行 `python shadowbot_sync_tool.py prepare`，并说明 Excel / WPS 验证环境。
 ```
 
 ## 常见故障定位
