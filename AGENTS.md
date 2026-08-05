@@ -127,7 +127,8 @@ C:\Users\Administrator\Desktop\影刀xAI开发指南
 3. 日志方法只传一个字符串参数，例如 `logging.info(text)`。
 4. 动态内容使用 f-string，例如 `logging.info(f"行数={n}")`。
 5. 需要异常堆栈时，在 `except` 里用 `traceback.format_exc()` 拼到 `logging.error(...)`，不要用 `logger.exception(...)`。
-6. 涉及浏览器、URL、页面业务时，优先使用 `xbot.web` 和浏览器对象能力。
+6. 日志前缀不需要记录时间，影刀 `logging` 自带时间前缀，调用方不要再拼 `datetime` 或 `time`。
+7. 涉及浏览器、URL、页面业务时，优先使用 `xbot.web` 和浏览器对象能力。
 7. 除非用户明确要求接口方式，或项目已有接口调用方式，否则不要用 `requests`、`httpx`、`aiohttp`、`urllib` 处理网页业务。
 8. 能用元素、选择器、页面接口处理，就不要优先坐标点击。
 9. 中文或长文本输入优先考虑剪贴板输入。

@@ -70,7 +70,8 @@
 1. 影刀项目禁止使用 Python 标准 `logging`，只使用 `from xbot.app import logging`。
 2. 日志方法只传一个字符串参数，动态内容使用 f-string。
 3. 需要异常堆栈时，用 `traceback.format_exc()` 拼到 `logging.error(...)`。
-4. 涉及浏览器、URL、页面业务时，优先使用 `xbot.web` 和浏览器对象能力。
+4. 日志前缀不需要记录时间，影刀 `logging` 自带时间前缀，调用方不要再拼 `datetime` 或 `time`。
+5. 涉及浏览器、URL、页面业务时，优先使用 `xbot.web` 和浏览器对象能力。
 5. 除非用户明确要求接口方式，或项目已有接口调用方式，否则不要用 `requests`、`httpx`、`aiohttp`、`urllib` 处理网页业务。
 6. 能用元素、选择器、页面接口处理，就不要优先坐标点击。
 7. XPath、CSS、页面接口、按钮状态未验证时，必须标注“需运行验证”。

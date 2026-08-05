@@ -251,3 +251,4 @@ logging.export(r"C:\logs\run.log")
 - 调试细节：用 `debug()` 或 `trace()`。
 - 成功/失败状态：用 `success()` / `error()`。
 - 需要文件留存：最后调用 `export()`。
+- 日志前缀不需要记录时间：影刀日志面板自带时间戳，不要在日志内容里再拼接 `datetime`、`time` 或自定义时间前缀。
