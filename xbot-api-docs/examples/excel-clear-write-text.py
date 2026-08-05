@@ -49,7 +49,4 @@ def main(args):
         logging.info(f"已写入 {len(text_rows)} 行数据，所有非空值均按文本保存")
     finally:
         if workbook:
-            try:
-                workbook.close()
-            except Exception as error:
-                logging.warning(f"关闭工作簿失败：{error}")
+            workbook.close()

@@ -38,7 +38,4 @@ def main(args):
         logging.info(f"已复制 {source_sheet_name}!A1:{end_column}{end_row} 到 {target_sheet_name}!A1")
     finally:
         if workbook:
-            try:
-                workbook.close()
-            except Exception as error:
-                logging.warning(f"关闭工作簿失败：{error}")
+            workbook.close()
