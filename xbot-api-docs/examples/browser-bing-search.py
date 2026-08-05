@@ -20,21 +20,11 @@ def main(args):
     """
     keyword = args.get("keyword") or "影刀 x Agent驱动开发"
 
-    page = xbot.web.create(
-        url="https://cn.bing.com",
-        mode="chrome",
-        load_timeout=60,
-    )
+    page = xbot.web.create(url="https://cn.bing.com", mode="chrome", load_timeout=60)
     page.wait_load_completed(timeout=30)
 
-    input_element = page.find_by_xpath(
-        "//input[contains(@class, 'sb_form_q')]",
-        timeout=20,
-    )
-    search_buttons = page.find_all_by_xpath(
-        "//input[@name='search']",
-        timeout=20,
-    )
+    input_element = page.find_by_xpath("//input[contains(@class, 'sb_form_q')]", timeout=20)
+    search_buttons = page.find_all_by_xpath("//input[@name='search']", timeout=20)
     if not search_buttons:
         raise RuntimeError("未找到搜索按钮")
 
