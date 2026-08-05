@@ -1,46 +1,14 @@
-"""钉钉群 Markdown 通知最小示例。
+"""通过 Webhook 发送钉钉群 Markdown 通知。
 
 运行前提：
 - 本文件应放在影刀项目代码目录中运行
 - 当前项目已安装市场指令：钉钉企业机器人消息_v2（dingtalk_bot_message）
-- `args` 中的 app_key、app_secret、open_conversation_id 由影刀编辑器提前配置
+- `args` 中的 webhook_url 由影刀编辑器提前配置
+- 自定义机器人启用了加签时，同时配置 webhook_secret
 """
 
 from xbot.app import logging
-
-
-def send_markdown_to_group(app_key, app_secret, open_conversation_id, title, content):
-    """发送钉钉群 Markdown 消息。
-
-    :param app_key: 钉钉应用 AppKey
-    :type app_key: str
-    :param app_secret: 钉钉应用 AppSecret
-    :type app_secret: str
-    :param open_conversation_id: 群会话 ID
-    :type open_conversation_id: str
-    :param title: 消息标题
-    :type title: str
-    :param content: Markdown 正文
-    :type content: str
-    """
-    if not (app_key and app_secret and open_conversation_id):
-        logging.warning("钉钉群通知参数缺失，已跳过发送。")
-        return
-
-    from xbot_extensions.dingtalk_bot_message import process2 as send_group_message
-
-    send_group_message(
-        app_key=app_key,
-        app_secret=app_secret,
-        open_conversation_id=open_conversation_id,
-        title=title,
-        message_type="markdown",
-        content=content,
-        webhook_url="",
-        webhook_secret="",
-        at_mobiles=[],
-        at_all=False,
-    )
+from xbot_extensions.dingtalk_bot_message.py_api import send_dingtalk_group
 
 
 def main(args):
@@ -48,7 +16,10 @@ def main(args):
 
     :param args: 影刀流程初始化参数字典
     :type args: dict
+    :return: 钉钉接口返回结果
     """
+    webhook_url = args["webhook_url"]
+    webhook_secret = args.get("webhook_secret") or None
     title = args.get("title") or "影刀任务通知"
     content = args.get("content") or "\n".join([
         "### 影刀任务通知",
@@ -57,11 +28,11 @@ def main(args):
         "- 说明：这是一条 Markdown 示例消息",
     ])
 
-    send_markdown_to_group(
-        app_key=args["app_key"],
-        app_secret=args["app_secret"],
-        open_conversation_id=args["open_conversation_id"],
-        title=title,
-        content=content,
-    )
-    logging.info("钉钉群 Markdown 通知已提交")
+    try:
+        result = send_dingtalk_group("markdown", content, webhook_url=webhook_url, webhook_secret=webhook_secret, title=title)
+    except Exception as error:
+        logging.error(f"钉钉群通知发送失败：{error}")
+        raise
+
+    logging.info("钉钉群 Markdown 通知发送成功")
+    return result

@@ -13,8 +13,11 @@
 - `project-entry-skeleton.py`：影刀项目入口骨架，说明固定导入、`main(args)` 和 `package.variables`
 - `browser-bing-search.py`：最小浏览器搜索示例，演示打开页面、找元素、输入、点击
 - `dingtalk-ai-table-records.py`：钉钉 AI 表格最小读写示例，演示读取 `data.records`、按 `record["fields"]` 取值和回写记录
-- `dingtalk-markdown-notify.py`：钉钉群 Markdown 通知示例，演示 `dingtalk_bot_message.process2` 的最小调用
+- `dingtalk-markdown-notify.py`：钉钉群 Markdown 通知示例，演示 `dingtalk_bot_message.py_api.send_dingtalk_group()` 的最小调用
 - `browser-price-check-single-row.py`：单行商品抓价并回写表格示例，演示 `xbot.web` 抓价、价格解析和钉钉 AI 表格更新
+- `excel-clear-write-text.py`：清空指定数据区域后，把二维数组全部按文本批量写入，避免长数字精度丢失
+- `excel-copy-range.py`：使用 `copy_range()` 和 `paste_range_ex()` 复制区域并保留格式、公式
+- `browser-download-and-wait.py`：点击下载按钮后，使用 `wait_download_file()` 等待本次新文件完成
 
 ## 运行前提
 
@@ -30,6 +33,9 @@
 3. 再看 `dingtalk-ai-table-records.py`，理解钉钉 AI 表格读写返回结构
 4. 需要群通知时看 `dingtalk-markdown-notify.py`
 5. 需要业务串联时看 `browser-price-check-single-row.py`
+6. 需要按文本更新 Excel 数据区域时看 `excel-clear-write-text.py`
+7. 需要保留格式或公式复制区域时看 `excel-copy-range.py`
+8. 需要点击网页按钮并等待下载时看 `browser-download-and-wait.py`
 
 ## 新增示例规范
 
