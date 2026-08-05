@@ -243,6 +243,17 @@ file_path = workbook.get_full_name()
 | `close()` | 无 | 关闭工作簿 |
 | `is_closed()` | 无 | 判断工作簿对象是否已关闭 |
 | `set_saved(True)` | `True` / `False` | 标记保存状态；常用于不保存关闭 |
+
+`workbook.close()` 直接调用即可，不需要为了关闭工作簿单独套一层 `try / except`。需要保证业务异常时也关闭工作簿，可以放在 `finally` 中直接调用：
+
+```python
+workbook = xbot.excel.open(file_name=file_path, kind="wps", visible=True)
+try:
+    sheet = workbook.get_active_sheet()
+    data = sheet.get_used_range()
+finally:
+    workbook.close()
+```
 | `get_full_name()` | 无 | 获取当前工作簿的完整文件路径 |
 
 ---
