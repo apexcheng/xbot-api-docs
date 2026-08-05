@@ -298,7 +298,7 @@
 | 抖音店铺登录 | direct python | `login_douyin_seller` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | Win 元素可点击判断 | direct python | `is_win_element_clickable` | —（仅模块导入） | `win_utils.py` | `element` | `bool` |
 | 发送 ntfy 消息 | direct python | `send_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `message`、`topic`、`server` | `bool` |
-| 接收 ntfy 消息 | direct python | `receive_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `topic`、`server`、`since`、`timeout` | `dict` 或 `None` |
+| 接收 ntfy 消息 | direct python | `receive_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `topic`、`server`、`since`、`timeout` | 按时间倒序的消息列表；无消息为空列表 |
 
 ---
 

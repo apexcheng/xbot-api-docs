@@ -40,7 +40,7 @@
 - `login_douyin_seller(account, password, profile=None)`：打开抖音电商后台 `https://fxg.jinritemai.com/login`，切换到邮箱登录，输入邮箱和密码，必要时勾选协议并提交；按 URL 是否离开 `login` 判断结果
 - `is_win_element_clickable(element)`：判断 `Win32Window.find()` / `find_all()` 返回的 Win 元素是否显示、可用、矩形有效，且中心点落在当前屏幕范围内；满足时返回 `True`，否则返回 `False`
 - `send_ntfy_message(message, topic, server="https://ntfy.sh")`：向指定 ntfy topic 发送纯文本消息；成功返回 `True`，失败抛出异常
-- `receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=15)`：从指定 ntfy topic 拉取一条消息；有消息时返回包含 `id`、`time`、`message` 的字典，无消息时返回 `None`
+- `receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=15)`：从指定 ntfy topic 拉取 `since` 范围内的缓存消息，按 `time` 从新到旧返回包含 `id`、`time`、`message` 的字典列表；无消息时返回空列表
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
@@ -125,13 +125,13 @@ from xbot_extensions.xbot_enhance_tools.ntfy_message import (
 
 send_ntfy_message("验证码 382914", topic="your-private-topic")
 
-message = receive_ntfy_message(
+messages = receive_ntfy_message(
     topic="your-private-topic",
     since="10m",
     timeout=15,
 )
-if message:
-    print(message["message"])
+if messages:
+    print(messages[0]["message"])
 ```
 
 **注意事项：**
@@ -146,7 +146,9 @@ if message:
 - `is_win_element_clickable()` 只判断元素当前状态和中心点是否在屏幕范围内，不会自动滚动、激活窗口或处理遮挡；复杂窗口状态仍需运行验证
 - `ntfy_message.py` 依赖 `requests`，当前市场指令项目已登记该依赖
 - 使用公共 `ntfy.sh` 时，topic 即消息地址的一部分，应使用难以猜测的私有 topic，避免传递账号密码等高敏感信息
-- `receive_ntfy_message()` 使用 ntfy JSON 流接口轮询，并返回读取到的第一条消息；是否需要去重或持久化消费进度由调用方处理
+- `receive_ntfy_message()` 使用 `poll=1` 一次读取当前缓存消息，不会在无消息时保持长连接等待；返回结果按消息时间从新到旧排序
+- `since` 表示本次查询从什么时间点开始读取，例如 `10m` 是最近 10 分钟、`1m` 是最近 1 分钟；它不是 ntfy 的消息保存时长
+- ntfy 拉取不会删除服务端消息；是否需要去重或持久化消费进度由调用方处理
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
 ---
