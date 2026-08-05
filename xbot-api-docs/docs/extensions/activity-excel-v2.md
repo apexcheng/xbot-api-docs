@@ -17,6 +17,7 @@
 - Visual flow 包装入口：`xbot_extensions.activity_excel_v2.<入口函数>(...)`
 - Code flow 模块入口：`xbot_extensions.activity_excel_v2.refresh_pivot_table.main(args)`
 - 常用入口：`fill_down_formula()`、`fill_right_formula()`、`filter()`、`text_format_to_num()`、`num_format_to_text()`、`process16()` 等
+- 区域截图入口：`process24(excel_instance, begin_row, begin_column, end_row, end_column, save_path, sheet_name)`
 
 **参数说明：**
 - `excel_instance` / `Excel对象`：待处理 Excel 对象。
@@ -30,6 +31,7 @@ from xbot_extensions.activity_excel_v2 import (
     fill_down_formula,
     filter,
     process21,
+    process24,
     process56,
 )
 
@@ -74,10 +76,44 @@ process56(
     kind="ROW",
     area="1",
 )
+
+# 把指定区域保存为图片
+result = process24(
+    excel_instance=workbook,
+    begin_row=1,
+    begin_column="E",
+    end_row=last_row,
+    end_column=last_column,
+    save_path=image_path,
+    sheet_name="每日报表",
+)
+if isinstance(result, dict):
+    image_path = result.get("image_save_path", image_path)
 ```
+
+### 区域截图 `process24()`
+
+```python
+result = process24(excel_instance, begin_row, begin_column, end_row, end_column, save_path, sheet_name)
+```
+
+| 参数 | 类型 | 说明 |
+|---|---|---|
+| `excel_instance` | 工作簿对象 | 已打开的 Excel / WPS 工作簿 |
+| `begin_row` | `int` | 起始行 |
+| `begin_column` | `str` | 起始列，如 `"E"` |
+| `end_row` | `int` | 结束行 |
+| `end_column` | `str` | 结束列，如 `"T"` |
+| `save_path` | `str` | 图片保存路径 |
+| `sheet_name` | `str` | 要截图的 Sheet 名称 |
+
+输出名为 `image_save_path`。当前真实项目中包装入口可能直接返回路径，也可能返回包含 `image_save_path` 的字典，因此调用方可按上例兼容读取。该能力没有发现等价的原生 `xbot.excel` 区域截图接口，适合保留为市场指令用法。
+
+完整示例见 [`excel-range-screenshot.py`](../../examples/excel-range-screenshot.py)。
 
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot.excel` 内置 API；能用原生 `xbot.excel` 清晰完成的任务仍优先查 `docs/excel.md`。
+- 普通读写、清空、复制优先使用原生 `xbot.excel`；只有区域截图等原生 API 缺失的能力才使用本扩展。
 - 该扩展大多数编码版入口是 `__init__.py` 中的包装函数，调用后进入 Visual flow；`refresh_pivot_table` 是 Code flow 模块入口；不要把内部工具模块或测试模块当作公开调用入口。
 - `process45`、`process46`、`process47` 等入口在源码中使用中文参数名，编码版调用前建议按当前安装版本再次用 `inspect.signature()` 核对。
 - 本节仅根据源码结构和 block 元数据整理，未在影刀编辑器内运行验证。

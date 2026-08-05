@@ -18,6 +18,10 @@
 - `excel-clear-write-text.py`：清空指定数据区域后，把二维数组全部按文本批量写入，避免长数字精度丢失
 - `excel-copy-range.py`：使用 `copy_range()` 和 `paste_range_ex()` 复制区域并保留格式、公式
 - `browser-download-and-wait.py`：点击下载按钮后，使用 `wait_download_file()` 等待本次新文件完成
+- `excel-range-screenshot.py`：使用 `activity_excel_v2.process24()` 截取 Excel / WPS 区域
+- `cerp-report-download.py`：初始化 C-ERP 并下载发货订单明细，检查文件路径返回值
+- `erp-order-detail-query.py`：按平台订单号查询 ERP 订单详情并翻译为中文字段
+- `offline-ocr.py`：使用 `activity_179ea575.process1()` 识别本地图片文字
 
 ## 运行前提
 
@@ -36,6 +40,7 @@
 6. 需要按文本更新 Excel 数据区域时看 `excel-clear-write-text.py`
 7. 需要保留格式或公式复制区域时看 `excel-copy-range.py`
 8. 需要点击网页按钮并等待下载时看 `browser-download-and-wait.py`
+9. 需要表格截图或 ERP 场景时看对应示例
 
 ## 新增示例规范
 

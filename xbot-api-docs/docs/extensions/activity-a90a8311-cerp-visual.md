@@ -1,9 +1,9 @@
-# C-ERP可视化版
+# C-ERP 市场指令
 
 > 来源：本地已安装市场指令目录 `xbot_robot`。  
 > 指令 UUID：`86515626-37c2-4a22-971b-62cf6971df12`。  
 > Activity code：`activity_a90a8311`。  
-> 调用类型：Visual flow 包装入口。  
+> 调用类型：Visual flow 包装入口；当前未发现等价的原生 `xbot` ERP 业务接口。
 > 记录原则：只记录从 `package.json`、`prototype.block.json`、`__init__.py` 可确认的信息；页面行为、筛选条件效果和下载结果需运行验证。
 
 ---
@@ -15,8 +15,10 @@
 ```python
 from xbot_extensions import activity_a90a8311
 
-web = activity_a90a8311.process13(username, password, "Default", False)
-file_path = activity_a90a8311.process14("店铺名称", "2026/07/01", "2026/07/23")
+web = activity_a90a8311.process13(username=username, password=password, ERP浏览器标识="Default", refresh=True)
+file_path = activity_a90a8311.process14(店铺名称=None, 发货时间start="2026/08/01", 发货时间end="2026/08/05")
+if not file_path:
+    raise RuntimeError("发货订单明细下载未返回文件路径")
 ```
 
 包装函数内部会组装 `inputs` / `outputs`，再调用：
@@ -77,7 +79,7 @@ xbot_visual.process.run(
 ```python
 from xbot_extensions import activity_a90a8311
 
-web = activity_a90a8311.process13(username, password, "Default", False)
+web = activity_a90a8311.process13(username=username, password=password, ERP浏览器标识="Default", refresh=True)
 ```
 
 需要进入某个菜单页时：
@@ -89,12 +91,26 @@ activity_a90a8311.process5("库存统计", web)
 下载类指令直接返回 `file_path`：
 
 ```python
-stock_path = activity_a90a8311.process4("商品代码", "规格代码", "正品仓")
+stock_path = activity_a90a8311.process4(商品代码=None, 规格代码=None, 仓库名称="正品仓")
 platform_path = activity_a90a8311.process11("淘宝", "店铺名称", "平台商品ID")
-summary_path = activity_a90a8311.process12("店铺名称", "2026/07/01", "2026/07/23", False)
-order_path = activity_a90a8311.process14("店铺名称", "2026/07/01", "2026/07/23")
-return_path = activity_a90a8311.process15("店铺名称", "2026/07/01", "2026/07/23")
+summary_path = activity_a90a8311.process12("BOW官方旗舰店", "2026/08/01", "2026/08/05", False)
+order_path = activity_a90a8311.process14(店铺名称=None, 发货时间start="2026/08/01", 发货时间end="2026/08/05")
+return_path = activity_a90a8311.process15(店铺名称=None, 发货时间start="2026/08/01", 发货时间end="2026/08/05")
+
+for report_name, file_path in {
+    "库存": stock_path,
+    "平台铺货": platform_path,
+    "发货商品汇总": summary_path,
+    "发货订单明细": order_path,
+    "退货商品明细": return_path,
+}.items():
+    if not file_path:
+        raise RuntimeError(f"{report_name}下载未返回文件路径")
 ```
+
+真实项目中下载类入口均按“返回文件路径”使用。调用后应立即检查返回值，避免后续把空值传给 `xbot.excel.open()`。
+
+完整示例见 [`cerp-report-download.py`](../../examples/cerp-report-download.py)。
 
 如果需要等待并获取下载文件：
 

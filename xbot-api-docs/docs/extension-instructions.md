@@ -1,7 +1,7 @@
 # 影刀市场指令扩展开发指南
 
-> 分析范围：9 个常用市场指令目录
-> 分析日期：2026-06-08
+> 分析范围：13 个常用市场指令目录
+> 最近补充：2026-08-06
 > 分析原则：不猜测，所有结论均有文件依据
 
 ---
@@ -27,6 +27,9 @@
 | `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`、`win_utils.py`、`ntfy_message.py`) |
 | `guanyi_erp_api` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
 | `activity_excel_v2` | Excel扩展操作 | flow | ✅ | ✅ | ✅ (包装入口 + 模块导入) | ❌ | ✅ (Visual / Code flow 对应 .py + 工具模块) |
+| `activity_a90a8311` | C-ERP 市场指令 | flow | ✅ | ✅ | ✅ (processN 包装) | ❌ | ✅ (Visual flow) |
+| `activity_df0688e4` | ERP订单详情查询与字段翻译 | direct python | ✅ | ✅ | ✅ (模块导入) | ✅ | ✅ (`select_order_dteail.py`、`translation.py`) |
+| `activity_179ea575` | 离线 OCR | flow | ✅ | ✅ | ✅ (`process1`) | ❌ | ✅ (OCR 业务模块) |
 | `iframe2` | XPath跨域获取网页元素 | both | ✅ | ✅ | ❌ | ✅ (`_core.py`) | ✅ (`api.py`、`js_code.py`) |
 | `ad_killer` | 广告杀手 | both | ✅ | ✅ | ✅ (close_ads/close_ads_win) | ✅ (_core.py) | ✅ (7 个) |
 | `web_action` | 网页扩展操作 | both | ✅ | ✅ | ✅ (18 个 process) | ❌ | ✅ (10 个业务) |
@@ -92,15 +95,16 @@
 
 | 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
-| 发送私聊消息 | flow | `process1` | `process1()` | — | app_key、app_secret、title、message_type、content、user_mobiles | result |
-| 发送群聊消息 | flow | `process2` | `process2()` | — | app_key、app_secret、open_conversation_id、title、message_type、content、webhook_url、webhook_secret、at_mobiles、at_all | result |
+| 发送私聊消息 | direct python 优先 | `send_dingtalk_private` | `py_api.py` | `py_api.py` | message_type、content、app_key、app_secret、user_ids / user_mobiles | 钉钉接口结果 |
+| 发送群聊消息 | direct python 优先 | `send_dingtalk_group` | `py_api.py` | `py_api.py` | message_type、content、应用机器人或 webhook 参数 | 钉钉接口结果 |
 | 群聊使用说明 | flow | `process3` | `process3()` | — | — | help |
 | 生成markdown表格 | direct python | `to_table_format` | —（import） | `to_table_format.py` | data、max_cell_length | md_table |
 
 **调用方式总结：**
-- process1/process2/process3 通过 `__init__.py` 包装调用 Visual flow
-- `core.py` 是底层发送逻辑（`send_dingtalk_group`、`send_dingtalk_private`、`send_text`、`send_markdown`、`send_image`），不直接暴露为指令
-- `to_table_format.py` 可直接调用 `to_markdown_table(data, max_cell_length)`
+- 新代码优先从 `xbot_extensions.dingtalk_bot_message.py_api` 导入 `send_dingtalk_group()` / `send_dingtalk_private()`。
+- `process1()` / `process2()` 仍可兼容旧项目，但会额外经过 Visual flow，不再作为编码版首选。
+- `to_table_format.py` 可直接调用 `to_markdown_table(data, max_cell_length)`。
+- 发送失败会抛出异常，不要按返回 `False` 处理。
 
 **message_type 枚举值：** text、markdown、image
 
@@ -354,6 +358,52 @@
 
 ---
 
+### 2.11 activity_a90a8311 — C-ERP 市场指令
+
+| 指令显示名 | 调用类型 | 对应 function | 主要入参 | 主要出参 |
+|---|---|---|---|---|
+| init_v2 | flow | `process13` | username、password、ERP浏览器标识、refresh | ERP网页对象 |
+| 库存下载 | flow | `process4` | 商品代码、规格代码、仓库名称 | file_path |
+| 发货商品汇总下载 | flow | `process12` | 店铺名称、发货时间start、发货时间end、店铺汇总 | file_path |
+| 发货订单明细下载 | flow | `process14` | 店铺名称、发货时间start、发货时间end | file_path |
+| 退货商品明细下载 | flow | `process15` | 店铺名称、发货时间start、发货时间end | file_path |
+
+**调用方式总结：**
+- 先用 `process13(...)` 初始化或复用 ERP 页面，再调用下载入口。
+- 下载类入口按文件路径使用，返回空值时立即抛出明确异常，不要继续调用 `xbot.excel.open()`。
+- 当前未发现等价的原生 `xbot` ERP 业务接口，因此保留该市场指令。
+- 详细参数与示例见 [C-ERP 市场指令](extensions/activity-a90a8311-cerp-visual.md)。
+
+---
+
+### 2.12 activity_df0688e4 — ERP 订单详情查询与字段翻译
+
+| 指令显示名 | 调用类型 | 对应 function | 主要入参 | 主要出参 |
+|---|---|---|---|---|
+| 订单查询详情 | direct python | `select_order_dteail.main(args)` | `platform_code` 或 `code` | 原始订单详情或 `None` |
+| 翻译 Dict | direct python | `translation.main(args)` | `record` | 中文字段数据 |
+
+**调用方式总结：**
+- `platform_code` 和 `code` 至少提供一个，否则抛出 `ValueError`。
+- 先查当前订单，再查历史订单；查询过程异常继续向上抛出。
+- 详细参数与示例见 [ERP 订单详情查询与字段翻译](extensions/activity-df0688e4.md)。
+
+---
+
+### 2.13 activity_179ea575 — 离线 OCR
+
+| 指令显示名 | 调用类型 | 对应 function | 主要入参 | 主要出参 |
+|---|---|---|---|---|
+| 离线 OCR | flow | `process1` | 图片路径或图片url、输出完整结果、文字检测框过滤的阈值、文字检测框的大小 | OCR 结果 |
+
+**调用方式总结：**
+- 支持本地图片路径和网络图片 URL。
+- 当前未发现等价的原生 `xbot` OCR 接口，可保留为 OCR 实现。
+- 完整结果字段和识别准确率需在目标图片上运行验证。
+- 详细参数与示例见 [离线 OCR](extensions/activity-179ea575.md)。
+
+---
+
 ## 三、调用规则
 
 ### 3.1 package.json 定位 flow 指令
@@ -475,10 +525,12 @@ def main(args):
 |---|---|---|---|
 | `activity_47680f64` | 小工具指令集 | both | [activity-47680f64.md](extensions/activity-47680f64.md) |
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | [activity-5b77c4ce.md](extensions/activity-5b77c4ce.md) |
-| `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | [dingtalk-bot-message.md](extensions/dingtalk-bot-message.md) |
+| `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | direct python 优先 | [dingtalk-bot-message.md](extensions/dingtalk-bot-message.md) |
 | `activity_7bca6d` | 登录扩展操作 | both | [activity-7bca6d.md](extensions/activity-7bca6d.md) |
 | `guanyi_erp_api` | C-ERP API | direct python | [guanyi-erp-api.md](extensions/guanyi-erp-api.md) |
-| `activity_a90a8311` | C-ERP可视化版 | flow | [activity-a90a8311-cerp-visual.md](extensions/activity-a90a8311-cerp-visual.md) |
+| `activity_a90a8311` | C-ERP 市场指令 | flow | [activity-a90a8311-cerp-visual.md](extensions/activity-a90a8311-cerp-visual.md) |
+| `activity_df0688e4` | ERP订单详情查询与字段翻译 | direct python | [activity-df0688e4.md](extensions/activity-df0688e4.md) |
+| `activity_179ea575` | 离线 OCR | flow | [activity-179ea575.md](extensions/activity-179ea575.md) |
 | `iframe2` | XPath跨域获取网页元素 | both | [iframe2-extension.md](iframe2-extension.md) |
 | `ad_killer` | 广告杀手 | both | [ad-killer.md](extensions/ad-killer.md) |
 | `web_action` | 网页扩展操作 | both | [web-action.md](extensions/web-action.md) |
@@ -510,7 +562,10 @@ def main(args):
 | close_ads 默认值 | `ad_killer/_core.py` 第 25-28 行：`close_type` 默认 `"hidden"` |
 | AdKiller 类定义 | `ad_killer/_core.py` 第 22-65 行 |
 | core.py 签名封装 | `guanyi_erp_api/core.py` 第 30-45 行：`make_sign()`、`build_payload()` |
-| 钉钉机器人参数 | `dingtalk_bot_message/__init__.py:process1` 第 5-25 行 |
+| 钉钉机器人 Direct API | `dingtalk_bot_message/py_api.py`：`send_dingtalk_group()`、`send_dingtalk_private()` |
+| ERP订单详情查询 | `activity_df0688e4/select_order_dteail.py`：当前订单、历史订单查询与返回规则 |
+| ERP字段翻译 | `activity_df0688e4/translation.py`：递归字段映射与 `new_record` 输出 |
+| 离线 OCR 参数 | `activity_179ea575/__init__.py`：`process1()` 包装参数 |
 | 通用表格操作参数 | `activity_5b77c4ce/prototype.block.json`：`general_table_action` block |
 | 智能日期选择器 | `web_action/select_date.py`：`select_date()` 函数 |
 | 通用下拉框 | `web_action/auto_drop_selector.py`：`set_dropdown()` 函数 |

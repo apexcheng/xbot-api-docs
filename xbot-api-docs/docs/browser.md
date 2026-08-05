@@ -263,6 +263,16 @@ element = browser.find_by_xpath('//input[@name="q"]', timeout=10)
 elements = browser.find_all_by_xpath('//div[@class="item"]', timeout=10)
 ```
 
+从已找到的元素内部继续查找时，直接对元素调用同名方法，并使用以 `.//` 开头的相对 XPath：
+
+```python
+row = browser.find_by_xpath('//div[@role="row"]', timeout=10)
+name_element = row.find_by_xpath('.//div[@aria-colindex="2"]', timeout=2)
+buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout=2)
+```
+
+注意：元素内部查找必须使用 `.//` 表示“从当前元素向下查找”。写成 `//` 会从整个页面根节点开始查找，可能匹配到其他行中的元素。
+
 | 方法 | 参数 | 类型 |
 |---|---|---|
 | `find` | `selector` | `str` / `Selector` |

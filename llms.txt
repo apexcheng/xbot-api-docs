@@ -78,6 +78,11 @@ python shadowbot_sync_tool.py prepare
 - [市场指令源码排查](xbot-api-docs/docs/debug/market-extension-source.md)：市场指令参数不明确、可视化能运行但编码版异常时的源码排查方法。
 - [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md)：调用入口、参数、返回结构、数据表、字段、记录、filter、分页、附件和常见限制。
 - [影刀增强工具](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)：浏览器等待、下载等待、异常格式化、商家登录辅助和 Windows 元素辅助。
+- [钉钉企业机器人消息](xbot-api-docs/docs/extensions/dingtalk-bot-message.md)：Direct Python 群聊、私聊和 Markdown 表格。
+- [Excel 扩展操作](xbot-api-docs/docs/extensions/activity-excel-v2.md)：区域截图等原生 Excel API 缺失能力。
+- [C-ERP 市场指令](xbot-api-docs/docs/extensions/activity-a90a8311-cerp-visual.md)：ERP 初始化、库存与报表下载。
+- [ERP 订单详情查询与字段翻译](xbot-api-docs/docs/extensions/activity-df0688e4.md)：按 ERP / 平台订单号查询并翻译字段。
+- [离线 OCR](xbot-api-docs/docs/extensions/activity-179ea575.md)：本地或网络图片文字识别。
 
 ## Debug and Knowledge Maintenance
 

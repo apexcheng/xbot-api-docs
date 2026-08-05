@@ -31,7 +31,7 @@
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
 - `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，查找抛异常即视为已消失，返回 `True`；超时返回 `False`
-- `wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`：等待下载目录中的文件下载完成；`download_dir` 不传时默认使用当前用户下载目录，不存在则回退到 `~/下载`；`filename_pattern` 可选，传了按指定文件名关键词或 glob 表达式匹配，不传按本次新出现并稳定的文件判断；`start_time` 建议在点击下载前用 `time.time()` 记录
+- `wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`：等待下载目录中的文件下载完成；成功返回 `pathlib.Path`；超时抛出 `TimeoutError`。`download_dir` 不传时默认使用当前用户下载目录，不存在则回退到 `~/下载`；`filename_pattern` 可选，传了按指定文件名关键词或 glob 表达式匹配，不传按本次新出现并稳定的文件判断；`start_time` 建议在点击下载前用 `time.time()` 记录
 - `format_exception_detail(e)`：返回错误信息、报错位置、当前时间、函数名、代码行，适合通知或日志汇总
 - `login_pdd_seller(account, password, profile=None)`：打开拼多多商家中心登录页，登录后按 URL 是否离开 `login` 判断结果
 - `login_qianniu(account, password, profile=None)`：打开千牛商家工作台登录页，登录后按 URL 是否离开 `login` 判断结果
@@ -75,6 +75,7 @@ if not wait_disappear_by_xpath(page, '//div[@class="loading"]', timeout=20):
 
 start_time = time.time()
 file_path = wait_download_file(filename_pattern="result.xlsx", timeout=300, start_time=start_time)
+file_path = str(file_path)
 
 try:
     page.find_by_xpath('//input[@name="keyword"]', timeout=3).input("影刀")
@@ -138,6 +139,9 @@ if messages:
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
 - `wait_disappear_by_xpath()` 的判定依据是“查找抛异常即视为已消失”
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
+- `wait_download_file()` 成功返回 `Path`；需要传给只接受字符串路径的市场指令或旧代码时，可显式转换为 `str(file_path)`
+- `wait_download_file()` 超时会抛出 `TimeoutError`，不要把超时误判为返回 `None`
+- 完整示例见 [`browser-download-and-wait.py`](../../examples/browser-download-and-wait.py)
 - `shop_utils` 中的登录 XPath 会随平台页面变化，当前页面行为需运行验证
 - 商家后台登录只处理账号密码输入和提交，不处理验证码、扫码、安全验证、短信验证、人机验证等复杂分支
 - 抖音登录使用邮箱账号；协议勾选仅在页面显示未勾选状态时处理，登录后的跳转和风控页面仍需在实际环境确认

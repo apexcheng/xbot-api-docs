@@ -233,6 +233,7 @@ xbot.excel.kill_excel_process("wps", True)
 workbook.save()
 workbook.save_as(r"C:\path\new.xlsx")
 workbook.close()
+file_path = workbook.get_full_name()
 ```
 
 | 方法 | 参数 | 说明 |
@@ -242,6 +243,7 @@ workbook.close()
 | `close()` | 无 | 关闭工作簿 |
 | `is_closed()` | 无 | 判断工作簿对象是否已关闭 |
 | `set_saved(True)` | `True` / `False` | 标记保存状态；常用于不保存关闭 |
+| `get_full_name()` | 无 | 获取当前工作簿的完整文件路径 |
 
 ---
 
@@ -254,6 +256,7 @@ sheet = workbook.get_active_sheet()
 sheet = workbook.get_sheet_by_name("Sheet1")
 sheet = workbook.get_sheet_by_index(1)
 sheets = workbook.get_all_sheets()
+sheet_name = sheet.get_name()
 ```
 
 | 方法 | 参数 | 参数说明 | 返回 |
@@ -262,6 +265,7 @@ sheets = workbook.get_all_sheets()
 | `get_sheet_by_name(name)` | `name: str` | Sheet 名称 | `WorkSheet` |
 | `get_sheet_by_index(index)` | `index: int` | Sheet 位置，通常从 `1` 开始 | `WorkSheet` |
 | `get_all_sheets()` | 无 | 获取全部 Sheet | Sheet 列表 |
+| `sheet.get_name()` | 无 | 获取当前 Sheet 名称 | `str` |
 
 ### 9.2 激活 / 创建 / 删除 / 重命名
 
@@ -334,21 +338,23 @@ data = sheet.get_used_range()
 
 ```python
 sheet.set_cell(1, "A", "hello")
+sheet.set_cell(row_num=2, col_name="A", value="2026/08/05")
 sheet.set_row(1, ["姓名", "年龄"], begin_column_name="A")
 sheet.append_row(["张三", 18], begin_column_name="A")
 sheet.insert_row(2, ["李四", 20], begin_column_name="A")
 sheet.set_column("A", ["姓名", "张三"], begin_row_num=1)
 sheet.set_range(1, "A", [["姓名", "年龄"], ["张三", 18]])
+sheet.set_range(row_num=3, col_name="A", values=[["李四", 20]])
 ```
 
 | 方法 | 参数 | 参数说明 |
 |---|---|---|
-| `set_cell(row, column, value)` | `row: int`, `column: str`, `value` | 写入单元格 |
+| `set_cell(row_num, col_name, value)` | `row_num: int`, `col_name: str`, `value` | 写入单元格；也可按位置传参 |
 | `set_row(row, values, begin_column_name="A")` | `values: list` | 覆盖一行 |
 | `append_row(values, begin_column_name="A")` | `values: list` | 追加一行 |
 | `insert_row(row, values, begin_column_name="A")` | `row: int` | 插入一行 |
 | `set_column(column, values, begin_row_num=1)` | `values: list` | 覆盖一列 |
-| `set_range(row, column, values)` | `values: list[list]` | 从指定位置写入二维数组 |
+| `set_range(row_num, col_name, values)` | `values: list[list]` | 从指定位置写入二维数组；也可按位置传参 |
 
 ### 11.2 可视化封装写数据：`write_data_to_workbook`
 
@@ -433,12 +439,13 @@ row_count = sheet.get_row_count()
 column_count = sheet.get_column_count()
 first_free_row = sheet.get_first_free_row()
 first_free_column = sheet.get_first_free_column()
+last_column = sheet.get_last_column()
 row_num = sheet.get_first_free_row_on_column("A")
 ```
 
-当前接口没有直接获取“最后数据行 / 最后数据列”的方法，只有获取“第一个空行 / 第一个空列”的方法。
+当前真实项目已确认可用 `sheet.get_last_column()` 获取最后使用列，返回列字母，例如 `"BA"`。当前未确认对应的原生“最后数据行”方法，最后数据行通常仍使用 `sheet.get_first_free_row() - 1`。
 
-普通的数据区域读取、复制或清空场景中，即使结束边界多包含一个空行或空列通常也没有影响，可以直接把 `get_first_free_row()` / `get_first_free_column()` 的结果当作区域结束位置使用。不要仅为把“第一个空行 / 空列”换算成“最后数据行 / 列”而新增复杂封装。
+普通的数据区域读取、复制或清空场景中，即使结束边界多包含一个空行或空列通常也没有影响，可以直接把 `get_first_free_row()` / `get_first_free_column()` 的结果当作区域结束位置使用。不要仅为把“第一个空行 / 空列”换算成“最后数据行 / 列”而新增复杂封装；需要准确最后列时直接调用 `get_last_column()`。
 
 只有业务明确要求精确行数、精确列数或严格边界时，才在当前代码中直接做简单换算，例如最后数据行为 `sheet.get_first_free_row() - 1`。
 
@@ -448,7 +455,28 @@ sheet.remove_column("C")
 sheet.insert_blank_row(2, amount=1)
 sheet.insert_blank_column("B", amount=1)
 sheet.clear()
+sheet.clear_range(begin_row_num=1, begin_column_name="E", end_row_num=first_free_row, end_column_name=first_free_column, target="content")
 ```
+
+`clear_range()` 用于清空指定区域，真实项目已确认的参数如下：
+
+| 参数 | 类型 | 示例 | 说明 |
+|---|---|---|---|
+| `begin_row_num` | `int` | `1` | 起始行 |
+| `begin_column_name` | `str` | `"E"` | 起始列 |
+| `end_row_num` | `int` | `20000` | 结束行 |
+| `end_column_name` | `str` | `"AA"` | 结束列 |
+| `target` | `str` | `"content"` | 清空目标；清数据时使用 `"content"` |
+
+也可按位置传参：
+
+```python
+sheet.clear_range(1, "E", 20000, "AA")
+```
+
+清空旧数据是后续写入正确性的前提时，不要静默忽略 `clear_range()` 异常。
+
+完整示例：[`excel-clear-write-text.py`](../examples/excel-clear-write-text.py)，演示清空数据区域后把全部非空值按文本批量写入，避免商品 ID、订单号等长数字丢失精度。
 
 常见参数：
 
@@ -463,6 +491,26 @@ sheet.clear()
 ## 13. 清空、复制、粘贴、选择
 
 ### 13.1 复制区域
+
+原生区域复制：
+
+```python
+source_sheet.copy_range(begin_row_num=1, begin_column_name="A", end_row_num=end_row, end_column_name="BA")
+target_sheet.paste_range_ex(row_num=1, column_name="G")
+```
+
+纯数据搬运优先使用 `get_range()` + `set_range()`；需要同时保留公式或格式时，再使用 `copy_range()` + `paste_range_ex()`。
+
+`copy_range()` 参数：
+
+| 参数 | 类型 | 说明 |
+|---|---|---|
+| `begin_row_num` | `int` | 起始行 |
+| `begin_column_name` | `str` | 起始列 |
+| `end_row_num` | `int` | 结束行 |
+| `end_column_name` | `str` | 结束列 |
+
+可视化复制封装的 `copy_way` 可选值：
 
 `copy_way` 可选值：
 
@@ -495,6 +543,16 @@ sheet.paste_range_ex(
 | `paste_special_operation` | `int` | `-4142` | Excel 特殊粘贴操作常量 |
 | `skip_blanks` | `bool` | `False` | 是否跳过空白 |
 | `transpose` | `bool` | `False` | 是否转置 |
+
+### 13.3 选择多行
+
+```python
+sheet.select_rows(list(range(2, 11)))
+```
+
+`select_rows(rows)` 接收行号列表，用于在 Excel / WPS 界面中选中多行。该操作依赖真实 Office / WPS 界面，需在影刀运行环境验证。
+
+区域复制完整示例：[`excel-copy-range.py`](../examples/excel-copy-range.py)。
 
 ---
 

@@ -187,6 +187,12 @@ shadowbot_sync_tool.py
 - [市场指令源码排查](xbot-api-docs/docs/debug/market-extension-source.md)
 - [钉钉 AI 表格](xbot-api-docs/docs/extensions/activity-5b77c4ce.md)
 - [影刀增强工具](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
+- [钉钉企业机器人消息](xbot-api-docs/docs/extensions/dingtalk-bot-message.md)
+- [Excel 扩展操作](xbot-api-docs/docs/extensions/activity-excel-v2.md)
+- [C-ERP 市场指令](xbot-api-docs/docs/extensions/activity-a90a8311-cerp-visual.md)
+- [ERP 订单详情查询与字段翻译](xbot-api-docs/docs/extensions/activity-df0688e4.md)
+- [离线 OCR](xbot-api-docs/docs/extensions/activity-179ea575.md)
+- [最小可运行示例](xbot-api-docs/examples/README.md)
 - [错误修正记录](wiki/error-book.md)
 - [待验证事项](wiki/unresolved.md)
 

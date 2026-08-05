@@ -29,6 +29,11 @@ xbot-api-docs/docs/
 | 市场指令源码排查 | [`market-extension-source.md`](../xbot-api-docs/docs/debug/market-extension-source.md) | 编码版异常、参数不明和源码调查 |
 | 钉钉 AI 表格 | [`activity-5b77c4ce.md`](../xbot-api-docs/docs/extensions/activity-5b77c4ce.md) | 调用入口、参数、返回结构、数据表、字段、记录、filter、分页和附件 |
 | 影刀增强工具 | [`xbot-enhance-tools.md`](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md) | 浏览器等待、下载等待、异常格式化等 |
+| 钉钉群聊和私聊通知 | [`dingtalk-bot-message.md`](../xbot-api-docs/docs/extensions/dingtalk-bot-message.md) | Direct Python 发送文本、Markdown、图片和私聊消息 |
+| Excel 区域截图 | [`activity-excel-v2.md`](../xbot-api-docs/docs/extensions/activity-excel-v2.md) | `process24()` 区域截图和其他 Excel 扩展能力 |
+| C-ERP 报表下载 | [`activity-a90a8311-cerp-visual.md`](../xbot-api-docs/docs/extensions/activity-a90a8311-cerp-visual.md) | ERP 初始化、库存和报表下载 |
+| ERP 订单详情查询 | [`activity-df0688e4.md`](../xbot-api-docs/docs/extensions/activity-df0688e4.md) | 按订单号查询详情并翻译中文字段 |
+| 图片文字识别 | [`activity-179ea575.md`](../xbot-api-docs/docs/extensions/activity-179ea575.md) | 离线 OCR 参数和调用示例 |
 
 ## 按常见搜索问题定位
 
