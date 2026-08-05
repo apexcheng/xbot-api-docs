@@ -436,6 +436,12 @@ first_free_column = sheet.get_first_free_column()
 row_num = sheet.get_first_free_row_on_column("A")
 ```
 
+当前接口没有直接获取“最后数据行 / 最后数据列”的方法，只有获取“第一个空行 / 第一个空列”的方法。
+
+普通的数据区域读取、复制或清空场景中，即使结束边界多包含一个空行或空列通常也没有影响，可以直接把 `get_first_free_row()` / `get_first_free_column()` 的结果当作区域结束位置使用。不要仅为把“第一个空行 / 空列”换算成“最后数据行 / 列”而新增复杂封装。
+
+只有业务明确要求精确行数、精确列数或严格边界时，才在当前代码中直接做简单换算，例如最后数据行为 `sheet.get_first_free_row() - 1`。
+
 ```python
 sheet.remove_row(2)
 sheet.remove_column("C")

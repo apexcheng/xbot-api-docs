@@ -127,7 +127,6 @@ send_ntfy_message("验证码 382914", topic="your-private-topic")
 
 messages = receive_ntfy_message(
     topic="your-private-topic",
-    since="10m",
     timeout=15,
 )
 if messages:
@@ -148,6 +147,7 @@ if messages:
 - 使用公共 `ntfy.sh` 时，topic 即消息地址的一部分，应使用难以猜测的私有 topic，避免传递账号密码等高敏感信息
 - `receive_ntfy_message()` 使用 `poll=1` 一次读取当前缓存消息，不会在无消息时保持长连接等待；返回结果按消息时间从新到旧排序
 - `since` 表示本次查询从什么时间点开始读取，例如 `10m` 是最近 10 分钟、`1m` 是最近 1 分钟；它不是 ntfy 的消息保存时长
+- `receive_ntfy_message()` 的 `since` 默认值已经是 `"10m"`；业务没有特殊时间范围要求时不要显式传入，也不要额外改成更短或更长的值
 - ntfy 拉取不会删除服务端消息；是否需要去重或持久化消费进度由调用方处理
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
