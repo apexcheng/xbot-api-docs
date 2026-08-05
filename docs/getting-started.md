@@ -19,7 +19,7 @@ yingdao-xbot-ai-agent/
 - `AGENTS.md`：Agent 开发规则
 - `llms.txt`：文档索引
 - `xbot-api-docs/`：影刀 xbot API 文档与示例
-- `shadowbot_sync_tool.py`：开发完成后的同步工具
+- `shadowbot_sync_tool.py`：真实项目新增文件后的同步工具
 - 调试记录、历史错误和待验证事项
 
 ### 2. 真实影刀项目目录
@@ -54,16 +54,17 @@ yingdao-xbot-ai-agent/
 知识库：C:\path\to\yingdao-xbot-ai-agent
 真实项目：C:\path\to\real-shadowbot-project
 
-先读取知识库中的 AGENTS.md 和 llms.txt，
-再在真实项目目录中完成修改。
+先读取知识库中的 AGENTS.md，
+再检查真实项目现有代码并完成修改。
+仅当新增或无法确认 xbot API、市场指令、页面行为时，
+再按 llms.txt 定位相关文档。
 ```
 
-Agent 应优先读取：
+Agent 应按以下顺序处理：
 
-1. [`AGENTS.md`](../AGENTS.md)
-2. [`llms.txt`](../llms.txt)
-3. 与当前任务相关的 API 文档
-4. 真实项目现有代码和业务说明
+1. 读取 [`AGENTS.md`](../AGENTS.md)。
+2. 检查真实项目现有代码和业务说明。
+3. 仅当新增或无法确认 xbot API、市场指令、页面行为时，再按 [`llms.txt`](../llms.txt) 定位相关文档。
 
 ### 步骤 3：判断是否需要 TASK.md
 
@@ -137,7 +138,7 @@ Agent 应优先读取：
 
 ### API 用法必须有依据
 
-优先使用本仓库已经记录并验证的 API 文档。遇到参数不明确时，应继续查文档、示例或市场指令源码，不要凭相似库的用法猜测。
+先检查真实项目现有代码。仅当新增或无法确认 xbot API、市场指令、页面行为时，再按 `llms.txt` 定位文档、示例或市场指令源码，不要凭相似库的用法猜测。
 
 ### 区分已验证与待验证
 
@@ -145,9 +146,9 @@ Agent 应优先读取：
 - 只阅读源码或文档：应说明依据
 - 仅根据错误现象推测：应标记为待验证
 
-## 开发后同步
+## 新增文件后的同步
 
-Agent 在真实项目中完成代码修改后，运行知识库根目录中的同步工具：
+只有真实影刀项目新增文件时，才运行知识库根目录中的同步工具；仅修改已有文件时不运行：
 
 ```powershell
 python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
@@ -164,10 +165,10 @@ python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
 ## 最终验收清单
 
 - [ ] 修改发生在真实影刀项目目录
-- [ ] Agent 已读取 `AGENTS.md` 和相关 API 文档
+- [ ] Agent 已读取 `AGENTS.md` 并检查真实项目现有代码
 - [ ] 没有改动无关代码
-- [ ] 关键参数和调用方式有文档或源码依据
-- [ ] 已运行 `shadowbot_sync_tool.py`
+- [ ] 关键参数和调用方式有现有代码、文档或源码依据
+- [ ] 如有新增文件，已运行 `shadowbot_sync_tool.py`
 - [ ] 已在影刀环境中实际验证
 - [ ] 未验证结论已经明确标记
 

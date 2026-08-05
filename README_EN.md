@@ -32,10 +32,9 @@ This repository provides those materials in a structure that can be read by both
 ## Start here
 
 1. Read [`AGENTS.md`](AGENTS.md) for stable repository and development rules.
-2. Read [`llms.txt`](llms.txt) for the machine-readable documentation index.
-3. Open [`docs/getting-started.md`](docs/getting-started.md) for the beginner workflow.
-4. Use [`docs/xbot-api-guide.md`](docs/xbot-api-guide.md) to locate the correct API documentation.
-5. Read the topic guides for [browser automation](docs/browser-automation.md), [Excel automation](docs/excel-automation.md) and [troubleshooting](docs/troubleshooting.md).
+2. Inspect the existing code in the real Yingdao project.
+3. Only when adding or unable to confirm an xbot API, marketplace extension, or page behavior, use [`llms.txt`](llms.txt) to locate the relevant documentation.
+4. Open [`docs/getting-started.md`](docs/getting-started.md) for the beginner workflow.
 
 ## Documentation
 
@@ -58,15 +57,15 @@ Describe the business goal
         ↓
 Locate the real Yingdao project directory
         ↓
-Read AGENTS.md and llms.txt
+Read AGENTS.md and inspect existing project code
         ↓
 Create TASK.md for complex work
         ↓
-Inspect existing code and documentation
+Use llms.txt only for new or uncertain API, extension, or page behavior
         ↓
 Make the smallest required change
         ↓
-Run shadowbot_sync_tool.py
+Run shadowbot_sync_tool.py only when adding files
         ↓
 Validate inside Yingdao
 ```
@@ -95,7 +94,7 @@ The repository includes conventions for Claude Code, OpenAI Codex and other agen
 
 ## Important rule
 
-After modifying a real Yingdao project, run the synchronization helper from this knowledge-base repository:
+Run the synchronization helper only when adding files to a real Yingdao project. Do not run it when only modifying existing files:
 
 ```powershell
 python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^

@@ -20,10 +20,9 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 ## Required Reading Order
 
 1. [AGENTS.md](AGENTS.md)：当前知识库的稳定 Agent 主规则。
-2. [docs/getting-started.md](docs/getting-started.md)：知识库与真实项目的使用流程。
-3. 根据任务读取下面的公开专题文档。
-4. 再读取 `xbot-api-docs/docs/` 中对应的技术文档。
-5. 检查真实项目现有代码，不要仅根据通用 Python 经验猜测 xbot API。
+2. 先检查真实项目现有代码和业务说明。
+3. 仅当新增或无法确认 xbot API、市场指令、页面行为时，再使用本文件定位对应文档。
+4. 不要仅根据通用 Python 经验猜测 xbot API。
 
 ## Public Documentation
 
@@ -37,9 +36,9 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 - [常见问题 FAQ](docs/faq.md)：影刀编码版、Agent、同步工具和常见异常问答。
 - [贡献指南](CONTRIBUTING.md)：验证等级、脱敏、错误修正和文档结构。
 
-## Development Completion Requirement
+## New File Sync Requirement
 
-Agent 在真实影刀项目目录完成代码修改后，必须运行本仓库根目录的 `shadowbot_sync_tool.py` 做同步收尾。
+只有真实影刀项目新增文件时，才运行本仓库根目录的 `shadowbot_sync_tool.py`；仅修改已有文件时不运行。
 
 `shadowbot_sync_tool.py` 不在真实影刀项目目录里。调用时必须明确工具路径和真实项目路径。
 

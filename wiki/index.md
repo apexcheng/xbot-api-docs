@@ -12,7 +12,7 @@
 ## 使用边界
 
 - `wiki/` 不作为默认编码依据。
-- Agent 写代码时，应优先查看当前项目代码、`AGENTS.md` 和 `xbot-api-docs/docs/`。
+- Agent 写代码时，应先查看当前项目代码和 `AGENTS.md`；仅当新增或无法确认 xbot API、市场指令、页面行为时，再按 `llms.txt` 定位 `xbot-api-docs/docs/`。
 - 只有用户明确询问历史错误、待验证事项，或 API 文档没有答案时，才查 `wiki/`。
 - 不确定的 API 行为先标 `需运行验证`，确认后再回写到 `xbot-api-docs/docs/`。
 - 不要把真实项目路径、账号、token、Cookie 或其他敏感信息写入 Wiki。

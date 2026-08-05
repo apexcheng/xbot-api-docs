@@ -10,7 +10,7 @@
 
 如果 Agent 只读取到本文件，也必须遵守以下规则：
 
-1. 写影刀编码版代码前，先查本目录下的 `docs/`。
+1. 先检查真实项目现有代码；仅当新增或无法确认 xbot API、市场指令、页面行为时，再按上级 `llms.txt` 定位本目录下的 `docs/`。
 2. 不确定 API 行为时，不要猜，标注“需运行验证”。
 3. 涉及浏览器、URL、网页业务功能时，除非用户明确要求，不要使用 `requests`、`httpx`、`aiohttp`、`urllib` 或其他网络相关 Python 库；只使用 `xbot.web` 及其浏览器对象能力。
 4. 市场指令参数不明确时，先查 `docs/debug/market-extension-source.md`。

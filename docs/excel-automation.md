@@ -188,13 +188,13 @@
 - 保存位置：...
 
 要求：
-1. 先读取 AGENTS.md、llms.txt 和 xbot-api-docs/docs/excel.md。
-2. 先检查真实项目中现有的工作簿和 Sheet 操作方式。
+1. 先读取 AGENTS.md，并检查真实项目中现有的工作簿和 Sheet 操作方式。
+2. 仅当新增或无法确认 xbot API、市场指令、页面行为时，再按 llms.txt 定位 xbot-api-docs/docs/excel.md 等相关文档。
 3. 确认订单号、商品 ID 等长数字字段的数据类型。
 4. 不修改无关表格逻辑。
 5. 失败时不要覆盖原有正确数据。
 6. 保存后验证输出文件可以正常打开。
-7. 完成后运行 shadowbot_sync_tool.py，并说明 Excel / WPS 验证环境。
+7. 仅在新增文件时运行 shadowbot_sync_tool.py，并说明 Excel / WPS 验证环境。
 ```
 
 ## 常见故障定位

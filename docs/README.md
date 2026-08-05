@@ -38,17 +38,18 @@
 
 1. [快速开始](getting-started.md)
 2. [xbot API 导航指南](xbot-api-guide.md)
-3. 根据任务选择浏览器、Excel 或 Windows 文档
-4. 完成修改后执行 `shadowbot_sync_tool.py`
-5. 回到影刀编辑器内验证
+3. 先检查真实项目现有代码
+4. 仅当新增或无法确认 API、市场指令、页面行为时，选择对应文档
+5. 新增文件时执行 `shadowbot_sync_tool.py`
+6. 回到影刀编辑器内验证
 
 ### 使用 AI Agent 的开发者
 
 1. [`AGENTS.md`](../AGENTS.md)
-2. [`llms.txt`](../llms.txt)
+2. 真实影刀项目现有代码和业务说明
 3. [AI Agent 开发工作流](ai-agent-development.md)
-4. 真实影刀项目中的业务草稿或 `TASK.md`
-5. 对应的 xbot API 文档
+4. 复杂任务使用真实影刀项目中的业务草稿或 `TASK.md`
+5. 仅在新增或无法确认 API、市场指令、页面行为时使用 [`llms.txt`](../llms.txt) 定位文档
 
 ### 排查异常
 

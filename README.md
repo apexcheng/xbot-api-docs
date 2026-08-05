@@ -90,8 +90,10 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 知识库目录：C:\path\to\yingdao-xbot-ai-agent
 真实项目目录：C:\path\to\shadowbot-project
 
-先读取知识库中的 AGENTS.md 和 llms.txt，
+先读取知识库中的 AGENTS.md，
 再检查真实项目现有代码，只修改与当前需求直接相关的内容。
+仅当新增或无法确认 xbot API、市场指令、页面行为时，
+再按 llms.txt 定位相关文档。
 ```
 
 ### 4. 根据任务读取文档
@@ -114,17 +116,17 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
           ↓
 确认知识库与真实项目目录
           ↓
-读取 AGENTS.md 和 llms.txt
+读取 AGENTS.md
           ↓
 复杂任务创建 TASK.md
           ↓
 检查真实项目现有代码
           ↓
-查对应 xbot API 文档
+仅在新增或无法确认 API、市场指令、页面行为时查 llms.txt 和对应文档
           ↓
 实施最小必要修改
           ↓
-运行 shadowbot_sync_tool.py
+新增文件时运行 shadowbot_sync_tool.py
           ↓
 在影刀环境实际验证
           ↓
@@ -173,9 +175,9 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 - [错误修正记录](wiki/error-book.md)
 - [待验证事项](wiki/unresolved.md)
 
-## 开发后同步
+## 新增文件后的同步
 
-Agent 在真实影刀项目目录完成修改后，需要运行本仓库根目录中的 `shadowbot_sync_tool.py`：
+只有真实影刀项目新增文件时，才运行本仓库根目录中的 `shadowbot_sync_tool.py`；仅修改已有文件时不运行：
 
 ```powershell
 python "C:\path\to\影刀xAI开发指南\shadowbot_sync_tool.py" ^
@@ -209,7 +211,7 @@ xbot-api-docs/
 wiki/
   error-book.md              # 历史错误修正
   unresolved.md              # 待验证事项
-shadowbot_sync_tool.py       # 真实项目修改后的同步工具
+shadowbot_sync_tool.py       # 真实项目新增文件后的同步工具
 待优化清单.md                # 后续补充和验证事项
 ```
 
