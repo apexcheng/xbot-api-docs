@@ -462,22 +462,7 @@ sheet.clear()
 
 ## 13. 清空、复制、粘贴、选择
 
-### 13.1 清空区域
-
-可视化封装 `clear_range` 的常见参数：
-
-| 参数 | 类型 | 可选值 | 说明 |
-|---|---|---|---|
-| `clear_way` | `str` | `"cell"` / `"range"` / `"row"` / `"column"` / `"used_range"` | 清空目标类型 |
-| `clear_target` | `str` | 常见为 `"all"` | 清空目标，源码直接传给底层 |
-| `cell_row_num` | `int` | `1` | 单元格行号 |
-| `cell_column_name` | `str` | `"A"` | 单元格列名 |
-| `area_begin_row_num` | `int` | `1` | 区域开始行 |
-| `area_begin_column_name` | `str` | `"A"` | 区域开始列 |
-| `area_end_row_num` | `int` | `10` | 区域结束行 |
-| `area_end_column_name` | `str` | `"D"` | 区域结束列 |
-
-### 13.2 复制区域
+### 13.1 复制区域
 
 `copy_way` 可选值：
 
@@ -489,7 +474,7 @@ sheet.clear()
 | `"column"` | 复制列 |
 | `"used_range"` | 复制已使用区域 |
 
-### 13.3 粘贴区域
+### 13.2 粘贴区域
 
 ```python
 sheet.paste_range_ex(
