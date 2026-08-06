@@ -47,7 +47,7 @@ xbot_visual.process.run(
 | 获取下载文件 | `process8(文件关键词, 下载时间, 等待超时)` | `文件关键词: str`、`下载时间: datetime`、`等待超时: int` | `file_path: str` | 等待超时单位为秒 |
 | init初始化ERP | `process10(username, password, ERP浏览器标识)` | `username: str`、`password: str`、`ERP浏览器标识: str` | `ERP网页对象: WebBrowser` | 使用前初始化 ERP |
 | 平台铺货下载 | `process11(平台类型, 店铺名称, 平台商品ID)` | `平台类型: str`、`店铺名称: str`、`平台商品ID: str` | `file_path: str` | 过滤式下载平台铺货 |
-| 发货商品汇总下载 | `process12(店铺名称, 发货时间start, 发货时间end, 店铺汇总)` | `店铺名称: str`、`发货时间start: str`、`发货时间end: str`、`店铺汇总: bool` | `file_path: str` | 日期格式提示为 `yyyy/mm/dd` |
+| 发货商品汇总下载 | `process12(店铺名称, 发货时间start, 发货时间end, 店铺汇总)` | `店铺名称: str`、`发货时间start: str`、`发货时间end: str`、`店铺汇总: bool` | `file_path: str` | 日期格式为 `yyyy/mm/dd`；时间范围按 `[start, end)` 处理 |
 | init_v2 | `process13(username, password, ERP浏览器标识, refresh)` | `username: str`、`password: str`、`ERP浏览器标识: str`、`refresh: bool` | `ERP网页对象: WebBrowser` | 如果已有网页则不打开新页面；`refresh` 表示已有网页时是否刷新 |
 | 发货订单明细下载 | `process14(店铺名称, 发货时间start, 发货时间end)` | `店铺名称: str`、`发货时间start: str`、`发货时间end: str` | `file_path: str` | 日期格式提示为 `yyyy/mm/dd` |
 | 退货商品明细下载 | `process15(店铺名称, 发货时间start, 发货时间end)` | `店铺名称: str`、`发货时间start: str`、`发货时间end: str` | `file_path: str` | 日期格式提示为 `yyyy/mm/dd` |
@@ -65,7 +65,7 @@ xbot_visual.process.run(
 | `process10` | `username` / `password` | 默认示例值为 `1123`，实际项目不要写死账号密码 |
 | `process10` | `ERP浏览器标识` | 默认 `Default`，界面提示必填 |
 | `process11` | `平台类型` | 默认 `淘宝` |
-| `process12` | `发货时间start` / `发货时间end` | 提示必填，格式 `yyyy/mm/dd` |
+| `process12` | `发货时间start` / `发货时间end` | 必填，格式 `yyyy/mm/dd`；两者都表示对应日期的 `00:00`，范围按 `[start, end)` 处理 |
 | `process12` | `店铺汇总` | 默认 `False` |
 | `process13` | `ERP浏览器标识` | 默认 `Default` |
 | `process13` | `refresh` | 默认 `False` |
@@ -109,6 +109,18 @@ for report_name, file_path in {
 ```
 
 真实项目中下载类入口均按“返回文件路径”使用。调用后应立即检查返回值，避免后续把空值传给 `xbot.excel.open()`。
+
+`process12` 的日期参数是时间边界，不是“起止日期都包含”。例如下载 `2026/08/01` 一整天，应传入 `2026/08/01 00:00` 到 `2026/08/02 00:00`：
+
+```python
+from datetime import timedelta
+
+download_start_text = download_date.strftime("%Y/%m/%d")
+download_end_text = (download_date + timedelta(days=1)).strftime("%Y/%m/%d")
+file_path = activity_a90a8311.process12("BOW官方旗舰店", download_start_text, download_end_text, False)
+```
+
+不要把同一个日期同时传给 `发货时间start` 和 `发货时间end`，否则时间范围为空，无法表示当天完整数据。
 
 完整示例见 [`cerp-report-download.py`](../../examples/cerp-report-download.py)。
 
