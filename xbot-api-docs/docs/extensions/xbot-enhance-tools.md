@@ -137,6 +137,7 @@ if messages:
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
+- 需要循环刷新等待元素时，优先让 `wait_appear_by_xpath()` 负责单轮短时等待，并在循环顶部统一判断总超时；不要再用 `find_by_xpath()` 配合 `try / except` 轮询
 - `wait_disappear_by_xpath()` 的判定依据是“查找抛异常即视为已消失”
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - `wait_download_file()` 成功返回 `Path`；需要传给只接受字符串路径的市场指令或旧代码时，可显式转换为 `str(file_path)`

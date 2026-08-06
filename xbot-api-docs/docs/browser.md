@@ -316,6 +316,20 @@ loading_done = wait_disappear_by_xpath(browser, '//div[@class="loading"]', timeo
 
 返回：`wait_appear_by_xpath()` 找到时返回元素，超时返回 `None`；`wait_disappear_by_xpath()` 消失返回 `True`，超时返回 `False`。
 
+需要“短时等待，未出现就刷新，直到总超时”时，优先把总超时判断放在循环顶部；`wait_appear_by_xpath()` 只负责当前一轮等待，不要再用 `find_by_xpath()` 配合 `try / except` 轮询。
+
+```python
+# 循环等待第一条导出记录的下载按钮出现，每轮等 5 秒，没出现就刷新页面，超时 2 分钟
+deadline = time.time() + 60 * 2
+while True:
+    if time.time() > deadline:
+        raise RuntimeError("抖音电商·精选联盟：等待下载按钮超时（2 分钟）")
+
+    if wait_appear_by_xpath(page, download_xpath, timeout=5):
+        break
+    page.reload(ignore_cache=True)
+```
+
 ---
 
 ## 12. `Element` 常用方法
