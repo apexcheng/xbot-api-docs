@@ -363,6 +363,7 @@ loading_done = wait_disappear_by_xpath(browser, '//div[@class="loading"]', timeo
 element.click(button="left", simulative=True, keys="none", delay_after=0.3)
 element.dblclick(simulative=True, delay_after=0.3)
 element.hover(simulative=True, delay_after=0.3)
+element.hover(simulative=True, delay_after=0.3, anchor=("middleCenter", -100, 0))
 element.focus()
 ```
 
@@ -379,6 +380,12 @@ element.focus()
 
 ### 13.2 `anchor` 可选值
 
+`anchor` 参数结构为 `(sudoku_part, offset_x, offset_y)`：
+
+- `sudoku_part`：元素内的锚点位置。
+- `offset_x`：相对锚点的水平偏移量，负数向左，正数向右。
+- `offset_y`：相对锚点的垂直偏移量，负数向上，正数向下。
+
 | 第一项 | 说明 |
 |---|---|
 | `"topLeft"` | 左上 |
@@ -394,10 +401,21 @@ element.focus()
 
 ### 13.3 `hover()` 参数
 
+```python
+element.hover(simulative=True, delay_after=1, anchor=None)
+```
+
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
 | `simulative` | `bool` | `True` | 是否模拟人工移动（鼠标轨迹） |
 | `delay_after` | `int` / `float` | `1` | 操作后等待 |
+| `anchor` | `tuple` / `None` | `None` | 悬停位置和偏移，结构为 `(sudoku_part, offset_x, offset_y)`；为 `None` 时悬停在元素中心且无偏移 |
+
+示例：悬停在元素中心左侧 100px：
+
+```python
+element.hover(anchor=("middleCenter", -100, 0))
+```
 
 ---
 
