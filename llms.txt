@@ -21,14 +21,16 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 
 1. [AGENTS.md](AGENTS.md)：当前知识库的稳定 Agent 主规则。
 2. 先检查真实项目现有代码和业务说明。
-3. 仅当新增或无法确认 xbot API、市场指令、页面行为时，再使用本文件定位对应文档。
-4. 不要仅根据通用 Python 经验猜测 xbot API。
+3. 新建或重构多数据源报表、网页下载写表、统一保存通知类项目时，优先读取 [标准流程项目参考](docs/standard-project-reference.md)。
+4. 仅当新增或无法确认 xbot API、市场指令、页面行为时，再使用本文件定位对应文档。
+5. 不要仅根据通用 Python 经验猜测 xbot API。
 
 ## Public Documentation
 
 - [文档中心](docs/README.md)：面向开发者和搜索引擎的总入口。
 - [影刀 xbot 快速开始](docs/getting-started.md)：首次使用、目录区分、TASK.md 和同步流程。
 - [AI Agent 开发工作流](docs/ai-agent-development.md)：Claude Code、Codex、Cursor 的推荐工作方式。
+- [标准流程项目参考](docs/standard-project-reference.md)：多数据源下载、写表、完整重试、统一保存和通知的首选结构。
 - [xbot API 导航指南](docs/xbot-api-guide.md)：按业务任务定位正确 API 文档。
 - [影刀浏览器自动化指南](docs/browser-automation.md)：网页、元素、等待、滚动、下载、Cookie、网络监听和 iframe。
 - [影刀 Excel / WPS 自动化指南](docs/excel-automation.md)：工作簿、Sheet、表头、读写、长数字、保存和文件占用。
@@ -110,6 +112,7 @@ Agent 写入技术结论时应区分：
 
 - “影刀怎么开发”“影刀编码版教程”：`docs/getting-started.md`
 - “影刀 AI Agent”“Claude Code 影刀”“Codex 影刀”：`docs/ai-agent-development.md`
+- “影刀标准项目”“报表自动化架构”“多数据源写表流程”：`docs/standard-project-reference.md`
 - “影刀 xbot API”：`docs/xbot-api-guide.md`
 - “影刀浏览器自动化”“影刀网页元素”：`docs/browser-automation.md`
 - “影刀 Excel”“影刀 WPS”：`docs/excel-automation.md`

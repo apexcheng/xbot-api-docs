@@ -10,6 +10,7 @@
 | --- | --- |
 | 第一次使用本仓库 | [影刀 xbot 快速开始](getting-started.md) |
 | 使用 AI Agent 开发影刀应用 | [AI Agent 开发工作流](ai-agent-development.md) |
+| 新建或重构多数据源报表项目 | [标准流程项目参考](standard-project-reference.md) |
 | 查找 xbot API | [xbot API 导航指南](xbot-api-guide.md) |
 | 开发网页自动化 | [影刀浏览器自动化指南](browser-automation.md) |
 | 操作 Excel 或 WPS | [影刀 Excel / WPS 自动化指南](excel-automation.md) |
@@ -48,9 +49,10 @@
 
 1. [`AGENTS.md`](../AGENTS.md)
 2. 真实影刀项目现有代码和业务说明
-3. [AI Agent 开发工作流](ai-agent-development.md)
-4. 复杂任务使用真实影刀项目中的业务草稿或 `TASK.md`
-5. 仅在新增或无法确认 API、市场指令、页面行为时使用 [`llms.txt`](../llms.txt) 定位文档
+3. 新建或重构同类报表流程时读取 [标准流程项目参考](standard-project-reference.md)
+4. [AI Agent 开发工作流](ai-agent-development.md)
+5. 复杂任务使用真实影刀项目中的业务草稿或 `TASK.md`
+6. 仅在新增或无法确认 API、市场指令、页面行为时使用 [`llms.txt`](../llms.txt) 定位文档
 
 ### 排查异常
 

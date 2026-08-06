@@ -52,6 +52,7 @@
 
 - `AGENTS.md`：稳定开发规则入口
 - `llms.txt`：面向 Agent 的文档索引
+- `docs/standard-project-reference.md`：多数据源下载写表项目的标准流程与首选参考项目
 - `project-template/`：复制到真实影刀项目根目录的 `AGENTS.md`、`.claude`、`.codex` 和同步工具
 - `TASK.md` 工作流：适用于复杂、多文件和多阶段任务
 
@@ -115,6 +116,7 @@ shadowbot_sync_tool.py
 | --- | --- |
 | 第一次使用 | [影刀 xbot 快速开始](docs/getting-started.md) |
 | 使用 Claude Code / Codex 开发 | [AI Agent 开发工作流](docs/ai-agent-development.md) |
+| 新建或重构多数据源报表流程 | [标准流程项目参考](docs/standard-project-reference.md) |
 | 查找 xbot API | [xbot API 导航指南](docs/xbot-api-guide.md) |
 | 网页、元素、滚动、下载、Cookie | [浏览器自动化指南](docs/browser-automation.md) |
 | Excel、WPS、Sheet、单元格和格式 | [Excel / WPS 自动化指南](docs/excel-automation.md) |
@@ -136,6 +138,8 @@ shadowbot_sync_tool.py
 复杂任务创建 TASK.md
           ↓
 检查真实项目现有代码
+          ↓
+新建或重构同类报表项目时优先参考标准流程项目
           ↓
 仅在新增或无法确认 API、市场指令、页面行为时查 llms.txt 和对应文档
           ↓
@@ -165,6 +169,7 @@ shadowbot_sync_tool.py
 - [文档中心](docs/README.md)
 - [影刀 xbot 快速开始](docs/getting-started.md)
 - [AI Agent 开发工作流](docs/ai-agent-development.md)
+- [标准流程项目参考](docs/standard-project-reference.md)
 - [常见问题 FAQ](docs/faq.md)
 
 ### xbot API 与自动化专题
