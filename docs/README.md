@@ -49,9 +49,9 @@
 
 1. [`AGENTS.md`](../AGENTS.md)
 2. 真实影刀项目现有代码和业务说明
-3. 新建或重构同类报表流程时读取 [标准流程项目参考](standard-project-reference.md)
-4. [AI Agent 开发工作流](ai-agent-development.md)
-5. 复杂任务使用真实影刀项目中的业务草稿或 `TASK.md`
+3. [AI Agent 开发工作流](ai-agent-development.md)
+4. 复杂任务使用真实影刀项目中的业务草稿或 `TASK.md`
+5. 仅在多个数据源写入同一工作簿并需要统一保存通知时读取 [标准流程项目参考](standard-project-reference.md)
 6. 仅在新增或无法确认 API、市场指令、页面行为时使用 [`llms.txt`](../llms.txt) 定位文档
 
 ### 排查异常
