@@ -309,6 +309,8 @@ show_notifycation(
 
 关闭桌面通知框。
 
+`xbot.app.dialog.close_notifycation()` 直接调用即可，不需要为了关闭通知框单独套 `try / except`。方法名中的 `notifycation` 为当前源码拼写，不要自行改成 `notification`。
+
 ### 返回值
 
 无。

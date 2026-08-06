@@ -179,6 +179,8 @@ browser.close(ignore_beforeunload=False)
 web.close_all(mode="chrome", task_kill=False, ignore_beforeunload=False)
 ```
 
+`WebBrowser.close()`（常见变量名包括 `browser`、`page`、`web_page`、`erp_web`）和 `web.close_all()` 直接调用即可，不需要为了关闭网页单独套 `try / except`。需要保证业务异常时仍关闭网页，可以放在 `finally` 中直接调用；网页对象可能未创建时只判断对象是否存在。
+
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
 | `ignore_beforeunload` | `bool` | `False` | 是否忽略“确认离开页面”弹窗 |
@@ -711,6 +713,8 @@ result = browser.http_request(
     dowload_timeout=300,
 )
 ```
+
+`browser.stop_monitor_network()` 和 `browser.stop_load()` 也属于直接调用的收尾方法，不要为了收尾动作单独套 `try / except`。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|

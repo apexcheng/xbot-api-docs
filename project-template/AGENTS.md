@@ -65,7 +65,7 @@
 4. 输入形态不确定时，只在边界统一归一化一次。
 5. 异常处理只覆盖当前业务明确需要处理的失败情况。
 6. 捕获异常时必须保留关键错误信息，不要静默吞异常。
-7. 清理、停止监听等收尾操作如果主动捕获异常，至少记录 `warning`，不要静默吞异常；`workbook.close()` 直接调用，不需要单独套 `try / except`。
+7. 关闭、停止监听、停止加载等收尾方法直接调用，不要为了收尾动作单独套 `try / except`。包括 `workbook.close()`、`WebBrowser.close()`、`web.close_all()`、`Win32Window.close()`、`xbot.excel.kill_excel_process()`、`browser.stop_monitor_network()`、`browser.stop_load()` 和 `xbot.app.dialog.close_notifycation()`。需要保证业务异常时仍执行收尾，可放在 `finally` 中直接调用；对象可能未创建时只判断对象是否存在，例如 `if page: page.close()`。
 
 ## 6. 影刀日志与页面自动化
 

@@ -40,7 +40,7 @@ developer_instructions = """
 20. 是否误用 Python 标准 logging、logger.exception、logging.getLogger，或给影刀 logging.info / warning / error 传多个参数。
 21. 需要异常堆栈时，是否用 traceback.format_exc() 拼到 logging.error(...)，而不是 logger.exception(...)。
 22. 代码是否保持自上而下阅读；除代码量较多外，只调用一次的逻辑是否被过度封装成函数。
-23. 清理、停止监听等收尾操作如果主动捕获异常，是否至少记录 warning，而不是静默 pass；`workbook.close()` 是否直接调用，没有单独套 `try / except`。
+23. `workbook.close()`、`WebBrowser.close()`、`web.close_all()`、`Win32Window.close()`、`xbot.excel.kill_excel_process()`、`browser.stop_monitor_network()`、`browser.stop_load()`、`xbot.app.dialog.close_notifycation()` 等收尾方法是否直接调用，没有为收尾动作单独套 `try / except`；需要异常时仍执行的，是否放在 `finally` 中直接调用。
 24. 简单功能是否使用了不必要的嵌套推导式、lambda、装饰器、生成器、动态调度或难懂的一行式写法。
 25. 是否为未来可能的需求预留了当前未使用的参数、接口、分支、配置、Hook、兼容层或扩展点。
 

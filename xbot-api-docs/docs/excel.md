@@ -218,6 +218,8 @@ xbot.excel.kill_excel_process("office", False)
 xbot.excel.kill_excel_process("wps", True)
 ```
 
+`xbot.excel.kill_excel_process()` 直接调用即可，不需要为了关闭进程单独套 `try / except`。
+
 | 参数 | 类型 | 必填 | 可选值 | 说明 |
 |---|---|---:|---|---|
 | `close_process` | `str` | 是 | `"office"` / `"wps"` | 关闭 Office Excel 或 WPS 表格进程，必须小写 |
@@ -244,7 +246,7 @@ file_path = workbook.get_full_name()
 | `is_closed()` | 无 | 判断工作簿对象是否已关闭 |
 | `set_saved(True)` | `True` / `False` | 标记保存状态；常用于不保存关闭 |
 
-`workbook.close()` 直接调用即可，不需要为了关闭工作簿单独套一层 `try / except`。需要保证业务异常时也关闭工作簿，可以放在 `finally` 中直接调用：
+`workbook.close()` 直接调用即可，不需要为了关闭工作簿单独套一层 `try / except`。需要保证业务异常时也关闭工作簿，可以放在 `finally` 中直接调用；工作簿对象可能未创建时只判断对象是否存在，例如 `if workbook: workbook.close()`：
 
 ```python
 workbook = xbot.excel.open(file_name=file_path, kind="wps", visible=True)
