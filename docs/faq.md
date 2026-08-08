@@ -131,10 +131,10 @@
 示例：
 
 ```powershell
-python shadowbot_sync_tool.py prepare
+python shadowbot_sync_tool.py
 ```
 
-命令在包含 `package.json` 的真实项目根目录执行。`prepare` 自动扫描该目录下的 Python 文件，不接收文件列表。
+命令在包含 `package.json` 的真实项目根目录执行。同步脚本自动扫描该目录下的 Python 文件，不接收文件列表。
 
 ## 市场指令可视化能运行，编码版为什么失败？
 

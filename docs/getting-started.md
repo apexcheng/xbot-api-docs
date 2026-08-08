@@ -168,10 +168,10 @@ Agent 应按以下顺序处理：
 新增文件后需要运行。用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行下面的命令，即使只修改了已有文件：
 
 ```powershell
-python shadowbot_sync_tool.py prepare
+python shadowbot_sync_tool.py
 ```
 
-`prepare` 会自动扫描项目根目录下的 Python 文件，不需要也不支持手动传入文件列表。必须明确：
+同步脚本会自动扫描项目根目录下的 Python 文件，不需要也不支持手动传入文件列表。必须明确：
 
 - 命令在真实项目根目录执行
 - “同步影刀”不等于 Git commit、Git push 或普通文件复制

@@ -208,13 +208,13 @@ shadowbot_sync_tool.py
 项目新增文件后需要执行；用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行下面的命令，即使本次只修改了已有文件：
 
 ```powershell
-python shadowbot_sync_tool.py prepare
+python shadowbot_sync_tool.py
 ```
 
 必须区分：
 
 - 命令在真实影刀项目根目录执行
-- `prepare` 自动扫描项目根目录下的 Python 文件，不接收文件列表
+- 同步脚本自动扫描项目根目录下的 Python 文件，不接收文件列表
 - “同步影刀”不是 Git commit、Git push 或普通文件复制
 - 同步成功不等于业务验证成功
 - 最终仍需回到影刀编辑器内实际运行

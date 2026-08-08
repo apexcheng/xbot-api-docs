@@ -14,21 +14,21 @@ sys.path.insert(0, str(PROJECT_TEMPLATE_DIR))
 import shadowbot_sync_tool
 
 
-class PrepareCommandTests(unittest.TestCase):
+class SyncToolTests(unittest.TestCase):
     def write_package_json(self, project_dir, package_data):
         (project_dir / "package.json").write_text(
             json.dumps(package_data, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
         )
 
-    def run_prepare(self, project_dir, group=None):
+    def run_sync(self, project_dir, group=None):
         output = io.StringIO()
         args = SimpleNamespace(project_dir=str(project_dir), group=group)
         with contextlib.redirect_stdout(output):
-            shadowbot_sync_tool.command_prepare(args)
+            shadowbot_sync_tool.sync_project(args)
         return output.getvalue()
 
-    def test_prepare_scans_registers_compiles_and_is_idempotent(self):
+    def test_sync_scans_registers_compiles_and_is_idempotent(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             project_dir = Path(temp_dir)
             package_data = {
@@ -63,7 +63,7 @@ class PrepareCommandTests(unittest.TestCase):
             ):
                 (project_dir / file_name).write_text("value = 1\n", encoding="utf-8")
 
-            first_output = self.run_prepare(project_dir)
+            first_output = self.run_sync(project_dir)
             first_package_text = (project_dir / "package.json").read_text(encoding="utf-8")
             first_package = json.loads(first_package_text)
             flows = {flow["filename"]: flow for flow in first_package["flows"]}
@@ -84,7 +84,7 @@ class PrepareCommandTests(unittest.TestCase):
                         "filename": flow_name,
                         "kind": "Code",
                         "opened": False,
-                        "groupName": None,
+                        "groupName": "",
                         "enableCopilot": False,
                     },
                 )
@@ -109,7 +109,7 @@ class PrepareCommandTests(unittest.TestCase):
                 first_output,
             )
 
-            second_output = self.run_prepare(project_dir)
+            second_output = self.run_sync(project_dir)
             second_package_text = (project_dir / "package.json").read_text(encoding="utf-8")
             second_package = json.loads(second_package_text)
             filenames = [flow["filename"] for flow in second_package["flows"]]
@@ -140,7 +140,7 @@ class PrepareCommandTests(unittest.TestCase):
             (project_dir / "run.py").write_text("value = 1\n", encoding="utf-8")
             (project_dir / "constants.py").write_text("VALUE = 1\n", encoding="utf-8")
 
-            self.run_prepare(project_dir, group="工具")
+            self.run_sync(project_dir, group="工具")
             package_data = json.loads(
                 (project_dir / "package.json").read_text(encoding="utf-8")
             )
@@ -158,14 +158,14 @@ class PrepareCommandTests(unittest.TestCase):
             (project_dir / "broken.py").write_text("def broken(:\n", encoding="utf-8")
 
             with self.assertRaises(subprocess.CalledProcessError):
-                self.run_prepare(project_dir)
+                self.run_sync(project_dir)
 
             self.assertEqual(
                 (project_dir / "package.json").read_text(encoding="utf-8"),
                 original_package_text,
             )
 
-    def test_prepare_succeeds_when_only_excluded_files_exist(self):
+    def test_sync_succeeds_when_only_excluded_files_exist(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             project_dir = Path(temp_dir)
             self.write_package_json(project_dir, {"flows": [], "flow_groups": []})
@@ -176,17 +176,22 @@ class PrepareCommandTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            output = self.run_prepare(project_dir)
+            output = self.run_sync(project_dir)
 
             self.assertIn("scanned_files=3", output)
             self.assertIn("created_flows=[]", output)
             self.assertIn("compiled_files=[]", output)
 
-    def test_prepare_rejects_file_arguments(self):
+    def test_direct_invocation_accepts_no_arguments(self):
+        args = shadowbot_sync_tool.build_parser().parse_args([])
+        self.assertIsNone(args.project_dir)
+        self.assertIsNone(args.group)
+
+    def test_rejects_file_arguments(self):
         parser = shadowbot_sync_tool.build_parser()
         with contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit):
-                parser.parse_args(["prepare", "run.py"])
+                parser.parse_args(["run.py"])
 
 
 if __name__ == "__main__":

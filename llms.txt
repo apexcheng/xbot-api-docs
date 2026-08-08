@@ -47,10 +47,10 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 最小示例：
 
 ```powershell
-python shadowbot_sync_tool.py prepare
+python shadowbot_sync_tool.py
 ```
 
-命令应在包含 `package.json` 的真实项目根目录执行。`prepare` 自动扫描项目根目录下的 Python 文件，不接收文件列表。
+命令应在包含 `package.json` 的真实项目根目录执行。同步脚本自动扫描项目根目录下的 Python 文件，不接收文件列表。
 
 同步成功后仍需在影刀编辑器中实际运行验证。
 

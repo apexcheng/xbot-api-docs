@@ -98,10 +98,10 @@ The repository includes conventions for Claude Code, OpenAI Codex and other agen
 The synchronization helper is stored in the real Yingdao project root. Run it after adding files. Phrases such as “sync Yingdao” or “run Yingdao sync” also mean running this command, even when only existing files changed:
 
 ```powershell
-python shadowbot_sync_tool.py prepare
+python shadowbot_sync_tool.py
 ```
 
-Copy the helper from `project-template/` into the real project. `prepare` scans Python files directly under the project root and does not accept a file list.
+Copy the helper from `project-template/` into the real project. The sync script scans Python files directly under the project root and does not accept a file list.
 
 ## Search keywords
 

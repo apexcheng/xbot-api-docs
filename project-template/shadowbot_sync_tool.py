@@ -1,9 +1,7 @@
 import argparse
 import json
-import shutil
 import subprocess
 import sys
-from datetime import datetime
 from pathlib import Path
 
 
@@ -144,7 +142,7 @@ def ensure_code_flow(package_data, file_name, group_name=None):
         "filename": flow_name,
         "kind": "Code",
         "opened": False,
-        "groupName": target_group_name,
+        "groupName": target_group_name if target_group_name is not None else "",
         "enableCopilot": False,
     }
     package_data.setdefault("flows", []).append(new_flow)
@@ -155,27 +153,6 @@ def ensure_code_flow(package_data, file_name, group_name=None):
         "action": "created",
         "changed": True,
     }
-
-
-def create_backup(project_dir, files):
-    """Create a timestamped backup folder under `backups/`.
-
-    :param pathlib.Path project_dir: Target project directory.
-    :param list[str] files: Files to copy into the backup.
-    :return tuple[pathlib.Path, list[str]]: Backup directory and copied file names.
-    """
-    backup_dir = project_dir / "backups" / f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    backup_dir.mkdir(parents=True, exist_ok=True)
-
-    copied = []
-    for file_name in files:
-        source = project_dir / file_name
-        if not source.exists():
-            raise FileNotFoundError(f"找不到文件：{source}")
-        shutil.copy2(source, backup_dir / source.name)
-        copied.append(source.name)
-
-    return backup_dir, copied
 
 
 def find_shadowbot_python():
@@ -227,7 +204,7 @@ def scan_project_python_files(project_dir):
     return scanned_files, excluded_files, valid_files
 
 
-def show_flow(package_data, file_name):
+def find_flow(package_data, file_name):
     """Get the flow entry for a Python file.
 
     :param dict package_data: Package metadata.
@@ -241,40 +218,8 @@ def show_flow(package_data, file_name):
     return None
 
 
-def command_backup(args):
-    """Run the `backup` command."""
-    project_dir = resolve_project_dir(args.project_dir)
-    backup_dir, copied = create_backup(project_dir, args.files)
-    print(f"backup_dir={backup_dir}")
-    for item in copied:
-        print(f"copied={item}")
-
-
-def command_ensure_flow(args):
-    """Run the `ensure-flow` command."""
-    project_dir = resolve_project_dir(args.project_dir)
-    package_data = load_package_json(project_dir)
-    results = []
-    for file_name in args.files:
-        results.append(ensure_code_flow(package_data, file_name, args.group))
-    save_package_json(project_dir, package_data)
-
-    for result in results:
-        print(
-            f"{result['action']} flow:"
-            f" file={result['file']}, flow={result['flow']}, group={result['group']}"
-        )
-
-
-def command_compile(args):
-    """Run the `compile` command."""
-    project_dir = resolve_project_dir(args.project_dir)
-    python_exe = compile_files(project_dir, args.files)
-    print(f"compiled_with={python_exe}")
-
-
-def command_prepare(args):
-    """Run the common external-edit workflow.
+def sync_project(args):
+    """Sync externally edited code into ShadowBot.
 
     It scans root Python files, ensures Code flows exist and compiles all valid files.
     """
@@ -286,7 +231,7 @@ def command_prepare(args):
     package_changed = False
 
     for file_name in valid_files:
-        existing_flow = show_flow(package_data, file_name)
+        existing_flow = find_flow(package_data, file_name)
         if existing_flow and existing_flow.get("kind") != "Code":
             continue
 
@@ -313,18 +258,6 @@ def command_prepare(args):
     print(f"compiled_with={python_exe}")
 
 
-def command_show_flow(args):
-    """Run the `show-flow` command."""
-    project_dir = resolve_project_dir(args.project_dir)
-    package_data = load_package_json(project_dir)
-    flow = show_flow(package_data, args.file)
-    if not flow:
-        print(f"not_found={args.file}")
-        return
-
-    print(json.dumps(flow, ensure_ascii=False, indent=2))
-
-
 def build_parser():
     """Build the CLI parser.
 
@@ -338,36 +271,11 @@ def build_parser():
         default=None,
         help="目标影刀项目目录；不传时默认使用当前工作目录",
     )
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
-    parser_backup = subparsers.add_parser("backup", help="备份指定文件")
-    parser_backup.add_argument("files", nargs="+", help="要备份的文件名")
-    parser_backup.set_defaults(func=command_backup)
-
-    parser_ensure_flow = subparsers.add_parser("ensure-flow", help="确保代码文件已登记到 package.json")
-    parser_ensure_flow.add_argument("files", nargs="+", help="要登记的 .py 文件")
-    parser_ensure_flow.add_argument("--group", default=None, help="flow 分组名；不传则保留已有分组")
-    parser_ensure_flow.set_defaults(func=command_ensure_flow)
-
-    parser_compile = subparsers.add_parser("compile", help="用影刀 Python 编译指定文件")
-    parser_compile.add_argument("files", nargs="+", help="要编译的文件名")
-    parser_compile.set_defaults(func=command_compile)
-
-    parser_prepare = subparsers.add_parser(
-        "prepare",
-        help="扫描项目根目录 Python 文件，登记 flow 并统一编译",
-    )
-    parser_prepare.add_argument(
+    parser.add_argument(
         "--group",
         default=None,
         help="新登记 flow 的统一分组名；不传则使用空分组",
     )
-    parser_prepare.set_defaults(func=command_prepare)
-
-    parser_show_flow = subparsers.add_parser("show-flow", help="查看某个 .py 文件对应的 flow 配置")
-    parser_show_flow.add_argument("file", help="要查看的 .py 文件")
-    parser_show_flow.set_defaults(func=command_show_flow)
-
     return parser
 
 
@@ -375,7 +283,7 @@ def main():
     """Program entry point."""
     parser = build_parser()
     args = parser.parse_args()
-    args.func(args)
+    sync_project(args)
 
 
 if __name__ == "__main__":
