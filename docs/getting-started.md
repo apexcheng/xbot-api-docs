@@ -19,7 +19,7 @@ yingdao-xbot-ai-agent/
 - `AGENTS.md`：Agent 开发规则
 - `llms.txt`：文档索引
 - `xbot-api-docs/`：影刀 xbot API 文档与示例
-- `project-template/`：复制到真实项目根目录的规则、Agent 配置和同步工具
+- `project-template/`：复制到真实项目根目录的规则和 Agent 配置
 - 调试记录、历史错误和待验证事项
 
 ### 2. 真实影刀项目目录
@@ -54,7 +54,6 @@ yingdao-xbot-ai-agent/
 AGENTS.md
 .claude/
 .codex/
-shadowbot_sync_tool.py
 ```
 
 不要复制知识库根目录的 `.claude/settings.local.json`，它包含本机权限配置，不属于通用模板。
@@ -161,29 +160,12 @@ Agent 应按以下顺序处理：
 - 只阅读源码或文档：应说明依据
 - 仅根据错误现象推测：应标记为待验证
 
-## 影刀同步
-
-`shadowbot_sync_tool.py` 位于真实影刀项目根目录，与 `package.json` 同级。
-
-新增文件后需要运行。用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行下面的命令，即使只修改了已有文件：
-
-```powershell
-python shadowbot_sync_tool.py
-```
-
-同步脚本会自动扫描项目根目录下的 Python 文件，不需要也不支持手动传入文件列表。必须明确：
-
-- 命令在真实项目根目录执行
-- “同步影刀”不等于 Git commit、Git push 或普通文件复制
-- 同步完成后仍需要在影刀编辑器中运行验证
-
 ## 最终验收清单
 
 - [ ] 修改发生在真实影刀项目目录
 - [ ] Agent 已读取 `AGENTS.md` 并检查真实项目现有代码
 - [ ] 没有改动无关代码
 - [ ] 关键参数和调用方式有现有代码、文档或源码依据
-- [ ] 如有新增文件或用户要求同步影刀，已运行 `shadowbot_sync_tool.py`
 - [ ] 已在影刀环境中实际验证
 - [ ] 未验证结论已经明确标记
 

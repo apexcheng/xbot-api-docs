@@ -145,7 +145,7 @@ shadowbot_sync_tool.py
           ↓
 实施最小必要修改
           ↓
-新增文件或用户明确要求“同步影刀”时运行 shadowbot_sync_tool.py
+新增 `.py` 文件或用户明确要求“同步影刀”时运行 shadowbot_sync_tool.py
           ↓
 在影刀环境实际验证
           ↓
@@ -205,7 +205,7 @@ shadowbot_sync_tool.py
 
 `shadowbot_sync_tool.py` 位于真实影刀项目根目录，与 `package.json` 同级。
 
-项目新增文件后需要执行；用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行下面的命令，即使本次只修改了已有文件：
+只要真实影刀项目新增了 `.py` 文件，就必须执行；用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行下面的命令，即使本次只修改了已有 `.py` 文件：
 
 ```powershell
 python shadowbot_sync_tool.py

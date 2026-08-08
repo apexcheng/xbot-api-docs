@@ -38,11 +38,11 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 - [常见问题 FAQ](docs/faq.md)：影刀编码版、Agent、同步工具和常见异常问答。
 - [贡献指南](CONTRIBUTING.md)：验证等级、脱敏、错误修正和文档结构。
 
-## New File Sync Requirement
+## New Python File Sync Requirement
 
 `project-template/` 中的 `AGENTS.md`、`.claude`、`.codex` 和 `shadowbot_sync_tool.py` 应复制到真实影刀项目根目录。
 
-真实影刀项目新增文件后运行同步脚本。用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行该脚本，即使只修改了已有文件。
+只要真实影刀项目新增了 `.py` 文件，就必须运行同步脚本。用户说“同步影刀”“执行影刀同步”“同步到影刀”等同类表述时，也都指执行该脚本，即使只修改了已有 `.py` 文件。
 
 最小示例：
 

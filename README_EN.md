@@ -66,8 +66,6 @@ Use llms.txt only for new or uncertain API, extension, or page behavior
         ↓
 Make the smallest required change
         ↓
-Run shadowbot_sync_tool.py when adding files or when the user explicitly asks to sync Yingdao
-        ↓
 Validate inside Yingdao
 ```
 
@@ -92,16 +90,6 @@ The debugging documentation records practical ways to inspect extension source c
 ### AI coding agents
 
 The repository includes conventions for Claude Code, OpenAI Codex and other agents that support `AGENTS.md` or `llms.txt`.
-
-## Important rule
-
-The synchronization helper is stored in the real Yingdao project root. Run it after adding files. Phrases such as “sync Yingdao” or “run Yingdao sync” also mean running this command, even when only existing files changed:
-
-```powershell
-python shadowbot_sync_tool.py
-```
-
-Copy the helper from `project-template/` into the real project. The sync script scans Python files directly under the project root and does not accept a file list.
 
 ## Search keywords
 
