@@ -1,3 +1,5 @@
+
+
 # 影刀 xbot AI Agent 开发指南
 
 > 面向影刀编码版、xbot、RPA 自动化和 AI 编程 Agent 的中文开发知识库。
@@ -242,6 +244,7 @@ xbot-api-docs/
 wiki/
   error-book.md              # 历史错误修正
   unresolved.md              # 待验证事项
+tests/                       # 同步工具单元测试
 待优化清单.md                # 后续补充和验证事项
 ```
 
