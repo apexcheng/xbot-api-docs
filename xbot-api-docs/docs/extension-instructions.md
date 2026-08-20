@@ -301,7 +301,7 @@
 | 支付宝登录 | direct python | `login_alipay` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 抖音店铺登录 | direct python | `login_douyin_seller` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | Win 元素可点击判断 | direct python | `is_win_element_clickable` | —（仅模块导入） | `win_utils.py` | `element` | `bool` |
-| WPS / Excel 占用者识别 | direct python | `get_wps_lock_user` | — | `excel_utils.py` | `workbook`、`file_path` | 占用者用户名或 `None` |
+| WPS / Excel 占用者识别 | direct python | `get_wps_lock_user` | — | `excel_utils.py` | `workbook` | 占用者用户名、`"未知用户"` 或 `None` |
 | 发送 ntfy 消息 | direct python | `send_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `message`、`topic`、`server` | `bool` |
 | 接收 ntfy 消息 | direct python | `receive_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `topic`、`server`、`since`、`timeout` | 按时间倒序的消息列表；无消息为空列表 |
 
@@ -558,7 +558,7 @@ def main(args):
 | 异常详情格式化 | `xbot_enhance_tools/exception_utils.py`：`format_exception_detail()` |
 | 商家后台登录辅助 | `xbot_enhance_tools/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()`、`login_alipay()` |
 | Windows 元素判断辅助 | `xbot_enhance_tools/win_utils.py`：`is_win_element_clickable()` |
-| Excel / WPS 占用者识别 | `xbot_enhance_tools/excel_utils.py`：`get_wps_lock_user(workbook=None, file_path=None)` |
+| Excel / WPS 占用者识别 | `xbot_enhance_tools/excel_utils.py`：`get_wps_lock_user(workbook)` |
 | ntfy 消息发送与接收 | `xbot_enhance_tools/ntfy_message.py`：`send_ntfy_message()`、`receive_ntfy_message()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`guanyi_erp_api/__init__.py` |

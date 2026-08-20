@@ -40,7 +40,7 @@
 - `login_alipay(account, password, profile=None)`：打开支付宝登录页，切到“账密登录”，输入账号密码并提交，等待页面跳转后按 URL 是否仍包含 `login` 判断结果
 - `login_douyin_seller(account, password, profile=None)`：打开抖音电商后台 `https://fxg.jinritemai.com/login`，切换到邮箱登录，输入邮箱和密码，必要时勾选协议并提交；按 URL 是否离开 `login` 判断结果
 - `is_win_element_clickable(element)`：判断 `Win32Window.find()` / `find_all()` 返回的 Win 元素是否显示、可用、矩形有效，且中心点落在当前屏幕范围内；满足时返回 `True`，否则返回 `False`
-- `get_wps_lock_user(workbook=None, file_path=None)`：读取 WPS / Excel 共享工作簿同目录下的 `~$` 锁文件并解析当前占用者用户名。可传影刀 Excel 工作簿对象，也可传正式文件路径；没有锁文件时返回 `None`
+- `get_wps_lock_user(workbook)`：判断影刀 Excel 工作簿是否因共享文件占用而只读，并读取同目录的 `~$` 锁文件解析当前占用者用户名。仅接收影刀 Excel workbook 对象
 - `send_ntfy_message(message, topic, server="https://ntfy.sh")`：向指定 ntfy topic 发送纯文本消息；成功返回 `True`，失败抛出异常
 - `receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=15)`：从指定 ntfy topic 拉取 `since` 范围内的缓存消息，按 `time` 从新到旧返回包含 `id`、`time`、`message` 的字典列表；无消息时返回空列表
 
@@ -127,9 +127,6 @@ from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user
 # 传影刀 Excel 工作簿对象
 user = get_wps_lock_user(workbook)
 
-# 或直接传正式文件路径
-user = get_wps_lock_user(file_path=r"\\192.168.16.34\共享目录\利润率.xlsx")
-
 if user:
     print(f"文件正在被【{user}】占用")
 ```
@@ -167,9 +164,10 @@ if messages:
 - 抖音登录使用邮箱账号；协议勾选仅在页面显示未勾选状态时处理，登录后的跳转和风控页面仍需在实际环境确认
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - `is_win_element_clickable()` 只判断元素当前状态和中心点是否在屏幕范围内，不会自动滚动、激活窗口或处理遮挡；复杂窗口状态仍需运行验证
-- `excel_utils.py` 是增强工具2026新增文件；`get_wps_lock_user()` 传影刀工作簿对象时通过 `workbook.get_full_name()` 获取正式文件路径，也支持 `file_path=` 直接传路径
+- `excel_utils.py` 是增强工具2026新增文件；`get_wps_lock_user()` 只接收影刀工作簿对象，并通过 `workbook.get_full_name()` 获取正式文件路径
+- `get_wps_lock_user()` 会先检查 `workbook.workbook.ReadOnly`：`False` 时直接返回 `None`，即使目录里有残留 `~$` 文件也不判定为占用；`True` 时才继续检查锁文件
 - `get_wps_lock_user()` 不通过普通 Python `open()` 读取锁文件，而是使用 Windows `CreateFileW` 并允许 `FILE_SHARE_READ / FILE_SHARE_WRITE / FILE_SHARE_DELETE` 后读取；这是为兼容 WPS 占用期间普通读取可能出现 `PermissionError` 的情况
-- 当前实测 WPS 锁文件会在同目录生成 `~$原文件名.xlsx/xlsm`，用户名优先从 UTF-16LE 区域解析，兼容 ANSI / GBK 回退；未发现锁文件时返回 `None`
+- 当前实测 WPS 锁文件会在同目录生成 `~$原文件名.xlsx/xlsm`，用户名优先从 UTF-16LE 区域解析，兼容 ANSI / GBK 回退；`ReadOnly=True` 但未发现锁文件时返回 `None`，锁文件存在但无法解析用户名时返回 `"未知用户"`
 - 该能力依赖 Windows / WPS 当前锁文件格式，已在当前 WPS 环境验证可读取中文用户名；WPS 后续版本若调整锁文件格式，需要重新验证解析偏移
 - `ntfy_message.py` 依赖 `requests`，当前市场指令项目已登记该依赖
 - 使用公共 `ntfy.sh` 时，topic 即消息地址的一部分，应使用难以猜测的私有 topic，避免传递账号密码等高敏感信息

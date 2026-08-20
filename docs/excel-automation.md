@@ -245,13 +245,12 @@ from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user
 
 
 user = get_wps_lock_user(workbook)
-# 或：user = get_wps_lock_user(file_path=r"\\server\share\demo.xlsx")
 
 if user:
     print(f"文件正在被【{user}】占用")
 ```
 
-`get_wps_lock_user()` 会自动定位同目录的 `~$` 锁文件。WPS 占用期间普通 `open()` 读取锁文件可能出现 `PermissionError`，该方法使用 Windows `CreateFileW` 的共享读取方式获取内容，再解析用户名；没有锁文件时返回 `None`。详细说明见 [增强工具2026](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)。
+`get_wps_lock_user()` 只接收影刀 Excel workbook 对象。它会先检查 `workbook.workbook.ReadOnly`：非只读时直接返回 `None`；只读时再定位同目录的 `~$` 锁文件。WPS 占用期间普通 `open()` 读取锁文件可能出现 `PermissionError`，该方法使用 Windows `CreateFileW` 的共享读取方式获取内容，再解析用户名。只读但没有锁文件时返回 `None`；锁文件存在但无法解析用户名时返回 `"未知用户"`。详细说明见 [增强工具2026](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)。
 
 ### 远程过程调用失败
 
