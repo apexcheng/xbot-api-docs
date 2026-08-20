@@ -238,6 +238,21 @@
 - 输出文件是否已存在
 - 保存路径是否有效
 
+如果项目已安装市场指令 `增强工具2026`，可以直接读取 WPS / Excel 共享文件的锁文件并识别占用者：
+
+```python
+from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user
+
+
+user = get_wps_lock_user(workbook)
+# 或：user = get_wps_lock_user(file_path=r"\\server\share\demo.xlsx")
+
+if user:
+    print(f"文件正在被【{user}】占用")
+```
+
+`get_wps_lock_user()` 会自动定位同目录的 `~$` 锁文件。WPS 占用期间普通 `open()` 读取锁文件可能出现 `PermissionError`，该方法使用 Windows `CreateFileW` 的共享读取方式获取内容，再解析用户名；没有锁文件时返回 `None`。详细说明见 [增强工具2026](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)。
+
 ### 远程过程调用失败
 
 此类问题可能与 Excel / WPS 进程状态、文件占用、应用崩溃或 COM 环境有关。应记录完整异常、当前打开的工作簿和应用进程状态，再结合真实环境排查，不要只重复执行相同动作。

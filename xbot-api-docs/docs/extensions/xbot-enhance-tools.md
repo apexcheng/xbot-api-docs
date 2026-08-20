@@ -1,7 +1,7 @@
 # 增强工具2026 (xbot_enhance_tools)
 
 > 调用类型：`direct python`  
-> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、ntfy_message.py 中的公开函数；__init__.py 仅导入模块。
+> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py 中的公开函数；__init__.py 不提供 processN 包装入口。
 > 来源说明：本页由原 extension-instructions.md 的 4.8 节拆出；网页登录和下载等待需运行验证。  
 > 返回：[市场指令扩展开发指南](../extension-instructions.md)
 
@@ -11,7 +11,7 @@
 
 **调用方式：** direct python
 
-**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断，以及 ntfy 消息发送与接收。
+**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别，以及 ntfy 消息发送与接收。
 
 **调用入口：**
 - `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils, win_utils, ntfy_message`
@@ -25,6 +25,7 @@
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_alipay`
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_douyin_seller`
 - `from xbot_extensions.xbot_enhance_tools.win_utils import is_win_element_clickable`
+- `from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user`
 - `from xbot_extensions.xbot_enhance_tools.ntfy_message import send_ntfy_message`
 - `from xbot_extensions.xbot_enhance_tools.ntfy_message import receive_ntfy_message`
 
@@ -39,6 +40,7 @@
 - `login_alipay(account, password, profile=None)`：打开支付宝登录页，切到“账密登录”，输入账号密码并提交，等待页面跳转后按 URL 是否仍包含 `login` 判断结果
 - `login_douyin_seller(account, password, profile=None)`：打开抖音电商后台 `https://fxg.jinritemai.com/login`，切换到邮箱登录，输入邮箱和密码，必要时勾选协议并提交；按 URL 是否离开 `login` 判断结果
 - `is_win_element_clickable(element)`：判断 `Win32Window.find()` / `find_all()` 返回的 Win 元素是否显示、可用、矩形有效，且中心点落在当前屏幕范围内；满足时返回 `True`，否则返回 `False`
+- `get_wps_lock_user(workbook=None, file_path=None)`：读取 WPS / Excel 共享工作簿同目录下的 `~$` 锁文件并解析当前占用者用户名。可传影刀 Excel 工作簿对象，也可传正式文件路径；没有锁文件时返回 `None`
 - `send_ntfy_message(message, topic, server="https://ntfy.sh")`：向指定 ntfy topic 发送纯文本消息；成功返回 `True`，失败抛出异常
 - `receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=15)`：从指定 ntfy topic 拉取 `since` 范围内的缓存消息，按 `time` 从新到旧返回包含 `id`、`time`、`message` 的字典列表；无消息时返回空列表
 
@@ -49,6 +51,7 @@
 - 需要把异常对象整理成更易读的文本内容
 - 需要在编码版里直接调用商家后台登录辅助函数，并复用指定 Chrome profile
 - 点击 Windows 元素前，需要先判断元素当前是否适合直接点击
+- 共享 Excel / WPS 文件保存失败或只读打开时，需要识别当前占用者用户名
 - 需要在 iOS 快捷指令与影刀 RPA 之间传递短信、验证码或其他文本消息
 
 **最小示例：**
@@ -115,6 +118,22 @@ if not is_win_element_clickable(element):
 element.click()
 ```
 
+**Excel / WPS 共享文件占用者识别示例：**
+
+```python
+from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user
+
+
+# 传影刀 Excel 工作簿对象
+user = get_wps_lock_user(workbook)
+
+# 或直接传正式文件路径
+user = get_wps_lock_user(file_path=r"\\192.168.16.34\共享目录\利润率.xlsx")
+
+if user:
+    print(f"文件正在被【{user}】占用")
+```
+
 **ntfy 消息发送与接收示例：**
 
 ```python
@@ -148,6 +167,10 @@ if messages:
 - 抖音登录使用邮箱账号；协议勾选仅在页面显示未勾选状态时处理，登录后的跳转和风控页面仍需在实际环境确认
 - 当前 `__init__.py` 仅做模块导入，不建议把隐藏的 Visual block 当作主要调用方式
 - `is_win_element_clickable()` 只判断元素当前状态和中心点是否在屏幕范围内，不会自动滚动、激活窗口或处理遮挡；复杂窗口状态仍需运行验证
+- `excel_utils.py` 是增强工具2026新增文件；`get_wps_lock_user()` 传影刀工作簿对象时通过 `workbook.get_full_name()` 获取正式文件路径，也支持 `file_path=` 直接传路径
+- `get_wps_lock_user()` 不通过普通 Python `open()` 读取锁文件，而是使用 Windows `CreateFileW` 并允许 `FILE_SHARE_READ / FILE_SHARE_WRITE / FILE_SHARE_DELETE` 后读取；这是为兼容 WPS 占用期间普通读取可能出现 `PermissionError` 的情况
+- 当前实测 WPS 锁文件会在同目录生成 `~$原文件名.xlsx/xlsm`，用户名优先从 UTF-16LE 区域解析，兼容 ANSI / GBK 回退；未发现锁文件时返回 `None`
+- 该能力依赖 Windows / WPS 当前锁文件格式，已在当前 WPS 环境验证可读取中文用户名；WPS 后续版本若调整锁文件格式，需要重新验证解析偏移
 - `ntfy_message.py` 依赖 `requests`，当前市场指令项目已登记该依赖
 - 使用公共 `ntfy.sh` 时，topic 即消息地址的一部分，应使用难以猜测的私有 topic，避免传递账号密码等高敏感信息
 - `receive_ntfy_message()` 使用 `poll=1` 一次读取当前缓存消息，不会在无消息时保持长连接等待；返回结果按消息时间从新到旧排序

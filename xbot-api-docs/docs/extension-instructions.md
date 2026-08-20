@@ -1,7 +1,7 @@
 # 影刀市场指令扩展开发指南
 
 > 分析范围：13 个常用市场指令目录
-> 最近补充：2026-08-06
+> 最近补充：2026-08-20
 > 分析原则：不猜测，所有结论均有文件依据
 
 ---
@@ -24,7 +24,7 @@
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | ✅ | ✅ | ✅ (仅 import) | ❌ | ✅ (3 个) |
 | `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
-| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (仅模块导入) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`、`win_utils.py`、`ntfy_message.py`) |
+| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (无 processN 包装) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`、`win_utils.py`、`excel_utils.py`、`ntfy_message.py`) |
 | `guanyi_erp_api` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
 | `activity_excel_v2` | Excel扩展操作 | flow | ✅ | ✅ | ✅ (包装入口 + 模块导入) | ❌ | ✅ (Visual / Code flow 对应 .py + 工具模块) |
 | `activity_a90a8311` | C-ERP 市场指令 | flow | ✅ | ✅ | ✅ (processN 包装) | ❌ | ✅ (Visual flow) |
@@ -301,6 +301,7 @@
 | 支付宝登录 | direct python | `login_alipay` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | 抖音店铺登录 | direct python | `login_douyin_seller` | —（仅模块导入） | `shop_utils.py` | `account`、`password`、`profile` | `bool` |
 | Win 元素可点击判断 | direct python | `is_win_element_clickable` | —（仅模块导入） | `win_utils.py` | `element` | `bool` |
+| WPS / Excel 占用者识别 | direct python | `get_wps_lock_user` | — | `excel_utils.py` | `workbook`、`file_path` | 占用者用户名或 `None` |
 | 发送 ntfy 消息 | direct python | `send_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `message`、`topic`、`server` | `bool` |
 | 接收 ntfy 消息 | direct python | `receive_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `topic`、`server`、`since`、`timeout` | 按时间倒序的消息列表；无消息为空列表 |
 
@@ -552,11 +553,12 @@ def main(args):
 | Excel扩展操作公开指令 | `activity_excel_v2/prototype.block.json`：`hidden=false` 的 40 个公开 block |
 | Excel扩展操作包装入口 | `activity_excel_v2/__init__.py`：`fill_down_formula()`、`filter()`、`process16()` 等包装函数；`refresh_pivot_table` 为模块导入 |
 | Excel扩展操作分组 | `activity_excel_v2/package.json` flows 列表中的 `A_单元格填充`、`B_单元格操作`、`C_筛选`、`D_其他` |
-| 仅模块导入型增强工具 | `xbot_enhance_tools/__init__.py`：导入 `package`、`xbot_visual`、`exception_utils`、`browser_utils`、`shop_utils`、`win_utils`、`ntfy_message` |
+| 增强工具包入口 | `xbot_enhance_tools/__init__.py`：当前不提供 processN 包装；编码版能力从各独立模块直接导入 |
 | 浏览器等待增强 | `xbot_enhance_tools/browser_utils.py`：`wait_appear_by_xpath()`、`wait_disappear_by_xpath()`、`wait_download_file()` |
 | 异常详情格式化 | `xbot_enhance_tools/exception_utils.py`：`format_exception_detail()` |
 | 商家后台登录辅助 | `xbot_enhance_tools/shop_utils.py`：`login_pdd_seller()`、`login_qianniu()`、`login_jingmai()`、`login_alipay()` |
 | Windows 元素判断辅助 | `xbot_enhance_tools/win_utils.py`：`is_win_element_clickable()` |
+| Excel / WPS 占用者识别 | `xbot_enhance_tools/excel_utils.py`：`get_wps_lock_user(workbook=None, file_path=None)` |
 | ntfy 消息发送与接收 | `xbot_enhance_tools/ntfy_message.py`：`send_ntfy_message()`、`receive_ntfy_message()` |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`guanyi_erp_api/__init__.py` |
