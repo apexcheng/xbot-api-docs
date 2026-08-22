@@ -45,7 +45,7 @@
 
 ### 2.1 activity_47680f64 — 小工具指令集
 
-| 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 独立 Python | 主要入参 | 主要出参 |
+| 指令显示名 | 调用类型 | 对应 function | __init__.py 入口 | 实现文件 | 主要入参 | 主要出参 |
 |---|---|---|---|---|---|---|
 | 递归创建文件夹 | direct python | `CreateDir` | — | `CreateDir.py` | 创建文件夹路径 | — |
 | 移动文件到上一级目录 | direct python | `MoveToPardir` | — | `MoveToPardir.py` | 文件路径 | 移动后文件路径 |
