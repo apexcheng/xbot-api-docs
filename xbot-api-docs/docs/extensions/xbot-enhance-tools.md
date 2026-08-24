@@ -1,8 +1,8 @@
 # 增强工具2026 (xbot_enhance_tools)
 
 > 调用类型：`direct python`  
-> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py 中的公开函数；__init__.py 不提供 processN 包装入口。
-> 来源说明：本页由原 extension-instructions.md 的 4.8 节拆出；网页登录和下载等待需运行验证。  
+> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py、market_config.py 中的公开函数；__init__.py 不提供 processN 包装入口。
+> 来源说明：本页由原 extension-instructions.md 的 4.8 节拆出；2026-08-24 补充初始化配置加密持久化能力；网页登录和下载等待需运行验证。  
 > 返回：[市场指令扩展开发指南](../extension-instructions.md)
 
 ---
@@ -11,7 +11,7 @@
 
 **调用方式：** direct python
 
-**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别，以及 ntfy 消息发送与接收。
+**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别、ntfy 消息发送与接收，以及影刀自定义对话框初始化配置的 DPAPI 加密持久化。
 
 **调用入口：**
 - `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils, win_utils, ntfy_message`
@@ -28,6 +28,9 @@
 - `from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user`
 - `from xbot_extensions.xbot_enhance_tools.ntfy_message import send_ntfy_message`
 - `from xbot_extensions.xbot_enhance_tools.ntfy_message import receive_ntfy_message`
+- `from xbot_extensions.xbot_enhance_tools.market_config import dialog_result_to_dict`
+- `from xbot_extensions.xbot_enhance_tools.market_config import save_secret_config`
+- `from xbot_extensions.xbot_enhance_tools.market_config import load_secret_config`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
@@ -43,6 +46,9 @@
 - `get_wps_lock_user(workbook)`：判断影刀 Excel 工作簿是否因共享文件占用而只读，并读取同目录的 `~$` 锁文件解析当前占用者用户名。仅接收影刀 Excel workbook 对象
 - `send_ntfy_message(message, topic, server="https://ntfy.sh")`：向指定 ntfy topic 发送纯文本消息；成功返回 `True`，失败抛出异常
 - `receive_ntfy_message(topic, server="https://ntfy.sh", since="10m", timeout=15)`：从指定 ntfy topic 拉取 `since` 范围内的缓存消息，按 `time` 从新到旧返回包含 `id`、`time`、`message` 的字典列表；无消息时返回空列表
+- `dialog_result_to_dict(dialog_result, ignore_attr=None)`：将 `xbot.app.dialog.show_custom_dialog()` 的返回对象转换为普通 `dict`；字符串值会尽量还原为 bool、数字、list、dict 等 Python 基础对象
+- `save_secret_config(json_path, config_obj, entropy="", description="my_app")`：使用当前 Windows 用户的 DPAPI 加密配置，并以 `{"token": "..."}` 形式持久化到磁盘；父目录不存在时自动创建
+- `load_secret_config(json_path, entropy="")`：读取并解密配置；成功返回 `dict`，文件不存在、格式错误、token 无效或解密失败时返回 `None`
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
@@ -53,6 +59,8 @@
 - 点击 Windows 元素前，需要先判断元素当前是否适合直接点击
 - 共享 Excel / WPS 文件保存失败或只读打开时，需要识别当前占用者用户名
 - 需要在 iOS 快捷指令与影刀 RPA 之间传递短信、验证码或其他文本消息
+- 机器人首次运行时通过 `show_custom_dialog()` 收集账号、路径、开关等初始化参数，并希望后续启动时直接读取，而不是每次重新填写
+- 初始化配置包含账号、密码或其他不适合明文写入 JSON 的敏感字段，需要使用 Windows 当前用户凭证保护后再落盘
 
 **最小示例：**
 
@@ -150,6 +158,66 @@ if messages:
     print(messages[0]["message"])
 ```
 
+**初始化配置加密持久化示例：**
+
+```python
+from xbot.app.dialog import show_custom_dialog
+from xbot_extensions.xbot_enhance_tools.market_config import (
+    dialog_result_to_dict,
+    load_secret_config,
+    save_secret_config,
+)
+
+
+config_path = r"C:\RobotData\my_robot_config.json"
+
+config = load_secret_config(config_path)
+if config is None:
+    dialog_result = show_custom_dialog(dialog_settings)
+    config = dialog_result_to_dict(dialog_result)
+    save_secret_config(config_path, config)
+
+username = config["username"]
+```
+
+`market_config.py` 对外只约定以上 3 个公开方法。DPAPI 加解密、字符串自动转换和底层 Windows CryptoAPI 处理均为 `_` 开头的内部方法，不应由业务项目直接依赖。
+
+**`show_custom_dialog()` 常用写法：**
+
+- 不要使用 `{"title": ..., "fields": ...}` 这种简化结构。
+- 推荐使用 `dialog_settings` 结构，通过 `dialogTitle`、`settings.editors`、`settings.buttons` 定义。
+- 输入控件使用 `VariableName` 作为返回字段名，之后通过 `dialog_result_to_dict()` 转换。
+- 初始化配置场景通常流程：`load_secret_config()` → 无配置时 `show_custom_dialog(dialog_settings)` → `dialog_result_to_dict()` → `save_secret_config()`。
+- 按钮行为建议明确区分：保存并启动（保存配置并继续）、启动（使用当前输入但不保存）、取消（终止当前流程）。
+
+示例：
+
+```python
+dialog_settings = {
+    "dialogTitle": "初始化配置",
+    "settings": {
+        "editors": [
+            {
+                "type": "TextBox",
+                "label": "账号",
+                "VariableName": "username",
+                "value": None,
+                "nullText": "请输入账号",
+            },
+        ],
+        "buttons": [
+            {
+                "type": "Button",
+                "label": "保存并启动",
+            },
+        ],
+    },
+}
+
+dialog_result = show_custom_dialog(dialog_settings)
+config = dialog_result_to_dict(dialog_result)
+```
+
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
@@ -175,6 +243,12 @@ if messages:
 - `since` 表示本次查询从什么时间点开始读取，例如 `10m` 是最近 10 分钟、`1m` 是最近 1 分钟；它不是 ntfy 的消息保存时长
 - `receive_ntfy_message()` 的 `since` 默认值已经是 `"10m"`；业务没有特殊时间范围要求时不要显式传入，也不要额外改成更短或更长的值
 - ntfy 拉取不会删除服务端消息；是否需要去重或持久化消费进度由调用方处理
+- `market_config.py` 是增强工具2026的 Direct Python 能力，不是 `show_custom_dialog()` 本身；对话框仍由调用方负责创建和展示
+- `market_config.py` 公开 API 仅有 `dialog_result_to_dict()`、`save_secret_config()`、`load_secret_config()`；其余 `_` 开头方法均视为内部实现，不要在业务项目中直接调用
+- `save_secret_config()` 使用 Windows DPAPI。默认情况下，密文与执行加密的 Windows 用户安全上下文绑定，不能把该文件当作跨用户、跨机器通用的加密配置文件
+- `entropy` 是可选附加熵；如果保存时传入，读取时必须传入完全相同的值，否则无法解密
+- `load_secret_config()` 把文件不存在、JSON 无效、token 缺失和解密失败统一处理为 `None`，调用方可据此决定是否重新展示初始化对话框
+- 配置文件磁盘格式固定为 `{"token": "<Base64 DPAPI 密文>"}`，不要再额外把明文账号、密码写入同一文件
 - 后续如果该扩展新增能力，应按源码实际接口继续补充，不要提前推断
 
 ---
