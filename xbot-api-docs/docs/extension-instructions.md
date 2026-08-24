@@ -1,7 +1,7 @@
 # 影刀市场指令扩展开发指南
 
 > 分析范围：13 个常用市场指令目录
-> 最近补充：2026-08-20
+> 最近补充：2026-08-24
 > 分析原则：不猜测，所有结论均有文件依据
 
 ---
@@ -24,7 +24,7 @@
 | `activity_5b77c4ce` | 钉钉AI表格 | direct python | ✅ | ✅ | ✅ (仅 import) | ❌ | ✅ (3 个) |
 | `dingtalk_bot_message` | 钉钉企业机器人消息_v2 | both | ✅ | ✅ | ✅ (process1/2/3) | ✅ (core.py) | ✅ (4 个) |
 | `activity_7bca6d` | 登录扩展操作 | both | ✅ | ✅ | ✅ (17 个 process) | ❌ | ✅ (11 个业务) |
-| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (无 processN 包装) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`、`win_utils.py`、`excel_utils.py`、`ntfy_message.py`) |
+| `xbot_enhance_tools` | 增强工具2026 | direct python | ✅ | ✅ | ✅ (无 processN 包装) | ❌ | ✅ (`browser_utils.py`、`exception_utils.py`、`shop_utils.py`、`win_utils.py`、`excel_utils.py`、`ntfy_message.py`、`market_config.py`) |
 | `guanyi_erp_api` | C-ERP API | direct python | ✅ | ✅ | ✅ (仅 import) | ✅ (core.py) | ✅ (7 个业务) |
 | `activity_excel_v2` | Excel扩展操作 | flow | ✅ | ✅ | ✅ (包装入口 + 模块导入) | ❌ | ✅ (Visual / Code flow 对应 .py + 工具模块) |
 | `activity_a90a8311` | C-ERP 市场指令 | flow | ✅ | ✅ | ✅ (processN 包装) | ❌ | ✅ (Visual flow) |
@@ -304,6 +304,9 @@
 | WPS / Excel 占用者识别 | direct python | `get_wps_lock_user` | — | `excel_utils.py` | `workbook` | 占用者用户名、`"未知用户"` 或 `None` |
 | 发送 ntfy 消息 | direct python | `send_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `message`、`topic`、`server` | `bool` |
 | 接收 ntfy 消息 | direct python | `receive_ntfy_message` | —（仅模块导入） | `ntfy_message.py` | `topic`、`server`、`since`、`timeout` | 按时间倒序的消息列表；无消息为空列表 |
+| 对话框结果转配置 | direct python | `dialog_result_to_dict` | —（仅模块导入） | `market_config.py` | `dialog_result`、`ignore_attr` | `dict` |
+| 保存加密初始化配置 | direct python | `save_secret_config` | —（仅模块导入） | `market_config.py` | `json_path`、`config_obj`、`entropy`、`description` | — |
+| 读取加密初始化配置 | direct python | `load_secret_config` | —（仅模块导入） | `market_config.py` | `json_path`、`entropy` | `dict` 或 `None` |
 
 ---
 
@@ -560,6 +563,7 @@ def main(args):
 | Windows 元素判断辅助 | `xbot_enhance_tools/win_utils.py`：`is_win_element_clickable()` |
 | Excel / WPS 占用者识别 | `xbot_enhance_tools/excel_utils.py`：`get_wps_lock_user(workbook)` |
 | ntfy 消息发送与接收 | `xbot_enhance_tools/ntfy_message.py`：`send_ntfy_message()`、`receive_ntfy_message()` |
+| 初始化配置加密持久化 | `xbot_enhance_tools/market_config.py`：公开 `dialog_result_to_dict()`、`save_secret_config()`、`load_secret_config()`；底层 DPAPI 方法为内部实现 |
 | processN() 标准包装 | `activity_47680f64/__init__.py:process2` 第 18-28 行、`web_action/__init__.py:process1` 第 5-15 行 |
 | 仅 import 无包装 | `activity_5b77c4ce/__init__.py`、`guanyi_erp_api/__init__.py` |
 | close_ads 默认值 | `ad_killer/_core.py` 第 25-28 行：`close_type` 默认 `"hidden"` |
@@ -616,7 +620,7 @@ def main(args):
 | 电商后台登录 | `activity_7bca6d` / `xbot_enhance_tools` | `activity_7bca6d` 提供成熟登录流程；`xbot_enhance_tools.shop_utils` 提供轻量账号密码登录辅助 |
 | ERP 数据查询 | `guanyi_erp_api` | `select_stock`、`select_item`、`select_order_list` |
 | 跨 iframe XPath 查找 / 点击 / 输入 / 等待 | `iframe2` | `init_iframe`、`to_iframe`、`find_ele`、`click_by_xpath`、`input_by_xpath`、`wait` |
-| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 / Windows 元素可点击判断 / ntfy 消息 | `xbot_enhance_tools` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils`、`is_win_element_clickable`、`send_ntfy_message`、`receive_ntfy_message` |
+| XPath 等待 / 下载等待 / 异常详情格式化 / 轻量商家登录 / Windows 元素可点击判断 / ntfy 消息 / 初始化配置加密 | `xbot_enhance_tools` | `wait_appear_by_xpath`、`wait_disappear_by_xpath`、`wait_download_file`、`format_exception_detail`、`shop_utils`、`is_win_element_clickable`、`send_ntfy_message`、`receive_ntfy_message`、`dialog_result_to_dict`、`save_secret_config`、`load_secret_config` |
 | 关闭网页广告 | `ad_killer` | `close_ads`、`close_ads_win` |
 | 网页元素扩展操作 | `web_action` | `process1`(滚动)、`process4`(背景色)、`select_date` |
 
