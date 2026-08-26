@@ -187,6 +187,7 @@ username = config["username"]
 - 不要使用 `{"title": ..., "fields": ...}` 这种简化结构。
 - 推荐使用 `dialog_settings` 结构，通过 `dialogTitle`、`settings.editors`、`settings.buttons` 定义。
 - 输入控件使用 `VariableName` 作为返回字段名，之后通过 `dialog_result_to_dict()` 转换。
+- 用户点击的按钮在返回结果中以 `pressed_button` 作为 key，不是 `button`；经 `dialog_result_to_dict()` 转换后的 dict 同样按 `pressed_button` 读取。
 - 初始化配置场景通常流程：`load_secret_config()` → 无配置时 `show_custom_dialog(dialog_settings)` → `dialog_result_to_dict()` → `save_secret_config()`。
 - 按钮行为建议明确区分：保存并启动（保存配置并继续）、启动（使用当前输入但不保存）、取消（终止当前流程）。
 
@@ -216,6 +217,9 @@ dialog_settings = {
 
 dialog_result = show_custom_dialog(dialog_settings)
 config = dialog_result_to_dict(dialog_result)
+
+# 用户点击的按钮 key 是 pressed_button，不是 button
+pressed_button = config["pressed_button"]
 ```
 
 **注意事项：**
