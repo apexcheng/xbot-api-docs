@@ -164,6 +164,8 @@ browsers = web.get_all(mode="chrome")
 
 注意：`web.get_active()` 依赖浏览器已经启动；如果当前还没有启动浏览器，这里会获取失败。初始化浏览器时建议直接用 `web.create('')`，再按业务需要传入 `mode` 和 `url`。
 
+多 Chrome Profile 场景要特别注意：`web.get_all(mode="chrome")` 受当前用户环境影响。要获取或关闭某个 Profile 下的页面，必须先用 `web.set_user_environment(...)` 切换到该 Profile，再调用 `web.get_all(...)`；不要在一个 Profile 环境下直接假设能拿到其它 Profile 的页面。
+
 | 方法 | 主要参数 | 说明 |
 |---|---|---|
 | `get(title=None, url=None, mode='cef', ...)` | `title` / `url` / `mode` / `open_page` / `page_url` | 按标题或网址匹配已打开网页 |
@@ -928,6 +930,21 @@ web.set_user_environment(
 browser = web.create("https://example.com", mode="chrome", load_timeout=20)
 browser.wait_load_completed(timeout=15)
 ```
+
+多 Profile 项目结束时，通常还需要清理各 Profile 的残留页面，避免长期运行后页面越积越多。`web.get_all()` 受当前用户环境影响，因此清理前必须先切换 Profile：
+
+```python
+def close_leftover_pages(profiles):
+    # get_all 受当前用户环境影响，必须先指定 Profile。
+    # 每个 Profile 保留最后一个页面，避免对应 Chrome 实例被完全关闭。
+    for profile in dict.fromkeys(profiles):
+        profile = str(profile or "Default").strip() or "Default"
+        web.set_user_environment(mode="chrome", profile_name=profile, specifield_userdata=False, user_data_dir=None)
+        for page in web.get_all(mode="chrome")[:-1]:
+            page.close()
+```
+
+这里使用 `[:-1]` 是有意保留最后一个页面：日常收尾目标是清理残留页面，而不是关闭整个 Chrome 实例。若把某个 Profile 下的页面全部关闭，可能连带关闭对应浏览器实例，影响后续复用该 Profile 的登录状态。只有业务明确要求完全退出浏览器时，才应关闭全部页面或使用 `web.close_all()`。
 
 登录态处理建议：
 
