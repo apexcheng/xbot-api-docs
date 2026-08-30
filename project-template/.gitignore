@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+.dev/
+config.py
+
+# ShadowBot 工程文件由影刀本地维护，只保留在本机，不进入 Git。
+__init__.py
+package.json
+package.*.json
+package.py
+package.sigstore
+settings.json
+*.pybx
+selectorsV2.xml
+imagesV2.xml
+prototype.activity.xml
+prototype.block.json
+resources/
+
+# 本地 Agent / 临时文件。
+.agents/
+.claude/
+.codex/
+AGENTS.md
+%T%/
