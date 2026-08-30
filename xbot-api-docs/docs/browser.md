@@ -259,8 +259,8 @@ browser.wait_load_completed(timeout=20)
 ## 10. 查找元素
 
 ```python
-element = browser.find(my_selector, timeout=10)
-elements = browser.find_all(my_selector, timeout=10)
+element = browser.find("按钮_查询", timeout=10)
+elements = browser.find_all("商品列表项", timeout=10)
 element = browser.find_by_css("#kw", timeout=10)
 elements = browser.find_all_by_css(".item", timeout=10)
 element = browser.find_by_xpath('//input[@name="q"]', timeout=10)
@@ -279,8 +279,8 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 
 | 方法 | 参数 | 类型 |
 |---|---|---|
-| `find` | `selector` | `str` / `Selector` |
-| `find_all` | `selector` | `str` / `Selector` |
+| `find` | `selector` | `str`（元素库名称） |
+| `find_all` | `selector` | `str`（元素库名称） |
 | `find_by_css` | `css_selector` | `str` |
 | `find_all_by_css` | `css_selector` | `str` |
 | `find_by_xpath` | `xpath_selector` | `str` |

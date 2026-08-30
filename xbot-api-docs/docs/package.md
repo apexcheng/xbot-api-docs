@@ -9,7 +9,6 @@
 
 `package` 主要用于访问当前应用中的：
 
-- 元素库选择器
 - 图像库选择器
 - 资源文件
 - 全局变量
@@ -22,48 +21,7 @@ from . import package
 
 ---
 
-## 2. `package.selector(name)`
-
-### 作用
-
-按“元素库里保存的名称”获取 `Selector` 对象。`package.selector()` 返回的是选择器，不是可直接点击或输入的元素对象。
-
-### 常用场景
-
-- 下游 API 明确需要 `Selector` 对象
-- 需要把同一个选择器对象复用到多个支持 `Selector` 的接口
-- 需要显式操作或传递选择器对象
-
-### 示例
-
-```python
-from xbot import win32
-from . import package
-
-window = win32.get_by_selector("ERP主窗口", timeout=10)
-query_btn_selector = package.selector("按钮_查询")
-query_btn = window.find(query_btn_selector, timeout=10)
-query_btn.click()
-```
-
-如果下游 API 已经支持直接传元素库名称，普通业务代码优先直接传名称，不必先调用 `package.selector()`：
-
-```python
-search_input = window.find("输入框_关键词", timeout=10)
-search_input.input("影刀")
-```
-
-### 注意事项
-
-- 传入的是元素库名称，不是页面文本。
-- 如果名称写错，会直接找不到选择器。
-- 不要把网页中看到的文字当成元素库名称。
-- 优先把稳定元素维护到元素库；当 `window.find()`、`win32.get_by_selector()` 等 API 已支持直接传元素库名称时，默认直接传名称。
-- 不要把 `Selector` 对象当成 `Win32Element` / WebElement 使用，`package.selector()` 本身不代表已经定位到元素。
-
----
-
-## 3. `package.image_selector(name)`
+## 2. `package.image_selector(name)`
 
 ### 作用
 
@@ -100,7 +58,7 @@ success_logo = package.image_selector("登录成功标记")
 
 ---
 
-## 4. `package.resources`
+## 3. `package.resources`
 
 ### 作用
 
@@ -177,7 +135,7 @@ package.resources.copy_to_clipboard(["模板.xlsx", "logo.png"])
 
 ---
 
-## 5. `package.variables`
+## 4. `package.variables`
 
 ### 作用
 
@@ -249,9 +207,9 @@ package.variables["collect_count"] = 20
 
 ---
 
-## 6. 组合用法
+## 5. 组合用法
 
-### 6.1 元素库 + 全局变量
+### 5.1 元素库 + 全局变量
 
 ```python
 from . import package
@@ -263,7 +221,7 @@ query_btn = web_page.find("按钮_查询", timeout=10)
 query_btn.click()
 ```
 
-### 6.2 资源文件 + 全局变量
+### 5.2 资源文件 + 全局变量
 
 ```python
 from . import package
@@ -272,7 +230,7 @@ template_file = package.resources.get_path("模板.xlsx")
 package.variables["template_file"] = template_file
 ```
 
-### 6.3 凭证变量 + 市场指令
+### 5.3 凭证变量 + 市场指令
 
 ```python
 from . import package
@@ -287,7 +245,7 @@ payload = build_payload(
 result = gy_call(payload)
 ```
 
-## 7. 经验
+## 6. 经验
 
 - `package.resources` 只用于访问随应用打包的固定资源，不适合保存运行时动态生成内容。
 - 当前可见 `ResourceReader` 公开方法是 `get_path()`、`get_text()`、`get_bytes()`、`copy_to()`、`copy_to_clipboard()`；不要把 `package.resources` 当字典使用，也不要写 `package.resources["模板.xlsx"]`。
@@ -299,9 +257,24 @@ result = gy_call(payload)
 
 ---
 
+## 7. 低频：显式获取 `Selector` 对象
+
+普通 Win32 / Web / Mobile 元素定位直接把元素库名称传给对应原生 API，不需要显式获取 `Selector` 对象。
+
+只有确实需要读取或处理选择器对象本身的元数据时，才使用 `package.selector()`：
+
+```python
+from . import package
+
+selector = package.selector("目标元素")
+framework = selector.framework()
+xpath = selector.xpath()
+```
+
+---
+
 ## 8. 快速建议
 
-- 需要显式取得选择器对象时，用 `package.selector()`；下游 API 已支持直接传元素库名称时，优先直接传名称。
 - 需要引用图片时，用 `package.image_selector()`。
 - 需要跨流程传对象时，用 `package.variables`。
 - 需要随应用打包的文件时，用 `package.resources`。

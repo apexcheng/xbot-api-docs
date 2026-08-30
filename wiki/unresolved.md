@@ -19,7 +19,7 @@
 ## 2026-06-13 package 底层对象详细用法
 
 - 问题：`xbot.selector.SelectorStore`、`xbot.selector.ImageSelectorStore`、`xbot.primitives.VariableDict`、`xbot.primitives.ResourceReader` 的底层初始化参数和返回对象行为尚未按当前影刀版本源码验证。
-- 当前判断：稳定开发优先使用项目生成的 `package.selector()`、`package.image_selector()`、`package.variables`、`package.resources`，不要在业务代码中直接猜底层对象行为。
+- 当前判断：普通元素定位直接把元素库名称传给 Win32 / Web / Mobile 对应原生 API；`package.image_selector()`、`package.variables`、`package.resources` 按各自公开用途使用，不要在业务代码中直接猜底层对象行为。
 - 需要验证：`SelectorStore(name=...)` 的 `name` 与元素库名称的对应关系、`VariableDict()` 是否完整等价于当前项目全局变量、`ResourceReader()` 的资源路径解析规则。
 - 验证方式：在真实影刀项目中用 `inspect.signature()`、`inspect.getfile()` 查看当前版本实现，并用最小流程运行确认。
 - 关联文档：`xbot-api-docs/docs/package.md`

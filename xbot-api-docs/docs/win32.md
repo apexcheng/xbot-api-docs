@@ -49,7 +49,7 @@
 
 按选择器获取窗口，返回 `Win32Window`。
 
-`selector` 支持直接传元素库选择器名称字符串，也支持传 `Selector` 对象。普通业务代码优先直接传名称，没有明确需要时不必先调用 `package.selector()`。
+`selector` 直接传元素库选择器名称字符串。
 
 ```python
 window = win32.get_by_selector("ERP主窗口", timeout=10)
@@ -234,7 +234,7 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 
 在窗口内查找元素、等待元素出现或消失。
 
-`Win32Window.find(selector, timeout=20)` 返回 `Win32Element`。`selector` 同样支持直接传元素库选择器名称字符串或 `Selector` 对象。
+`Win32Window.find(selector, timeout=20)` 返回 `Win32Element`。普通业务代码直接传元素库选择器名称字符串。
 
 推荐保留“先找窗口，再在窗口内找元素”的对象层级：
 
@@ -246,14 +246,6 @@ query_btn.click()
 
 search_input = window.find("输入框_关键词", timeout=10)
 search_input.input("影刀")
-```
-
-如果只是为了立即调用 `find()`，不推荐额外做一次选择器转换：
-
-```python
-# 不推荐：没有增加业务语义
-selector = package.selector("按钮_查询")
-query_btn = window.find(selector, timeout=10)
 ```
 
 更不要用同一个具体元素选择器先定位窗口、再在该窗口内重复查找同一元素。窗口定位和窗口内元素定位应保持清晰的两层语义。
