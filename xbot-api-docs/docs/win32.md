@@ -250,6 +250,50 @@ search_input.input("影刀")
 
 更不要用同一个具体元素选择器先定位窗口、再在该窗口内重复查找同一元素。窗口定位和窗口内元素定位应保持清晰的两层语义。
 
+### 6.7 推荐代码结构
+
+Windows 自动化优先让代码直接对应真实操作路径：先获取真正要操作的业务窗口；只有业务窗口不存在时，才进入主程序并打开该业务窗口。
+
+```python
+try:
+    target_window = win32.get_by_selector("目标业务窗口", timeout=2)
+except Exception:
+    target_window = None
+
+if not target_window:
+    main_window = win32.get_by_selector("主程序窗口", timeout=10)
+    main_window.find("进入业务窗口按钮", timeout=10).click()
+
+    try:
+        target_window = win32.get_by_selector("目标业务窗口", timeout=20)
+    except Exception:
+        raise RuntimeError("未找到目标业务窗口")
+
+target_window.find("搜索框", timeout=10).clipboard_input("关键词", append=False)
+target_window.find("查询按钮", timeout=10).click()
+```
+
+这种结构重点表达三层语义：
+
+1. 先复用目标业务窗口，不无条件启动或切换主程序。
+2. 主程序只是目标窗口不存在时的兜底入口。
+3. 获取目标窗口后，后续元素查找和操作都围绕该窗口对象展开。
+
+元素只使用一次并立即执行操作时，可以直接链式调用：
+
+```python
+window.find("输入框", timeout=10).clipboard_input(text, append=False)
+window.find("查询按钮", timeout=10).click()
+```
+
+元素后续还需要读取、判断或重复使用时，保留变量：
+
+```python
+result = window.find("结果文本", timeout=10)
+if "成功" in str(result.get_text() or ""):
+    result.click()
+```
+
 ---
 
 ## 7. Win32Element 常用方法
