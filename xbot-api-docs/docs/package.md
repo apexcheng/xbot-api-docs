@@ -26,34 +26,31 @@ from . import package
 
 ### 作用
 
-按“元素库里保存的名称”获取元素选择器。
+按“元素库里保存的名称”获取 `Selector` 对象。`package.selector()` 返回的是选择器，不是可直接点击或输入的元素对象。
 
 ### 常用场景
 
-- 点击页面按钮
-- 输入框定位
-- 软件窗口控件定位
-- 列表/表格元素定位
+- 下游 API 明确需要 `Selector` 对象
+- 需要把同一个选择器对象复用到多个支持 `Selector` 的接口
+- 需要显式操作或传递选择器对象
 
 ### 示例
 
 ```python
+from xbot import win32
 from . import package
 
-query_btn = package.selector("按钮_查询")
+window = win32.get_by_selector("ERP主窗口", timeout=10)
+query_btn_selector = package.selector("按钮_查询")
+query_btn = window.find(query_btn_selector, timeout=10)
 query_btn.click()
 ```
 
-### Agent 常见写法
+如果下游 API 已经支持直接传元素库名称，普通业务代码优先直接传名称，不必先调用 `package.selector()`：
 
 ```python
-from . import package
-
-search_input = package.selector("输入框_关键词")
-search_button = package.selector("按钮_搜索")
-
+search_input = window.find("输入框_关键词", timeout=10)
 search_input.input("影刀")
-search_button.click()
 ```
 
 ### 注意事项
@@ -61,7 +58,8 @@ search_button.click()
 - 传入的是元素库名称，不是页面文本。
 - 如果名称写错，会直接找不到选择器。
 - 不要把网页中看到的文字当成元素库名称。
-- 优先把稳定元素维护到元素库，再通过 `package.selector()` 取，不要在代码里到处硬写同一套选择器。
+- 优先把稳定元素维护到元素库；当 `window.find()`、`win32.get_by_selector()` 等 API 已支持直接传元素库名称时，默认直接传名称。
+- 不要把 `Selector` 对象当成 `Win32Element` / WebElement 使用，`package.selector()` 本身不代表已经定位到元素。
 
 ---
 
@@ -259,9 +257,9 @@ package.variables["collect_count"] = 20
 from . import package
 
 web_page = package.variables["web_page"]
-query_btn = package.selector("按钮_查询")
 
 web_page.wait_load_completed(timeout=30)
+query_btn = web_page.find("按钮_查询", timeout=10)
 query_btn.click()
 ```
 
@@ -303,7 +301,7 @@ result = gy_call(payload)
 
 ## 8. 快速建议
 
-- 需要引用元素时，用 `package.selector()`。
+- 需要显式取得选择器对象时，用 `package.selector()`；下游 API 已支持直接传元素库名称时，优先直接传名称。
 - 需要引用图片时，用 `package.image_selector()`。
 - 需要跨流程传对象时，用 `package.variables`。
 - 需要随应用打包的文件时，用 `package.resources`。
