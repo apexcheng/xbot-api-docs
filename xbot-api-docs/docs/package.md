@@ -52,7 +52,7 @@ success_logo = package.image_selector("登录成功标记")
 
 ### 注意事项
 
-- 通常配合 `xbot.win32.Image` 使用。
+- 配合 `xbot.win32.image` 图像识别 API 使用，不要把图片选择器传给 `Win32Window.find()`。
 - 图像选择器的稳定性依赖截图质量和页面状态。
 - 图像选择器更适合兜底，不要优先替代能稳定定位的网页元素。
 

@@ -149,8 +149,9 @@ docs/standard-project-reference.md
 10. 页面字段、按钮含义、价格口径必须以当前需求、页面证据或已验证结果为准。
 11. XPath、CSS、页面接口、按钮状态未验证时，必须标注“需运行验证”。
 12. Win32 / Web / Mobile 普通元素定位时，直接把元素库名称传给对应原生 API。Windows 获取窗口使用 `win32.get_by_selector()`，已有窗口后在窗口内查找元素使用 `window.find()`；不要为元素定位增加额外转换层，也不要新增 `get_element()`、`find_element()` 等仅做转发或切换定位方式的薄封装，避免隐藏搜索范围和对象语义。
-13. Windows 自动化需要进入二级业务窗口时，优先先获取并复用真正要操作的目标业务窗口；只有目标窗口不存在时，才进入“获取或启动主程序 → 点击入口 → 再获取目标业务窗口”的兜底路径。兜底后仍找不到目标窗口的失败判断放在该兜底分支内部，不要写成两个连续的同条件判断。
-14. Windows 元素只使用一次且立即执行 `click()`、`input()`、`clipboard_input()` 等操作时，可以直接链式调用，例如 `window.find("输入框", timeout=10).clipboard_input(text, append=False)`；元素后续还要读取、判断或复用时，保留语义明确的变量。
+13. 图片库选择器与普通元素选择器是两套定位方式。`package.image_selector()` 获取的图片选择器不要传给 `window.find()` / `find_all()`；图片识别使用 `win32.image`。已有目标窗口时，优先限定窗口范围，例如 `win32.image.click_on_window(window.hWnd, package.image_selector("图片名"), timeout=10)`；普通桌面元素仍使用 `window.find("元素名", timeout=10)`。
+14. Windows 自动化需要进入二级业务窗口时，优先先获取并复用真正要操作的目标业务窗口；只有目标窗口不存在时，才进入“获取或启动主程序 → 点击入口 → 再获取目标业务窗口”的兜底路径。兜底后仍找不到目标窗口的失败判断放在该兜底分支内部，不要写成两个连续的同条件判断。
+15. Windows 元素只使用一次且立即执行 `click()`、`input()`、`clipboard_input()` 等操作时，可以直接链式调用，例如 `window.find("输入框", timeout=10).clipboard_input(text, append=False)`；元素后续还要读取、判断或复用时，保留语义明确的变量。
 
 ---
 
