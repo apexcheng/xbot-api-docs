@@ -506,6 +506,32 @@ element.set_attribute("data-id", "123")
 | `get_all_attributes()` | 无 | 获取全部属性 |
 | `set_attribute(name, value)` | `str, str` | 设置属性 |
 
+### 15.1 `get_text()` 暂时读取不到动态渲染文本
+
+动态页面中，元素已经可以定位时，`get_text()` 仍可能暂时拿不到完整文本。不要把“元素已找到”直接当成“业务值已加载完成”。
+
+应等待文本满足预期业务格式，再继续执行；优先使用“短间隔轮询 + 总超时”，不要固定 `sleep()`。动态刷新页面中，每轮重新定位元素。
+
+```python
+import re
+import time
+
+deadline = time.monotonic() + 3
+
+while True:
+    text = page.find_by_xpath(value_xpath, timeout=1).get_text()
+
+    if re.fullmatch(r"\d+", text.strip()):
+        break
+
+    if time.monotonic() >= deadline:
+        raise RuntimeError(f"动态文本加载超时：{text}")
+
+    time.sleep(0.2)
+```
+
+正则应替换为当前业务值最终应满足的格式。该方式适用于倒计时、价格、库存、状态等异步加载字段。
+
 ---
 
 ## 16. 复选框和下拉框
