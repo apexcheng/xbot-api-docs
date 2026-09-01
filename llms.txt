@@ -28,7 +28,7 @@ Agent 应在真实项目目录修改业务代码，只从本仓库读取知识�
 ## Public Documentation
 
 - [文档中心](docs/README.md)：面向开发者和搜索引擎的总入口。
-- [影刀 xbot 快速开始](docs/getting-started.md)：首次使用、目录区分、TASK.md 和同步流程。
+- [影刀 xbot 快速开始](docs/getting-started.md)：首次使用、目录区分和同步流程。
 - [AI Agent 开发工作流](docs/ai-agent-development.md)：Claude Code、Codex、Cursor 的推荐工作方式。
 - [标准流程项目参考](docs/standard-project-reference.md)：多数据源下载、写表、完整重试、统一保存和通知的首选结构。
 - [xbot API 导航指南](docs/xbot-api-guide.md)：按业务任务定位正确 API 文档。
