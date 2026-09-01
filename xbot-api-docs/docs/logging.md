@@ -199,12 +199,14 @@ logging.info("开始采集")
 ### 示例
 
 ```python
+import traceback
+
 from xbot.app import logging
 
 try:
     run_task()
-except Exception as e:
-    logging.error(f"任务失败：{e}")
+except Exception:
+    logging.error(f"任务失败：\n{traceback.format_exc()}")
     raise
 ```
 

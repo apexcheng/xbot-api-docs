@@ -1,6 +1,7 @@
 import contextlib
 import io
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -192,6 +193,42 @@ class SyncToolTests(unittest.TestCase):
         with contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit):
                 parser.parse_args(["run.py"])
+
+    def test_project_template_base_files_register_as_code_flows(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            project_dir = Path(temp_dir)
+            self.write_package_json(
+                project_dir,
+                {
+                    "startup": "main",
+                    "flows": [
+                        {
+                            "name": "main",
+                            "filename": "main",
+                            "kind": "Visual",
+                            "opened": False,
+                            "groupName": None,
+                            "enableCopilot": False,
+                        }
+                    ],
+                    "flow_groups": [],
+                },
+            )
+            (project_dir / "main.pybx").write_bytes(b"visual-flow")
+            for file_name in ("run.py", "config.py"):
+                shutil.copy2(PROJECT_TEMPLATE_DIR / file_name, project_dir / file_name)
+
+            self.run_sync(project_dir)
+
+            package_data = json.loads(
+                (project_dir / "package.json").read_text(encoding="utf-8")
+            )
+            flows = {flow["filename"]: flow for flow in package_data["flows"]}
+
+            self.assertEqual(package_data["startup"], "main")
+            self.assertEqual(flows["main"]["kind"], "Visual")
+            self.assertEqual(flows["run"]["kind"], "Code")
+            self.assertEqual(flows["config"]["kind"], "Code")
 
 
 if __name__ == "__main__":

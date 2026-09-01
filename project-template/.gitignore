@@ -1,0 +1,27 @@
+# 影刀本地开发目录
+.dev/
+.dev/**
+
+# Python 缓存
+__pycache__/
+__pycache__/**
+*.pyc
+*.pyo
+*.pyd
+
+# 影刀自动维护的项目文件
+imagesV2.xml
+main.pybx
+package.json
+package.py
+package.sigstore
+PackageMeta.json
+selectorsV2.xml
+settings.json
+__init__.py
+
+# 本地开发工具配置
+.claude/settings.local.json
+*.db
+*.pdb
+workspace.state.json

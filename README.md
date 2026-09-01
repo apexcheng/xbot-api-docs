@@ -32,7 +32,13 @@
 
 - [AGENTS.md](AGENTS.md)：跨项目稳定规则，包括最小改动、过程式主流程、不猜 API 和按风险验证。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
-- [project-template](project-template/)：可复制到真实影刀项目的最小模板和同步工具。
+- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口、可视化流程读取 Skill 和同步工具。
+
+### 开发与排错专题
+
+- [最小 base 骨架](docs/base-project-skeleton.md)
+- [多数据源报表安全边界](docs/multi-source-report-safety.md)
+- [影刀编码版通用排错](docs/troubleshooting.md)
 
 ### xbot API 与自动化文档
 
@@ -66,14 +72,22 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 
 本仓库只保存知识，不是实际运行的影刀应用。请确认真实项目根目录中存在 `package.json`，再让 AI Agent 进入该目录修改业务代码。
 
-### 3. 复制最小项目模板
+### 3. 复制 base 项目模板
 
-把 `project-template/` 中的两个文件复制到真实项目根目录，与 `package.json` 同级：
+把 `project-template/` 的内容复制到已存在 `package.json` 的真实项目根目录：
 
 ```text
 AGENTS.md
+config.py
+run.py
 shadowbot_sync_tool.py
+.gitignore
+.agents/skills/xbot-visual-flow-reader/
+.claude/CLAUDE.md
+.claude/skills/xbot-visual-flow-reader/
 ```
+
+`run.py` 与 `config.py` 基于真实影刀项目核验，使用“增强工具2026”的加密配置能力。完整前提和验收见 [最小 base 骨架](docs/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 
@@ -113,7 +127,8 @@ AGENTS.md                    # Agent 稳定开发规则
 llms.txt                     # AI / LLM 文档索引
 README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
-project-template/            # 真实影刀项目最小模板
+docs/                        # base 骨架、多数据源安全与通用排错
+project-template/            # 真实影刀项目 base 模板、Skill 与同步工具
 tests/                       # 影刀同步工具回归测试
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界
