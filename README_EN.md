@@ -60,7 +60,7 @@ Locate the real Yingdao project directory
         ↓
 Copy project-template files and read the project AGENTS.md
         ↓
-Create TASK.md for complex work
+Create TASK.md only for long-running or persistent work
         ↓
 Use llms.txt only for new or uncertain API, extension, or page behavior
         ↓
