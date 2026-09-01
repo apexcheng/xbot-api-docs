@@ -1,6 +1,5 @@
 .obsidian/
-.claude/*
-!.claude/CLAUDE.md
+.claude/
 __pycache__/
 .idea/
 *.pyb

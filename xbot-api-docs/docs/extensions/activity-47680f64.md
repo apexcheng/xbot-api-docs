@@ -2,8 +2,8 @@
 
 > 调用类型：`both`  
 > 主要入口：Code 型直接调用业务 .py 的 main()；Visual 型通过 __init__.py 的 processN() 调用 xbot_visual.process.run()。  
-> 来源说明：本页由原 extension-instructions.md 的 4.1 节拆出；结论来源见总入口的证据引用。  
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：入口和参数以当前安装版本的 `package.json`、公开包装函数及运行结果为准。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 

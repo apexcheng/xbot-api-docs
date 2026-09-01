@@ -6,16 +6,9 @@
 
 ---
 
-## 1. 相关文件位置
+## 1. 核验来源
 
-| 路径 | 作用 |
-|---|---|
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\excel\__init__.py` | Excel 原生入口：创建、打开、获取当前工作簿、关闭 Excel 进程 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\excel\workbook\baseworkbook.py` | 工作簿接口：保存、关闭、Sheet 操作、宏、透视表、导出 PDF 等 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\excel\worksheet\baseworksheet.py` | 工作表接口：读写单元格、行、列、区域，插入/删除/清空等 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\excel\workrange\baseworkrange.py` | 区域对象接口：格式、字体、边框、背景、行高、列宽、数据验证等 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot_visual\excel.py` | 影刀可视化动作封装：`launch`、读写、循环、复制粘贴、格式、排序等 |
-| [`package.md`](package.md) | 影刀基础对象与全局变量说明 |
+本页按 ShadowBot 6.3.12 内置 `xbot/excel/` 与 `xbot_visual/excel.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.excel)` 定位当前实现。基础对象见 [`package.md`](package.md)。
 
 ---
 
@@ -489,8 +482,6 @@ sheet.clear_range(1, "E", 20000, "AA")
 
 清空旧数据是后续写入正确性的前提时，不要静默忽略 `clear_range()` 异常。
 
-完整示例：[`excel-clear-write-text.py`](../examples/excel-clear-write-text.py)，演示清空数据区域后把全部非空值按文本批量写入，避免商品 ID、订单号等长数字丢失精度。
-
 常见参数：
 
 | 参数 | 类型 | 可选值 / 示例 | 说明 |
@@ -564,8 +555,6 @@ sheet.select_rows(list(range(2, 11)))
 ```
 
 `select_rows(rows)` 接收行号列表，用于在 Excel / WPS 界面中选中多行。该操作依赖真实 Office / WPS 界面，需在影刀运行环境验证。
-
-区域复制完整示例：[`excel-copy-range.py`](../examples/excel-copy-range.py)。
 
 ---
 
@@ -670,23 +659,7 @@ workbook = xbot.excel.open(
 
 ---
 
-## 17. 经验
-
-- `kind` 等字符串参数大小写敏感，按文档传 `kind="wps"`、`kind="office"`、`kind="openpyxl"`，不要写 `"WPS"`、`"PWS"`、`"Office"` 或界面中文展示值。
-- 影刀项目默认优先使用 `xbot.excel` 处理 Excel / WPS 文件；涉及公式刷新、界面交互、宏、另存、格式、文件占用、真实 Office / WPS 行为时，不要为了图快改用其它后台读写库。
-- 表格大量写入时，优先整理成二维数组后用 `set_range()` 批量写入，减少逐单元格操作；写入前先明确表头、起始单元格和目标区域。
-- WPS 批量写入业务文本前，应检查字符串是否以 `=` 开头；这类值可能被当成公式并触发模糊 COM 异常。确定是文本时，在前面增加英文单引号后再写入，不要先误判为分批大小或 WPS 随机不稳定。
-- 需要写入真实 Excel / WPS 工作簿时，建议先用 `workbook.workbook.ReadOnly` 判断是否只读；第一次只读可能是本机残留进程占用，可关闭后 kill 本机 WPS / Excel 进程再二次打开判断，第二次仍只读再判定可能被他人占用。
-- `kind="wps"` 对应 `xbot.excel.kill_excel_process("wps", True)`；`kind="office"` 对应 `xbot.excel.kill_excel_process("office", True)`。
-- 字段名来自当前业务表时，不要抽成跨项目通用常量；当前项目已约定字段结构时，业务逻辑直接按约定取值，不要反复写 `isinstance` 和空结构兜底。
-- 用户需要看到 WPS / Excel 写入过程时，可用 `xbot.win32.get(title="*文件名*", use_wildcard=True)` 激活窗口，再用表格对象能力选中新增行；不要优先坐标点击或猜窗口句柄。
-- 本地脚本或 pytest 通过，只能说明后台数据处理逻辑可用；涉及 WPS / Office 界面、公式刷新、宏、弹窗、文件占用时，最终仍需在影刀编辑器或真实运行环境验证。
-- 按日期批量扫描表格时，如果业务要求日期连续，遇到缺失文件优先从模板资源复制补齐；模板路径应通过 `package.resources.get_path()` 或 `copy_to()` 获取，不要写 `package.resources["xxx"]`。
-- 平台导出 ZIP 后如果包含多个 `.xlsx`，不要随手取第一个文件；优先按业务文件名关键词、表头结构、sheet 名识别目标报表，无法判断时应抛出明确异常或进入失败结果。
-
----
-
-## 18. 排错速查
+## 17. 排错速查
 
 | 现象 | 常见原因 | 处理 |
 |---|---|---|

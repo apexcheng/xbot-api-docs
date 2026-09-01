@@ -5,12 +5,9 @@
 
 ---
 
-## 1. 相关文件位置
+## 1. 核验来源
 
-| 路径 | 作用 |
-|---|---|
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\app\logging.py` | 日志实现入口 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\__init__.py` | `xbot.print()` / `xbot.sleep()` |
+本页按 ShadowBot 6.3.12 内置 `xbot/app/logging.py` 与 `xbot/__init__.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.app.logging)` 定位当前实现。
 
 ---
 

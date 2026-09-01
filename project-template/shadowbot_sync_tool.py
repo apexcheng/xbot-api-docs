@@ -65,19 +65,6 @@ def normalize_python_file_name(file_name):
     return path.name, path.stem
 
 
-def resolve_existing_group_name(package_data, group_name):
-    """Use an existing flow-group name if it already exists.
-
-    :param dict package_data: Package metadata.
-    :param str group_name: Requested group name.
-    :return str: Existing or requested group name.
-    """
-    for item in package_data.get("flow_groups", []):
-        if item.get("name") == group_name:
-            return item["name"]
-    return group_name
-
-
 def ensure_group_exists(package_data, group_name):
     """Make sure the requested group exists in `flow_groups`.
 
@@ -85,8 +72,6 @@ def ensure_group_exists(package_data, group_name):
     :param str group_name: Group name to add.
     :return str: Final group name.
     """
-    group_name = resolve_existing_group_name(package_data, group_name)
-
     for item in package_data.get("flow_groups", []):
         if item.get("name") == group_name:
             return group_name

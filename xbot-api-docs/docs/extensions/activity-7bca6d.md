@@ -2,8 +2,8 @@
 
 > 调用类型：`both`  
 > 主要入口：Code 型登录脚本可直接调用；Visual 型通过 __init__.py 的 processN() 包装调用。  
-> 来源说明：本页由原 extension-instructions.md 的 4.4 节拆出；登录参数需按当前安装源码和运行环境复核。  
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：登录参数需按当前安装版本和运行环境复核。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 
@@ -94,6 +94,6 @@ browser.wait_load_completed(timeout=15)
 使用建议：
 
 - 复用指定 Chrome Profile、维持既有登录态或切换浏览器用户环境时，优先使用原生 `xbot.web.set_user_environment`。
-- 这类场景统一使用原生 `xbot.web.set_user_environment`；更多参数说明见 `docs/browser.md`。
+- 这类场景统一使用原生 `xbot.web.set_user_environment`；更多参数说明见 [`browser.md`](../browser.md)。
 
 ---

@@ -5,11 +5,9 @@
 
 ---
 
-## 1. 相关文件位置
+## 1. 核验来源
 
-| 路径 | 作用 |
-|---|---|
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\xzip.py` | 压缩/解压实现 |
+本页按 ShadowBot 6.3.12 内置 `xbot/xzip.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.xzip)` 定位当前实现。
 
 ---
 

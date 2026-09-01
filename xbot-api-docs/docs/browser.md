@@ -1,7 +1,7 @@
 # 影刀浏览器操作方法整理
 
-> 定位：影刀 / xbot 操作浏览器的开发者参数手册。  
-> 重点：把 `xbot.web` 常用方法、参数、默认值、可选值写清楚。  
+> 定位：影刀 / xbot 操作浏览器的开发者参数手册。
+> 重点：把 `xbot.web` 常用方法、参数、默认值、可选值写清楚。
 > 规则：字符串参数必须按文档中的值原样传入，例如 `mode="chrome"`，不是 `Chrome` / `CHROME`。
 
 涉及浏览器、URL、网页业务功能时，除非用户明确要求，否则不要使用 `requests`、`httpx`、`aiohttp`、`urllib` 或其他网络相关 Python 库；只使用 `xbot.web` 及其浏览器对象能力处理页面、请求、Cookie、网络监听和下载。
@@ -19,13 +19,9 @@
 
 ---
 
-## 1. 相关文件位置
+## 1. 核验来源
 
-| 路径 | 作用 |
-|---|---|
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\web\__init__.py` | 浏览器入口：打开、获取、关闭、Cookie、上传下载对话框等 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\web\browser.py` | 浏览器对象：页面信息、导航、查找、等待、执行脚本、截图、网络监听等 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\web\element.py` | 元素对象：点击、输入、悬停、取值、拖拽、上传下载、截图等 |
+本页按 ShadowBot 6.3.12 内置 `xbot/web/__init__.py`、`browser.py` 和 `element.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.web)` 定位当前实现，不复制固定绝对路径。
 
 ---
 
@@ -64,11 +60,12 @@ file_folder = r"C:\Downloads"
 file_name = r"C:\test.txt"
 ```
 
-### 2.4 不要使用影刀可视化选择器
+### 2.4 元素库与 XPath / CSS
 
-编码版优先用 XPath / CSS，不建议直接依赖可视化选择器。
+项目已有元素库名称时，可直接使用 `browser.find("元素名")`。没有可复用元素时，再按真实 DOM 使用 XPath / CSS；不要自行猜测或转换选择器。
 
 ```python
+element = browser.find("搜索框", timeout=10)
 element = browser.find_by_xpath('//div[@class="item"]', timeout=10)
 element = browser.find_by_css('.item', timeout=10)
 ```
@@ -145,12 +142,6 @@ browser = web.create(
 | `silent_running` | `bool` | 否 | `False` | 是否静默运行 |
 | `executable_path` | `str` / `None` | 否 | `None` | 自定义浏览器路径 |
 | `arguments` | `list` / `str` / `None` | 否 | `None` | 启动参数 |
-
-实战建议：
-
-- 普通页面打开可先用默认 `load_timeout=20`
-- 登录、电商后台、采价等慢页面，旧项目里更常见 `load_timeout=30`
-- 如果文档写的是默认值，不代表业务里一定适合默认值；以当前页面加载稳定性为准
 
 ---
 
@@ -826,152 +817,7 @@ web.set_user_environment(
 
 ---
 
-## 26. 常用模板
-
-### 26.1 XPath 等待后点击
-
-```python
-from xbot import web
-from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath
-
-browser = web.get_active(mode="chrome")
-
-element = wait_appear_by_xpath(browser, '//button[contains(., "查询")]', timeout=10)
-if not element:
-    raise RuntimeError("目标元素未出现")
-
-element.click(delay_after=0.3)
-```
-
-### 26.2 历史包装层写法需运行验证
-
-```python
-# 历史项目里可能看到类似写法，但不要默认当前环境可用
-# 如需等待 XPath 字符串，优先参考 xbot_enhance_tools.browser_utils
-from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath
-
-element = wait_appear_by_xpath(page, '//button[contains(., "查询")]', timeout=10)
-if not element:
-    raise RuntimeError("目标元素等待超时")
-element.click(delay_after=0.3)
-```
-
-说明：如果历史代码里出现包装层方法或 `page.wait_for_element()` 这类写法，需运行验证，不要直接当成当前稳定能力。
-
-### 26.3 输入中文
-
-```python
-input_ele = browser.find_by_xpath('//input[@name="wd"]')
-input_ele.clipboard_input("影刀 RPA", delay_after=0.3)
-```
-
-### 26.4 下载文件
-
-```python
-button = browser.find_by_xpath('//button[contains(., "下载")]')
-file_path = button.download(
-    file_folder=r"C:\Downloads",
-    file_name="result.xlsx",
-    wait_complete=True,
-)
-```
-
-### 26.5 电商项目常用浏览器组织模式
-
-```python
-from xbot import web
-
-browser = web.create(link, mode="chrome", load_timeout=20)
-browser.wait_load_completed(timeout=15)
-
-if not ensure_login(browser, account):
-    raise RuntimeError("账号未登录")
-
-for page in web.get_all(mode="chrome"):
-    if page.get_url() != browser.get_url():
-        page.close()
-```
-
-适用经验：
-
-- 电商页通常先 `web.create(..., mode="chrome", load_timeout=20)`，再补一层 `browser.wait_load_completed(timeout=15)`。
-- 登录流程建议先判断是否已登录，未登录再跳登录页，不要每次无条件重登。
-- 多页面任务结束后，可用 `web.get_all(mode="chrome")` 遍历关闭无关页面，只保留当前任务页。
-- `browser.get_cookies()` 可用于登录态判定；例如项目里会按 Cookie 名判断拼多多是否已登录。
-
-`browser.get_cookies()` 示例：
-
-```python
-cookies = browser.get_cookies()
-names = [cookie.get("name") for cookie in cookies]
-is_logged_in = "PDDAccessToken" in names or "pdd_user_id" in names
-```
-
-说明：
-
-- Cookie 名判断属于项目实战模式，不代表所有站点都适用；跨项目复用前建议先运行验证。
-- 页面清理逻辑只适合“当前浏览器实例由本流程统一接管”的任务，不要误关用户手工保留的工作页。
-
-### 26.6 Chrome Profile 与登录态复用
-
-需要复用登录态、切换浏览器用户环境或指定 Chrome Profile 时，优先使用原生 `xbot.web.set_user_environment`。Profile 名称可以来自账号表或配置项；为空时可回退到 `"Default"`。
-
-```python
-from xbot import web
-
-profile = str(profile_name or "Default").strip() or "Default"
-web.set_user_environment(
-    mode="chrome",
-    profile_name=profile,
-    specifield_userdata=False,
-    user_data_dir=None,
-)
-
-browser = web.create("https://example.com", mode="chrome", load_timeout=20)
-browser.wait_load_completed(timeout=15)
-```
-
-多 Profile 项目结束时，通常还需要清理各 Profile 的残留页面，避免长期运行后页面越积越多。`web.get_all()` 受当前用户环境影响，因此清理前必须先切换 Profile：
-
-```python
-def close_leftover_pages(profiles):
-    # get_all 受当前用户环境影响，必须先指定 Profile。
-    # 每个 Profile 保留最后一个页面，避免对应 Chrome 实例被完全关闭。
-    for profile in dict.fromkeys(profiles):
-        profile = str(profile or "Default").strip() or "Default"
-        web.set_user_environment(mode="chrome", profile_name=profile, specifield_userdata=False, user_data_dir=None)
-        for page in web.get_all(mode="chrome")[:-1]:
-            page.close()
-```
-
-这里使用 `[:-1]` 是有意保留最后一个页面：日常收尾目标是清理残留页面，而不是关闭整个 Chrome 实例。若把某个 Profile 下的页面全部关闭，可能连带关闭对应浏览器实例，影响后续复用该 Profile 的登录状态。只有业务明确要求完全退出浏览器时，才应关闭全部页面或使用 `web.close_all()`。
-
-登录态处理建议：
-
-- 进入业务页后，先通过 URL、Cookie 或页面元素判断是否已登录，已登录就继续，不要每次无条件重登。
-- 未登录时再跳转登录页、执行登录流程，或明确返回失败交给业务层处理。
-- 如果某个平台只能依赖人工保持登录态，未登录时应显式失败，不要伪装成功或静默继续。
-- 登录态判断方式必须按目标站点实测，不要把某个站点的 Cookie 名或 URL 规则当成通用规则。
-
----
-
-## 27. 经验
-
-- 涉及浏览器、URL、页面元素、Cookie、下载、网络监听等网页业务时，默认使用 `xbot.web` 和浏览器对象能力；除非用户明确要求接口方式，不要改用 `requests`、`httpx`、`aiohttp`、`urllib` 绕过浏览器。
-- 需要页面登录态、Cookie、JS 渲染、下载对话框或页面事件时，更应走浏览器能力，不要把网页当成普通 HTTP 接口猜。
-- 能用 XPath、CSS、元素库或页面对象定位时，不要先写坐标点击；坐标受分辨率、缩放、窗口位置影响，只适合作为确实无法定位元素时的最后手段。
-- XPath 失效时，优先人工修正定位规则，不要在代码里堆多个未验证候选 XPath 做兜底。
-- 中文、长文本、输入法不稳定的场景，优先用元素的 `clipboard_input()`；全局 `send_keys()` 更适合快捷键或当前焦点明确的短输入。
-- 历史项目中的 `wait_for_element()`、自定义 `page.xxx()` 等包装层，不要直接当成当前稳定能力；只有 XPath 字符串等待需求时，优先使用 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
-- 下载后等待文件生成，优先使用 `xbot_enhance_tools.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`；不要为同类下载等待重复维护旧封装。
-- 登录流程建议先判断是否已登录，未登录再跳登录页；登录态判断必须按目标站点实测，不要把某个站点的 Cookie 名、URL 规则或按钮文案当成通用规则。
-- 页面清理只适合“当前浏览器实例由本流程统一接管”的任务，不要误关用户手工保留的工作页。
-- 需要监听接口响应时，优先按稳定片段设置通配规则，例如 `start_monitor_network(url="*client.action*", use_wildcard=True, resource_type="XHR|Fetch")`；监听和读取响应时的 `resource_type` 要保持一致。
-- 排查浏览器问题时，先确认对象是否来自 `xbot.web`，再确认字符串参数、元素定位、iframe、弹窗、登录态和页面加载状态，最后再考虑坐标、图像识别或项目专用包装层。
-
----
-
-## 28. 排错速查
+## 26. 排错速查
 
 | 报错 / 现象 | 常见原因 | 处理 |
 |---|---|---|

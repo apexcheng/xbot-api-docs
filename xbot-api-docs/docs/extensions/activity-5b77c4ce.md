@@ -2,8 +2,8 @@
 
 > 调用类型：`direct python`
 > 主要入口：直接调用 general_table_action.py 中的 main()；__init__.py 仅做模块导入。
-> 来源说明：本页由原 extension-instructions.md 的 4.2 节拆出；返回结构和 action 枚举以当前源码或实测为准。
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：返回结构和 action 枚举以当前安装版本源码或实测为准。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 
@@ -253,7 +253,7 @@ result = yd_ai_table_action(
 1. 携带 `filter` 时，较大的 `maxResults` / `page_size` 更容易触发 `HTTP 500 unknownError`。对于只需要判断记录是否存在的查询，优先设置为 `1`。
 2. 筛选结果为零条时，接口有时返回正常空数组，有时错误返回 `HTTP 500 unknownError`。因此 `500` 不一定表示 `filter` 结构错误，也可能是零匹配触发的钉钉后端异常。
 
-业务代码里必须特别注意：**在正常程序员的直觉里，“查不到记录”和“查询异常”是两个概念；但钉钉 AI 表格这个接口可能把两者都表现成 `HTTP 500 unknownError`。** 写相关业务时，不要只按 HTTP 状态码判断“接口坏了”，也不要把 `500` 直接等同于“确实无数据”。正确处理方式是：在请求结构已固定正确、`page_size=1`、`max_pages=1`、并且查询目标是“是否存在记录”的前提下，`500` 可以作为“可能零匹配”的信号进入业务兜底，但仍要保留原始请求条件和错误信息，方便区分真正接口异常。
+`HTTP 500 unknownError` 是歧义失败，不能当成“没有匹配记录”。存在性查询只有在请求成功且明确返回空结果时，才能判定未命中；遇到 `500` 应保留查询条件和原始错误，并按业务风险重试、停止或交由人工确认，避免误新增重复数据。
 
 如果需要获取所有满足条件的记录，不要直接假设较大 `page_size` 稳定可用；应先在当前表和当前租户中运行验证，再决定分页参数和重试策略。
 
@@ -369,71 +369,7 @@ result = yd_ai_table_action(
 - 存在性查询优先使用 `page_size=1`、`max_pages=1`；不要把订单号长度误判为筛选失败原因
 - `__init__.py` 没有包装函数，直接调用 `general_table_action.py` 中的 `main()` 或 import `croe.py` 的函数
 - 如需更精细控制，可直接 import `croe.py` 中的函数
-
-**典型调用方式：**
-```python
-from xbot_extensions.activity_5b77c4ce.croe import yd_ai_table_action
-
-# 创建数据表
-result = yd_ai_table_action(
-    action="创建数据表",
-    client_id="xxx", client_secret="xxx",
-    base_id="xxx", user_id="xxx",
-    params={"sheet_name": "新表", "fields": [{"name": "标题", "type": "text"}]}
-)
-
-# 新增记录
-result = yd_ai_table_action(
-    action="新增记录",
-    client_id="xxx", client_secret="xxx",
-    base_id="xxx", user_id="xxx",
-    params={"sheet": "rPbLtRx", "record": {"标题": "测试", "金额": 100}}
-)
-
-# 获取记录列表（自动分页）
-result = yd_ai_table_action(
-    action="获取多行记录分页",
-    client_id="xxx", client_secret="xxx",
-    base_id="xxx", user_id="xxx",
-    params={"sheet": "rPbLtRx", "page_size": 50, "max_pages": 10}
-)
-```
-
-**项目里的推荐包装方式：**
-
-```python
-def table_action(action, client_id, client_secret, base_id, user_id, sheet, params=None):
-    from xbot_extensions.activity_5b77c4ce.croe import yd_ai_table_action
-
-    result = yd_ai_table_action(
-        action=action,
-        client_id=client_id,
-        client_secret=client_secret,
-        base_id=base_id,
-        user_id=user_id,
-        sheet=sheet,
-        params=params or {},
-    )
-    if not isinstance(result, dict):
-        raise ValueError(f"表格操作 {action} 返回异常: {result!r}")
-    return result
-
-
-records = table_action(
-    "获取多行记录分页",
-    client_id, client_secret, base_id, user_id,
-    sheet="账号表",
-    params={"page_size": 100, "max_pages": 100},
-).get("data", {}).get("records") or []
-```
-
-## 经验
-
-- 项目里更推荐先统一封装 `yd_ai_table_action()`，再让业务层读取 `data.records`。
-- 获取多行记录时，记录列表默认从 `result.get("data", {}).get("records")` 取，不要直接从顶层 `.get("records")` 取。
-- 记录结构进入业务逻辑后，优先直接按 `record["fields"]` 使用；调用方已经明确是表格记录时，不要再反复做 `isinstance` 兜底。
-- 多选字段或选项字段常见结构为 `{"name": "...", "id": "..."}`，显示值取 `.get("name")`，不要把整个字典直接当文本用。
-- `filter` 查询返回 `HTTP 500 unknownError` 时，先检查是否零匹配、是否把 `page_size` 设置过大，再判断是否为结构错误。
-- 这些结构约定只适用于已验证的钉钉 AI 表格指令，不要泛化到所有市场指令。
+- 获取多行记录时，记录列表从 `result.get("data", {}).get("records")` 取；记录业务字段在 `record["fields"]` 中。
+- 多选或选项字段常见结构为 `{"name": "...", "id": "..."}`，显示值取 `name`。
 
 ---

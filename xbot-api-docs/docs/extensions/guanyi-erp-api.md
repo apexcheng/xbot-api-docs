@@ -2,8 +2,8 @@
 
 > 调用类型：`direct python`  
 > 主要入口：直接调用各业务 .py 或 core.py 中的函数；__init__.py 仅做模块导入。  
-> 来源说明：本页由原 extension-instructions.md 的 4.5 节拆出；接口凭证和返回结构需按实际项目配置验证。  
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：接口凭证、服务可用性和返回结构需按当前项目验证。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 

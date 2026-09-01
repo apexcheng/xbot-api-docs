@@ -2,7 +2,7 @@
 
 > 调用类型：`direct python`
 > 证据等级：已从市场指令源码和真实项目调用确认；ERP 接口可用性仍依赖当前账号、网络和服务状态。
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 
@@ -96,4 +96,3 @@ details = order_data.get("商品明细") or []
 - 模块文件名为源码中的 `select_order_dteail`，包含既有拼写，调用时不要自行改成 `detail`。
 - 不要把 ERP 凭证、接口密钥或真实订单信息写入知识库。
 - 返回空值与接口异常是不同情况：空值表示未查到，异常表示查询过程失败。
-- 完整示例见 [`erp-order-detail-query.py`](../../examples/erp-order-detail-query.py)。

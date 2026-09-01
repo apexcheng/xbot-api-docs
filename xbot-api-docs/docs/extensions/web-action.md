@@ -2,8 +2,8 @@
 
 > 调用类型：`both`  
 > 主要入口：Flow 型通过 processN() 调用；Direct 型可调用 element_core.py、import_js.py、select_date.py 等独立模块。  
-> 来源说明：本页由原 extension-instructions.md 的 4.7 节拆出；页面行为仍需结合目标网页运行验证。  
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：页面行为需结合目标网页运行验证。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 

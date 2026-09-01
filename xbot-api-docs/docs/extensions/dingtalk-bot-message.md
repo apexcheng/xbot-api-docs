@@ -2,8 +2,8 @@
 
 > 调用类型：`direct python` 为主，保留 flow 包装兼容。
 > 主要入口：`py_api.py` 的 `send_dingtalk_group()` / `send_dingtalk_private()`；`to_markdown_table.py` 可直接调用。
-> 来源说明：本页由原 extension-instructions.md 的 4.3 节拆出；结论来源见总入口的证据引用。  
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：入口、参数和返回值以当前安装版本源码或实测为准。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 
@@ -115,6 +115,5 @@ except Exception as e:
 - 群通知里更推荐 `title` 和 `content` 分离，正文统一传 Markdown。
 - 如果通知失败只影响提醒链路，不影响主业务，可只记录日志，不中断主流程。
 - 老项目继续使用 `process1()` / `process2()` 时无需强制改造；新增代码直接使用 `py_api`，调用链更短、参数更明确。
-- 完整示例见 [`dingtalk-markdown-notify.py`](../../examples/dingtalk-markdown-notify.py)。
 
 ---

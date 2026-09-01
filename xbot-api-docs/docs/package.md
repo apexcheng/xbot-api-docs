@@ -64,7 +64,7 @@ success_logo = package.image_selector("登录成功标记")
 
 访问应用资源文件。
 
-当前知识库按本机可见源码 `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\primitives.py` 中的 `ResourceReader` 公开方法整理；这里只记录当前可见方法，不额外推断未确认行为。
+本页按 ShadowBot 6.3.12 内置 `xbot/primitives.py` 的 `ResourceReader` 公开方法核对；安装目录随版本变化，不固定绝对路径，也不推断未确认行为。
 
 ### 常用场景
 
@@ -245,19 +245,7 @@ payload = build_payload(
 result = gy_call(payload)
 ```
 
-## 6. 经验
-
-- `package.resources` 只用于访问随应用打包的固定资源，不适合保存运行时动态生成内容。
-- 当前可见 `ResourceReader` 公开方法是 `get_path()`、`get_text()`、`get_bytes()`、`copy_to()`、`copy_to_clipboard()`；不要把 `package.resources` 当字典使用，也不要写 `package.resources["模板.xlsx"]`。
-- 需要从模板补齐缺失 Excel 文件时，优先用 `package.resources.get_path()` 获取模板路径，或用 `package.resources.copy_to()` 复制模板到目标路径。
-- 同一轮任务中，多个记录共享同一页面、SPU、接口响应或解析结果时，可以用 `package.variables` 保存任务级缓存，减少重复打开页面和重复解析。
-- 任务开始时应显式初始化或清空任务级缓存，避免跨轮任务误用旧数据。
-- 缓存内容只放本轮可复用的中间结果，不要存账号密码、token、Cookie 等敏感数据。
-- Agent 写代码时，优先复用项目里已有元素名、资源名、变量名；不要凭感觉新造名字。
-
----
-
-## 7. 低频：显式获取 `Selector` 对象
+## 6. 低频：显式获取 `Selector` 对象
 
 普通 Win32 / Web / Mobile 元素定位直接把元素库名称传给对应原生 API，不需要显式获取 `Selector` 对象。
 
@@ -270,12 +258,3 @@ selector = package.selector("目标元素")
 framework = selector.framework()
 xpath = selector.xpath()
 ```
-
----
-
-## 8. 快速建议
-
-- 需要引用图片时，用 `package.image_selector()`。
-- 需要跨流程传对象时，用 `package.variables`。
-- 需要随应用打包的文件时，用 `package.resources`。
-- Agent 写代码时，优先复用项目里已经定义好的元素名、资源名、变量名，不要擅自发明一套新命名。

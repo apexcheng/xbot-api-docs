@@ -259,19 +259,6 @@ placeholder = get_elem_info(
 
 ---
 
-## 6. 经验
+## 6. 关联文档
 
-- `iframe2` 适合明确知道目标页面存在一层或多层 `iframe` / `frame`，且原生元素库不好稳定表达跨 iframe 路径的场景。
-- 编码版里已经拿到 `web_page` 时，可以继续按 `WebElement` 工作流操作；`check_obj` 会自动包装 `web_page`，不一定非要先手动 `init_iframe()`。
-- 已知 iframe 层级时，优先传 XPath 数组逐层切入；只有层级不稳定时，再考虑 `current_global=True` 做全局查找。
-- `current_global=True` 会遍历当前 iframe 树，如果多个 iframe 同时命中，可能无法唯一确定；具体业务元素更推荐先切准 iframe，再在当前层查找。
-- `wait()` 只返回 `bool`，不返回元素对象；需要元素对象时，用 `find_ele()` 或 `find_all_ele()`。
-- `execute_javascript()` 执行对象是当前 `IframePage` 持有的 `html`，不是固定回到最外层 `web_page`。
-- Shadow Root 相关路径、隐藏块 `A2-切换至父IFrame`、不同浏览器模式兼容性、页面未完全加载时的重试表现，都应标注“需运行验证”，不要提前泛化。
-
----
-
-## 7. 关联文档
-
-- [市场指令扩展开发](extension-instructions.md)
-- [市场指令源码排查](debug/market-extension-source.md)
+- [市场指令入口与签名核验](extension-instructions.md)

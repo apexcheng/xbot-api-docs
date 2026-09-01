@@ -122,8 +122,6 @@ file_path = activity_a90a8311.process12("BOW官方旗舰店", download_start_tex
 
 不要把同一个日期同时传给 `发货时间start` 和 `发货时间end`，否则时间范围为空，无法表示当天完整数据。
 
-完整示例见 [`cerp-report-download.py`](../../examples/cerp-report-download.py)。
-
 如果需要等待并获取下载文件：
 
 ```python

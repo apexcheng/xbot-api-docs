@@ -5,14 +5,9 @@
 
 ---
 
-## 1. 相关文件位置
+## 1. 核验来源
 
-| 路径 | 作用 |
-|---|---|
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\win32\__init__.py` | Win32 模块入口 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\win32\window.py` | 窗口对象定义 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\win32\element.py` | 元素对象定义 |
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\win32\image.py` | 图像对象定义 |
+本页按 ShadowBot 6.3.12 内置 `xbot/win32/__init__.py`、`window.py`、`element.py` 和 `image.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.win32)` 定位当前实现，不复制固定绝对路径。
 
 ---
 
@@ -92,6 +87,9 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 
 移动鼠标到指定位置。
 
+- `relative_to`：`screen`、`window`、`position`。
+- `move_speed`：`instant`、`fast`、`middle`、`slow`。
+
 ### 4.4 `mouse_move_by_anchor(rectangle, anchor=None, relative_to='screen', move_speed='instant', delay_after=1)`
 
 按矩形范围和锚点移动鼠标。
@@ -103,10 +101,15 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 **注意事项**：
 - 特殊符号和快捷键输入要按源码约定处理。
 - `force_ime_eng=True` 时会尝试切到英文输入。
+- `hardware_driver_input=True` 只支持键盘可见字符，不用于 `Tab`、`Ctrl`、`Enter`、`Shift` 等特殊按键。
 
 ### 4.6 `mouse_click(button='left', click_type='click', hardware_driver_click=False, keys='none', delay_after=1)`
 
 鼠标点击。
+
+- `button`：`left`、`right`。
+- `click_type`：`click`、`dbclick`、`down`、`up`。
+- `keys`：`none`、`alt`、`ctrl`、`shift`、`win`。
 
 ### 4.7 `mouse_click_by_anchor(rectangle, anchor=None, button='left', click_type='click', keys='none', hardware_driver_click=False, delay_after=1, move_mouse=True)`
 
@@ -382,6 +385,6 @@ else:
 
 ## 9. 常用建议
 
-- 找窗口优先用 `get()` / `get_active()`，不要直接猜句柄。
+- 已有窗口元素库名称时使用 `get_by_selector()`；只有目标由标题、类名或当前激活状态确定时才使用 `get()` / `get_active()`，不要猜句柄。
 - 需要模拟人工操作时，再开启 `manual_motion_on()`。
 - 锁屏和解锁相关方法有明显系统依赖，建议先运行验证再写入正式流程。

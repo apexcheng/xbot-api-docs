@@ -2,8 +2,8 @@
 
 > 调用类型：`direct python`  
 > 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py、market_config.py 中的公开函数；__init__.py 不提供 processN 包装入口。
-> 来源说明：本页由原 extension-instructions.md 的 4.8 节拆出；2026-08-24 补充初始化配置加密持久化能力；网页登录和下载等待需运行验证。  
-> 返回：[市场指令扩展开发指南](../extension-instructions.md)
+> 证据边界：入口以当前安装版本公开模块为准；网页登录和下载等待需运行验证。
+> 返回：[市场指令索引](../extension-instructions.md)
 
 ---
 
@@ -230,7 +230,6 @@ pressed_button = config["pressed_button"]
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - `wait_download_file()` 成功返回 `Path`；需要传给只接受字符串路径的市场指令或旧代码时，可显式转换为 `str(file_path)`
 - `wait_download_file()` 超时会抛出 `TimeoutError`，不要把超时误判为返回 `None`
-- 完整示例见 [`browser-download-and-wait.py`](../../examples/browser-download-and-wait.py)
 - `shop_utils` 中的登录 XPath 会随平台页面变化，当前页面行为需运行验证
 - 商家后台登录只处理账号密码输入和提交，不处理验证码、扫码、安全验证、短信验证、人机验证等复杂分支
 - 抖音登录使用邮箱账号；协议勾选仅在页面显示未勾选状态时处理，登录后的跳转和风控页面仍需在实际环境确认

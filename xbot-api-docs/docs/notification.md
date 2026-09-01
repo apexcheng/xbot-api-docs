@@ -5,11 +5,9 @@
 
 ---
 
-## 1. 相关文件位置
+## 1. 核验来源
 
-| 路径 | 作用 |
-|---|---|
-| `C:\Program Files\ShadowBot\shadowbot-6.0.30\Resources\Code-Activity\Zh-CN\xbot\app\dialog.py` | 对话框、通知入口 |
+本页按 ShadowBot 6.3.12 内置 `xbot/app/dialog.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.app.dialog)` 定位当前实现。
 
 ---
 
@@ -70,12 +68,11 @@
 
 - `storage_key` 不为空时，源码会尝试读取/保存历史输入。
 - 对话框配置结构较复杂，建议按源码注释逐项填写。
-- **下拉/列表类控件（`Select`、`MultiSelect`、`List`、`MultiList`）的 `options` 不能用纯字符串数组**。`dialog.py` 源码注释里 `options: ["选项1", "选项2"]` 的示例已过时；所有影刀版本都应按对象数组写：`{"value": ..., "display": ...}`。控件级默认值 `value` 必须等于某个选项的 `value`。
-  - 来源：`dnfile` 解析 `shadowbot-6.2.18/ShadowBot.Shell.ShadowBotToolkit.dll`，确认 `OptionItem` 只声明 `Value`、`Display` 两个属性；JSON 键按其它字段（`nullText`、`isTextEditable`）的驼峰小写规律写为 `value` / `display`。
+- 下拉/列表控件的 `options` 结构存在版本差异：6.3.12 的 Python 存根仍给出字符串数组示例，而部分运行时版本使用 `{"value": ..., "display": ...}` 对象数组。不能把任一写法泛化为所有版本；按当前客户端做最小运行验证。
 
 ### 示例
 
-下拉框 `options` 的正确写法（对象数组，非字符串数组）：
+当前运行时要求对象数组时，可使用以下写法；其他版本需运行验证：
 
 ```python
 from xbot.app.dialog import show_custom_dialog
@@ -255,7 +252,7 @@ result = show_custom_dialog(dialog_settings)
 | 参数名 | 类型 | 是否必填 | 说明 |
 |---|---|---|---|
 | `message` | `str` | 是 | 通知内容 |
-| `placement` | `str` | 否 | 显示位置，源码默认 `rightbottom` |
+| `placement` | `str` | 否 | `top` / `bottom` / `rightbottom`，默认 `rightbottom` |
 | `level` | `str` | 否 | `info` / `warning` / `error` |
 | `timeout` | `int` / `float` | 否 | 显示时长，默认 3 秒 |
 
@@ -265,8 +262,7 @@ result = show_custom_dialog(dialog_settings)
 
 ### 注意事项
 
-- 旧文档曾写默认值是 `top`，以当前源码为准，默认是 `rightbottom`。
-- `placement` 与 `level` 的完整可选值若需更广覆盖，建议运行验证。
+- `placement` 和 `level` 的可选值已按 ShadowBot 6.3.12 存根核对；其他版本应复核当前实现。
 
 ### 示例
 
@@ -276,31 +272,6 @@ from xbot.app.dialog import show_notifycation
 show_notifycation("✅ 完成", placement="rightbottom", level="info")
 ```
 
-### 旧项目常见写法
-
-```python
-from xbot.app.dialog import show_notifycation
-
-show_notifycation(
-    message="❌ 采集失败",
-    placement="top",
-    level="warning",
-)
-```
-
-### 使用建议
-
-- 成功提示：优先用 `level="info"`
-- 失败或异常提示：优先用 `level="warning"` 或 `level="error"`
-- 旧项目里常见 `placement="top"`，当前源码默认值仍以 `rightbottom` 为准
-- 如果只是补充进度提示，建议只传 `message` 和 `level`，避免无必要依赖位置参数
-
-### 需运行验证
-
-- `placement` 的完整可选值
-- `level` 是否还有 `success` 等别名
-- 不同影刀版本下通知展示样式是否一致
-
 ---
 
 ## 13. `close_notifycation()`
@@ -309,7 +280,7 @@ show_notifycation(
 
 关闭桌面通知框。
 
-`xbot.app.dialog.close_notifycation()` 直接调用即可，不需要为了关闭通知框单独套 `try / except`。方法名中的 `notifycation` 为当前源码拼写，不要自行改成 `notification`。
+方法名中的 `notifycation` 是当前公开 API 的实际拼写，不要改成 `notification`。
 
 ### 返回值
 
@@ -324,10 +295,3 @@ show_notifycation(
 - 单次提示：`show_alert()` 或 `show_message_box()`
 - 复杂参数输入：`show_custom_dialog()`
 - 文件/文件夹选择：`show_select_file_dialog()` / `show_select_folder_dialog()`
-
----
-
-## 15. 备注
-
-- 旧文档中若出现未确认的推断名，建议保留“需运行验证”标注。
-- 若要继续细化对话框控件配置，可再单独补一个“自定义对话框配置模板”章节。
