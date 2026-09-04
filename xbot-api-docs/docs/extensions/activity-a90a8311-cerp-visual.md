@@ -93,22 +93,12 @@ activity_a90a8311.process5("库存统计", web)
 ```python
 stock_path = activity_a90a8311.process4(商品代码=None, 规格代码=None, 仓库名称="正品仓")
 platform_path = activity_a90a8311.process11("淘宝", "店铺名称", "平台商品ID")
-summary_path = activity_a90a8311.process12("BOW官方旗舰店", "2026/08/01", "2026/08/05", False)
+summary_path = activity_a90a8311.process12("店铺名称", "2026/08/01", "2026/08/05", False)
 order_path = activity_a90a8311.process14(店铺名称=None, 发货时间start="2026/08/01", 发货时间end="2026/08/05")
 return_path = activity_a90a8311.process15(店铺名称=None, 发货时间start="2026/08/01", 发货时间end="2026/08/05")
-
-for report_name, file_path in {
-    "库存": stock_path,
-    "平台铺货": platform_path,
-    "发货商品汇总": summary_path,
-    "发货订单明细": order_path,
-    "退货商品明细": return_path,
-}.items():
-    if not file_path:
-        raise RuntimeError(f"{report_name}下载未返回文件路径")
 ```
 
-真实项目中下载类入口均按“返回文件路径”使用。调用后应立即检查返回值，避免后续把空值传给 `xbot.excel.open()`。
+真实项目中下载类入口均按“返回文件路径”使用。业务代码调用后应直接检查当前入口的返回值，避免把空值继续传给 `xbot.excel.open()`；API 示例不为一次性校验额外建立字典或调度层。
 
 `process12` 的日期参数是时间边界，不是“起止日期都包含”。例如下载 `2026/08/01` 一整天，应传入 `2026/08/01 00:00` 到 `2026/08/02 00:00`：
 
@@ -117,7 +107,7 @@ from datetime import timedelta
 
 download_start_text = download_date.strftime("%Y/%m/%d")
 download_end_text = (download_date + timedelta(days=1)).strftime("%Y/%m/%d")
-file_path = activity_a90a8311.process12("BOW官方旗舰店", download_start_text, download_end_text, False)
+file_path = activity_a90a8311.process12("店铺名称", download_start_text, download_end_text, False)
 ```
 
 不要把同一个日期同时传给 `发货时间start` 和 `发货时间end`，否则时间范围为空，无法表示当天完整数据。

@@ -21,7 +21,7 @@
 
 ## 1. 核验来源
 
-本页按 ShadowBot 6.3.12 内置 `xbot/web/__init__.py`、`browser.py` 和 `element.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.web)` 定位当前实现，不复制固定绝对路径。
+本页按本机可见 ShadowBot 6.3.13 内置 `xbot/web/__init__.py`、`browser.py` 和 `element.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.web)` 定位当前实现，不复制固定绝对路径。
 
 ---
 
@@ -92,14 +92,14 @@ glv['my_var'] = 'value'
 
 ---
 
-## 3. 三层能力分工
+## 3. 原生与可视化能力分工
 
 | 层级 | 推荐使用场景 | 返回对象 |
 |---|---|---|
 | `xbot.web` | 普通网页自动化主线 | 原生 `WebBrowser` / `WebElement` |
 | `xbot_visual.web` | 影刀可视化组件内部 | 多数为原生对象 |
 
-重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。Agent 编码场景里如果只有 XPath 字符串，优先看市场扩展文档里的 `xbot_enhance_tools.browser_utils.wait_appear_by_xpath()` / `wait_disappear_by_xpath()`。
+重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。单次等待元素出现可直接使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要等待 XPath 出现 / 消失或下载完成时，再按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数，不要仅因为文档示例给项目新增未安装依赖。
 
 ---
 
@@ -308,36 +308,10 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 ## 11. 等待元素
 
 ```python
-from xbot_extensions.xbot_enhance_tools.browser_utils import (
-    wait_appear_by_xpath,
-    wait_disappear_by_xpath,
-)
-
-element = wait_appear_by_xpath(browser, '//button[contains(., "查询")]', timeout=10)
-loading_done = wait_disappear_by_xpath(browser, '//div[@class="loading"]', timeout=30)
+element = browser.find_by_xpath('//button[contains(., "查询")]', timeout=10)
 ```
 
-| 参数 | 类型 | 默认值 | 说明 |
-|---|---|---|---|
-| `page` | `WebBrowser` | 必填 | 当前网页对象 |
-| `xpath` | `str` | 必填 | 要等待的 XPath |
-| `timeout` | `int` / `float` | `20` | 等待秒数 |
-
-返回：`wait_appear_by_xpath()` 匹配到一个及以上元素时返回第一个元素（XPath 匹配多个不算失败），超时返回 `None`；`wait_disappear_by_xpath()` 匹配元素全部消失返回 `True`，超时返回 `False`。
-
-需要“短时等待，未出现就刷新，直到总超时”时，优先把总超时判断放在循环顶部；`wait_appear_by_xpath()` 只负责当前一轮等待，不要再用 `find_by_xpath()` 配合 `try / except` 轮询。
-
-```python
-# 循环等待第一条导出记录的下载按钮出现，每轮等 5 秒，没出现就刷新页面，超时 2 分钟
-deadline = time.time() + 60 * 2
-while True:
-    if time.time() > deadline:
-        raise RuntimeError("抖音电商·精选联盟：等待下载按钮超时（2 分钟）")
-
-    if wait_appear_by_xpath(page, download_xpath, timeout=5):
-        break
-    page.reload(ignore_cache=True)
-```
+`find_by_xpath()` 自带超时等待，适合一次性等待并获取单个元素。需要“等待 XPath 出现 / 消失”“循环刷新直到总超时”这类复用能力时，如果当前项目已安装“增强工具2026”，直接使用其 `wait_appear_by_xpath()` / `wait_disappear_by_xpath()`；准确签名、返回值和循环等待约定只在 [增强工具 2026](extensions/xbot-enhance-tools.md) 维护。
 
 ---
 
@@ -731,7 +705,7 @@ file_path = browser.dowload_url(
 
 注意：方法名是 `dowload_url`，不是 `download_url`。
 
-业务里凡是“下载文件后等待结果”的场景，统一优先使用市场扩展 `xbot_enhance_tools.browser_utils.wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`；这里的 `wait_complete` / `wait_complete_timeout` 只作为原生接口参数说明保留。
+项目已安装“增强工具2026”时，下载文件后等待结果优先按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用 `wait_download_file()`；未安装时继续使用本节原生下载接口的 `wait_complete` / `wait_complete_timeout`，不要仅为复用示例新增市场指令依赖。
 
 ---
 
@@ -865,11 +839,11 @@ web.set_user_environment(
 
 | 报错 / 现象 | 常见原因 | 处理 |
 |---|---|---|
-| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 不要依赖 `wait_for_element`；XPath 等待改看 `xbot_enhance_tools.browser_utils.*` |
+| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 单次等待用原生 `find_by_xpath(..., timeout=...)`；项目已有增强工具时再用其 XPath 等待能力 |
 | `mode="Chrome"` 不稳定或报错 | 字符串大小写错误 | 改成 `mode="chrome"` |
 | `download_url` 不存在 | 源码拼写是 `dowload_url` | 调用 `browser.dowload_url(...)` |
 | `dowload_timeout` 拼写奇怪 | 源码就是这个拼写 | 按源码传 `dowload_timeout` |
 | 元素匹配多个 | 单元素查找要求唯一 | 改选择器，或用 `find_all*` 后自己取 |
 | 中文输入异常 | 输入法干扰 | 改用 `clipboard_input()` |
-| 下载后文件还没生成 | 没等下载完成 | 业务里统一改用 `xbot_enhance_tools.browser_utils.wait_download_file(...)` |
+| 下载后文件还没生成 | 没等下载完成 | 先使用原生下载等待参数；项目已有增强工具时可按其事实页使用 `wait_download_file()` |
 | `dialog_result="OK"` 不确定 | 源码注释是小写 `ok` / `cancel` | 建议传 `"ok"` / `"cancel"` |

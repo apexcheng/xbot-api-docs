@@ -24,4 +24,13 @@
 - 压缩与解压：[xzip.md](xbot-api-docs/docs/xzip.md)
 - 市场指令、扩展能力及其已核验事实页：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
 
+## 高频问题直达
+
+- Chrome Profile、`set_user_environment()`、`get_all()`、残留页面清理、动态 `get_text()`、网页下载等待：[browser.md](xbot-api-docs/docs/browser.md)
+- 元素库、`package.image_selector()`、资源文件与 `package.resources`：[package.md](xbot-api-docs/docs/package.md)
+- Win32 窗口 / 元素层级、图像点击、焦点、键鼠与坐标问题：[win32.md](xbot-api-docs/docs/win32.md)
+- WPS `set_range()`、`=` 开头文本、长数字精度、只读 / 文件占用：[excel.md](xbot-api-docs/docs/excel.md)
+- 市场指令的 Visual / Code / Direct Python 入口、参数名和返回值不明确：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
+- 已安装“增强工具2026”后的 XPath 等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
+
 文档贡献的证据和脱敏要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。

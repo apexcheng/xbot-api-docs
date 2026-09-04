@@ -14,7 +14,7 @@
 **用途：** 文件操作、日期处理、邮件获取、验证码获取
 
 **调用入口：**
-- Flow：`xbot_extensions.activity_47680f64.process1()` ~ `process5()`
+- Flow：`xbot_extensions.activity_47680f64.process1()`、`process2()`、`process3()`、`process5()`
 - Direct：`CreateDir.main()`、`MoveToPardir.main()`、`DateStringCheck.main()`、`latest_email.main()`、`get_SMS_code.main()`
 
 **入口能力映射：**
@@ -39,7 +39,7 @@
 
 **注意事项：**
 - Code 型指令直接调用 `.py` 中的 `main()`，不是 `__init__.py` 中的包装函数
-- Visual 型指令（process1~5）通过 `__init__.py` 包装调用
+- 当前事实页已确认的 Visual 入口为 `process1()`、`process2()`、`process3()`、`process5()`；不要因为编号连续就自行猜出 `process4()`
 - `latest_email.py` 支持 163 邮箱，需要 email + password
 - `get_SMS_code.py` 需要配置验证码获取接口 URL
 

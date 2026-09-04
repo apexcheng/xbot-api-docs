@@ -7,7 +7,7 @@
 
 ## 1. 核验来源
 
-本页按 ShadowBot 6.3.12 内置 `xbot/app/logging.py` 与 `xbot/__init__.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.app.logging)` 定位当前实现。
+本页按本机可见 ShadowBot 6.3.13 内置 `xbot/app/logging.py` 与 `xbot/__init__.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.app.logging)` 定位当前实现。
 
 ---
 

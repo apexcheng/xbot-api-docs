@@ -93,6 +93,7 @@ try:
 except Exception as e:
     detail = format_exception_detail(e)
     logging.error(detail)
+    raise
 ```
 
 **商家后台登录示例：**
@@ -129,6 +130,7 @@ element.click()
 **Excel / WPS 共享文件占用者识别示例：**
 
 ```python
+from xbot.app import logging
 from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user
 
 
@@ -136,12 +138,13 @@ from xbot_extensions.xbot_enhance_tools.excel_utils import get_wps_lock_user
 user = get_wps_lock_user(workbook)
 
 if user:
-    print(f"文件正在被【{user}】占用")
+    logging.info(f"文件正在被【{user}】占用")
 ```
 
 **ntfy 消息发送与接收示例：**
 
 ```python
+from xbot.app import logging
 from xbot_extensions.xbot_enhance_tools.ntfy_message import (
     receive_ntfy_message,
     send_ntfy_message,
@@ -155,7 +158,7 @@ messages = receive_ntfy_message(
     timeout=15,
 )
 if messages:
-    print(messages[0]["message"])
+    logging.info(messages[0]["message"])
 ```
 
 **初始化配置加密持久化示例：**

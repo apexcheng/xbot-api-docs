@@ -64,7 +64,7 @@ success_logo = package.image_selector("登录成功标记")
 
 访问应用资源文件。
 
-本页按 ShadowBot 6.3.12 内置 `xbot/primitives.py` 的 `ResourceReader` 公开方法核对；安装目录随版本变化，不固定绝对路径，也不推断未确认行为。
+本页按本机可见 ShadowBot 6.3.13 内置 `xbot/primitives.py` 的 `ResourceReader` 公开方法核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化，不固定绝对路径，也不推断未确认行为。
 
 ### 常用场景
 
@@ -228,21 +228,6 @@ from . import package
 
 template_file = package.resources.get_path("模板.xlsx")
 package.variables["template_file"] = template_file
-```
-
-### 5.3 凭证变量 + 市场指令
-
-```python
-from . import package
-from xbot_extensions.guanyi_erp_api.core import build_payload, gy_call
-
-payload = build_payload(
-    method="gy.erp.stock.get",
-    app_key=package.variables["APP_KEY"],
-    session_key=package.variables["SESSION_KEY"],
-    secret=package.variables["SECRET"],
-)
-result = gy_call(payload)
 ```
 
 ## 6. 低频：显式获取 `Selector` 对象

@@ -7,7 +7,7 @@
 
 ## 1. 核验来源
 
-本页按 ShadowBot 6.3.12 内置 `xbot/win32/__init__.py`、`window.py`、`element.py` 和 `image.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.win32)` 定位当前实现，不复制固定绝对路径。
+本页按本机可见 ShadowBot 6.3.13 内置 `xbot/win32/__init__.py`、`window.py`、`element.py` 和 `image.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.win32)` 定位当前实现，不复制固定绝对路径。
 
 ---
 
@@ -43,6 +43,8 @@
 ### 3.4 `get_by_selector(selector=None, *, timeout=5)`
 
 按选择器获取窗口，返回 `Win32Window`。
+
+当前存根明确：超时未找到窗口时抛出 `xbot.errors.UIAError`。需要把“窗口不存在”作为业务分支时，只捕获该异常，不要用裸 `except Exception` 把其它 Win32 / 引擎异常也误判成“窗口不存在”。
 
 `selector` 直接传元素库选择器名称字符串。
 
@@ -261,19 +263,17 @@ search_input.input("影刀")
 Windows 自动化优先让代码直接对应真实操作路径：先获取真正要操作的业务窗口；只有业务窗口不存在时，才进入主程序并打开该业务窗口。
 
 ```python
+from xbot.errors import UIAError
+
 try:
     target_window = win32.get_by_selector("目标业务窗口", timeout=2)
-except Exception:
+except UIAError:
     target_window = None
 
 if not target_window:
     main_window = win32.get_by_selector("主程序窗口", timeout=10)
     main_window.find("进入业务窗口按钮", timeout=10).click()
-
-    try:
-        target_window = win32.get_by_selector("目标业务窗口", timeout=20)
-    except Exception:
-        raise RuntimeError("未找到目标业务窗口")
+    target_window = win32.get_by_selector("目标业务窗口", timeout=20)
 
 target_window.find("搜索框", timeout=10).clipboard_input("关键词", append=False)
 target_window.find("查询按钮", timeout=10).click()

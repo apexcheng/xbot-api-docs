@@ -57,4 +57,11 @@ print(inspect.signature(your_extension_module.some_function))
 | `xbot_enhance_tools` | Direct Python | [增强工具 2026](extensions/xbot-enhance-tools.md) |
 | `activity_excel_v2` | Flow | [Excel 扩展操作](extensions/activity-excel-v2.md) |
 
+## 相近能力如何选
+
+- 普通网页打开、元素查找、点击、输入、Cookie、下载和网络监听先用原生 [`xbot.web`](browser.md)；只有目标能力属于扩展特性时，再进入 `web_action`、`iframe2` 或增强工具事实页。
+- `activity_7bca6d` 是完整登录扩展，包含多平台 Visual 登录、验证码和滑块等入口；`xbot_enhance_tools.shop_utils` 是轻量商家后台登录辅助，是否适用以其 [事实页](extensions/xbot-enhance-tools.md) 的能力边界为准，不要把两者当成同一套登录 API。
+- `guanyi_erp_api` 面向 C-ERP Direct Python 查询；`activity_a90a8311` 面向 ERP 初始化和报表下载等 Flow 能力。需要查询接口数据时看 [C-ERP API](extensions/guanyi-erp-api.md)，需要下载 ERP 报表时看 [C-ERP 市场指令](extensions/activity-a90a8311-cerp-visual.md)。
+- 普通工作簿、Sheet、区域读写和格式先查原生 [`xbot.excel`](excel.md)；只有原生能力不足、且项目已安装 Excel 扩展操作时，再查 [`activity_excel_v2`](extensions/activity-excel-v2.md)。
+
 参数不明确、可视化可运行但编码版失败时，按本页的入口与签名核验方法检查当前安装版本。

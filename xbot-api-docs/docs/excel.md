@@ -8,7 +8,7 @@
 
 ## 1. 核验来源
 
-本页按 ShadowBot 6.3.12 内置 `xbot/excel/` 与 `xbot_visual/excel.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.excel)` 定位当前实现。基础对象见 [`package.md`](package.md)。
+本页按本机可见 ShadowBot 6.3.13 内置 `xbot/excel/` 与 `xbot_visual/excel.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.excel)` 定位当前实现。基础对象见 [`package.md`](package.md)。
 
 ---
 
@@ -414,22 +414,16 @@ pywintypes.com_error: (-2147352567, '发生意外。', ..., -1880948725)
 写入前应把**本来就是业务文本、但以 `=` 开头**的值加上英文单引号：
 
 ```python
-def escape_wps_formula_text(data):
-    cleaned_data = []
+cleaned_data = []
+for row in data:
+    cleaned_row = []
+    for value in row:
+        if isinstance(value, str) and value.startswith("="):
+            value = "'" + value
+        cleaned_row.append(value)
+    cleaned_data.append(cleaned_row)
 
-    for row in data:
-        cleaned_row = []
-        for value in row:
-            if isinstance(value, str) and value.startswith("="):
-                value = "'" + value
-            cleaned_row.append(value)
-        cleaned_data.append(cleaned_row)
-
-    return cleaned_data
-
-
-data = escape_wps_formula_text(data)
-sheet.set_range(1, "A", data)
+sheet.set_range(1, "A", cleaned_data)
 ```
 
 本次在影刀 + WPS 环境实测，增加英文单引号后可一次性写入数千行数据，单元格显示内容仍以 `=` 开头，不会把英文单引号显示出来。

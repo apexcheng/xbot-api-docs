@@ -105,26 +105,9 @@ target = web_page.find_by_xpath('//input[@type="text"]', timeout=20)
 target.clipboard_input("测试关键字", delay_after=0.3)
 ```
 
-**Chrome Profile / 用户环境切换：**
-
-```python
-from xbot import web
-
-web.set_user_environment(
-    mode="chrome",
-    profile_name="Default",
-    specifield_userdata=False,
-    user_data_dir=None,
-)
-
-browser = web.create("https://example.com", mode="chrome", load_timeout=20)
-browser.wait_load_completed(timeout=15)
-```
-
 使用建议：
 
-- 复用指定 Chrome Profile、维持既有登录态或切换浏览器用户环境时，优先使用原生 `xbot.web.set_user_environment`。
-- 这类场景统一使用原生 `xbot.web.set_user_environment`；更多参数说明见 [`browser.md`](../browser.md)。
+- Chrome Profile、`set_user_environment()`、`get_all()` 与页面清理属于原生浏览器能力，统一按 [`browser.md`](../browser.md) 处理，本页不重复维护第二套参数和生命周期规则。
 - `process6` 是京东买家平台登录，`process56` 是京麦商家后台；`process7` 是淘宝 / 天猫买家平台，`qn_login` 是千牛商家后台。不要因为同属京东或淘宝体系就混用买家登录与商家后台登录。
 - 普通购物页、买家订单页优先匹配买家平台入口；商家经营后台、店铺管理页优先匹配京麦 / 千牛等商家后台入口。
 - `process56` 与 `process6` 的完整参数差异、`qn_login.login()` 的 `engine` 完整枚举仍以当前安装版本为准，必要时用 `inspect.signature()` 复核。

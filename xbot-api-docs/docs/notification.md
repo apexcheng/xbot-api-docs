@@ -7,7 +7,7 @@
 
 ## 1. 核验来源
 
-本页按 ShadowBot 6.3.12 内置 `xbot/app/dialog.py` 核对。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.app.dialog)` 定位当前实现。
+本页按本机可见 ShadowBot 6.3.13 内置 `xbot/app/dialog.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.app.dialog)` 定位当前实现。
 
 ---
 
@@ -68,7 +68,7 @@
 
 - `storage_key` 不为空时，源码会尝试读取/保存历史输入。
 - 对话框配置结构较复杂，建议按源码注释逐项填写。
-- 下拉/列表控件的 `options` 结构存在版本差异：6.3.12 的 Python 存根仍给出字符串数组示例，而部分运行时版本使用 `{"value": ..., "display": ...}` 对象数组。不能把任一写法泛化为所有版本；按当前客户端做最小运行验证。
+- 下拉/列表控件的 `options` 结构存在版本差异：6.3.12 / 6.3.13 的 Python 存根仍给出字符串数组示例，而部分运行时版本使用 `{"value": ..., "display": ...}` 对象数组。不能把任一写法泛化为所有版本；按当前客户端做最小运行验证。
 
 ### 示例
 
@@ -262,7 +262,7 @@ result = show_custom_dialog(dialog_settings)
 
 ### 注意事项
 
-- `placement` 和 `level` 的可选值已按 ShadowBot 6.3.12 存根核对；其他版本应复核当前实现。
+- `placement` 和 `level` 的可选值已按 ShadowBot 6.3.13 存根核对；与 6.3.12 对应源码一致，其他版本应复核当前实现。
 
 ### 示例
 
