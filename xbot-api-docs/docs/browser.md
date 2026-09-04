@@ -323,7 +323,7 @@ loading_done = wait_disappear_by_xpath(browser, '//div[@class="loading"]', timeo
 | `xpath` | `str` | 必填 | 要等待的 XPath |
 | `timeout` | `int` / `float` | `20` | 等待秒数 |
 
-返回：`wait_appear_by_xpath()` 找到时返回元素，超时返回 `None`；`wait_disappear_by_xpath()` 消失返回 `True`，超时返回 `False`。
+返回：`wait_appear_by_xpath()` 匹配到一个及以上元素时返回第一个元素（XPath 匹配多个不算失败），超时返回 `None`；`wait_disappear_by_xpath()` 匹配元素全部消失返回 `True`，超时返回 `False`。
 
 需要“短时等待，未出现就刷新，直到总超时”时，优先把总超时判断放在循环顶部；`wait_appear_by_xpath()` 只负责当前一轮等待，不要再用 `find_by_xpath()` 配合 `try / except` 轮询。
 

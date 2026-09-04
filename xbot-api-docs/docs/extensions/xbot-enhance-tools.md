@@ -33,8 +33,8 @@
 - `from xbot_extensions.xbot_enhance_tools.market_config import load_secret_config`
 
 **当前能力：**
-- `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，找到即返回元素，超时返回 `None`
-- `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_by_xpath(xpath, timeout=1)`，查找抛异常即视为已消失，返回 `True`；超时返回 `False`
+- `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_all_by_xpath(xpath, timeout=1)`，匹配到一个及以上元素即返回第一个元素，超时返回 `None`
+- `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_all_by_xpath(xpath, timeout=1)`，返回空列表即视为已消失，返回 `True`；超时返回 `False`
 - `wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`：等待下载目录中的文件下载完成；成功返回 `pathlib.Path`；超时抛出 `TimeoutError`。`download_dir` 不传时默认使用当前用户下载目录，不存在则回退到 `~/下载`；`filename_pattern` 可选，传了按指定文件名关键词或 glob 表达式匹配，不传按本次新出现并稳定的文件判断；`start_time` 建议在点击下载前用 `time.time()` 记录
 - `format_exception_detail(e)`：返回错误信息、报错位置、当前时间、函数名、代码行，适合通知或日志汇总
 - `login_pdd_seller(account, password, profile=None)`：打开拼多多商家中心登录页，登录后按 URL 是否离开 `login` 判断结果
@@ -226,7 +226,8 @@ pressed_button = config["pressed_button"]
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
 - `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
 - 需要循环刷新等待元素时，优先让 `wait_appear_by_xpath()` 负责单轮短时等待，并在循环顶部统一判断总超时；不要再用 `find_by_xpath()` 配合 `try / except` 轮询
-- `wait_disappear_by_xpath()` 的判定依据是“查找抛异常即视为已消失”
+- `wait_disappear_by_xpath()` 的判定依据是"`find_all_by_xpath()` 返回空列表即视为已消失"
+- 两个等待方法内部都用 `find_all_by_xpath()` 判断，XPath 匹配到多个元素时也能正常工作；不要改回 `find_by_xpath()`（它匹配到多个元素会抛异常，会让"等待出现"误判为失败、"等待消失"误判为已消失）
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - `wait_download_file()` 成功返回 `Path`；需要传给只接受字符串路径的市场指令或旧代码时，可显式转换为 `str(file_path)`
 - `wait_download_file()` 超时会抛出 `TimeoutError`，不要把超时误判为返回 `None`
