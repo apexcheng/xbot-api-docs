@@ -139,8 +139,14 @@ xbot-api-docs/
 
 影刀、影刀编码版、影刀 xbot、影刀 API、影刀 RPA、浏览器自动化、Excel 自动化、WPS 自动化、Windows 自动化、钉钉 AI 表格、市场指令、AI Agent、Codex、Claude Code、Cursor、Yingdao、xbot API、RPA automation、Python automation。
 
-## 联系与许可证
+## 联系作者
 
-如需交流影刀编码版、xbot API、RPA 自动化和 AI Agent 开发，可联系 QQ：`1677880403`。
+如果你在使用过程中遇到问题，或有影刀 RPA、AI 编码相关的交流需求：
+
+- QQ：`1677880403`
+- 邮箱：`chengrip@foxmail.com`
+- 技术问题 / Bug：请优先提交 GitHub Issue
+
+## 许可证
 
 本项目采用 [MIT License](LICENSE)。
