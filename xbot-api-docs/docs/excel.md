@@ -661,6 +661,20 @@ workbook = xbot.excel.open(
 
 ## 17. 排错速查
 
+### 17.1 长数字已经丢失精度时不能靠格式恢复
+
+订单号、商品 ID、链接 ID 等长数字应在进入 Excel / WPS 前就按文本保护。如果原始文件已经把长数字按数值保存并发生精度丢失，之后再设置文本格式、科学计数法显示格式或给当前错误值加单引号，都不能恢复原始数字；这时必须回到未丢失精度的数据源重新读取。
+
+### 17.2 WPS / Excel 只读与文件占用
+
+真实工作簿以只读方式打开时，不要直接把原因判定为“他人占用”。常见排查顺序是：
+
+1. 先检查 `workbook.workbook.ReadOnly`。
+2. 如果业务允许清理本机残留进程，先关闭当前工作簿，再按驱动使用 `xbot.excel.kill_excel_process("wps", True)` 或 `xbot.excel.kill_excel_process("office", True)` 清理本机残留进程并重新打开一次。
+3. 二次打开仍为只读时，再结合 `xbot_enhance_tools.excel_utils.get_wps_lock_user(workbook)` 检查共享文件锁和占用者。
+
+不要在共享办公场景下未经确认就强制结束他人的 Office / WPS 进程。`get_wps_lock_user()` 的返回与锁文件边界见 [增强工具 2026](extensions/xbot-enhance-tools.md)。
+
 | 现象 | 常见原因 | 处理 |
 |---|---|---|
 | `kind="WPS"` 打不开 | 参数值大小写错误 | 改成 `kind="wps"` |

@@ -21,12 +21,26 @@
 - `xbot_extensions.guanyi_erp_api.select_combine_item.main(args)`
 - `xbot_extensions.guanyi_erp_api.select_item_by_sku_code.main(args)`
 
+**公开入口参数速查：**
+
+| 入口 | 用途 | 主要入参 | 主要输出 |
+|---|---|---|---|
+| `select_stock.main(args)` | 查询库存 | max_page_no、app_key、session_key、secret、item_code、item_sku_code、warehouse_code | `stocks` |
+| `select_item.main(args)` | 查询商品 | max_page_no、code、app_key、session_key、secret、combine | `items` |
+| `select_combine_item.main(args)` | 查询组合商品 | code | `items`、`context` |
+| `translation.main(args)` | 翻译 Dict | record | `new_record` |
+| `select_order_dteail.main(args)` | 查询订单详情 | code、platform_code | `order_detail` |
+| `select_order_list.main(args)` | 查询订单列表 | platform_code、date_type、shop_code、code、has_cancel_data、start_date、end_date | `orders` |
+| `select_item_by_sku_code.main(args)` | 按商品条码查询商品 | 商品条码 | `items` |
+
 **参数说明：**
 - `app_key`、`session_key`、`secret`：ERP 接口凭证（来自 `package.variables`）
 - `code`：商品编码 / 订单编号
 - `platform_code`：平台代码
 - `start_date`、`end_date`：日期范围
 - `max_page_no`：最大页码
+
+不同入口的参数并不通用。例如库存查询有 `item_code` / `item_sku_code` / `warehouse_code`，订单列表有 `date_type` / `shop_code` / `has_cancel_data`。调用时按目标入口的真实参数使用，不要把上面的概括参数列表当成所有函数都支持的公共参数集。
 
 **返回值：** 查询结果列表（items、orders、stocks 等）
 

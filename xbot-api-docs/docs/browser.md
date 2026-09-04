@@ -157,6 +157,20 @@ browsers = web.get_all(mode="chrome")
 
 多 Chrome Profile 场景要特别注意：`web.get_all(mode="chrome")` 受当前用户环境影响。要获取或关闭某个 Profile 下的页面，必须先用 `web.set_user_environment(...)` 切换到该 Profile，再调用 `web.get_all(...)`；不要在一个 Profile 环境下直接假设能拿到其它 Profile 的页面。
 
+长期运行的多 Profile 自动化通常还需要在收尾时清理残留页面。清理某个 Profile 前同样先切换用户环境；日常目标如果只是防止页面越积越多，应保留该 Profile 的最后一个页面，避免把对应 Chrome 实例一起完全关闭，影响后续复用登录状态：
+
+```python
+for profile in dict.fromkeys(profiles):
+    profile = str(profile or "Default").strip() or "Default"
+    web.set_user_environment(mode="chrome", profile_name=profile, specifield_userdata=False, user_data_dir=None)
+    for page in web.get_all(mode="chrome")[:-1]:
+        page.close()
+```
+
+这里的 `[:-1]` 是有意保留最后一个页面，不是遗漏。只有业务明确要求完全退出浏览器时，才关闭全部页面或使用 `web.close_all()`。页面清理还要遵守所有权边界：只清理由当前自动化流程接管的页面，不要因为 `get_all()` 能获取到就关闭用户手工保留的工作页。
+
+复用 Profile 登录态时，优先先检查当前目标站点是否已经登录，再决定是否进入登录流程；登录态判断必须以该站点真实页面、URL、元素或已验证 Cookie 规则为准，不要把一个站点的判断方式泛化到其它平台。
+
 | 方法 | 主要参数 | 说明 |
 |---|---|---|
 | `get(title=None, url=None, mode='cef', ...)` | `title` / `url` / `mode` / `open_page` / `page_url` | 按标题或网址匹配已打开网页 |
@@ -267,6 +281,8 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 ```
 
 注意：元素内部查找必须使用 `.//` 表示“从当前元素向下查找”。写成 `//` 会从整个页面根节点开始查找，可能匹配到其他行中的元素。
+
+定位规则应以当前真实 DOM 为准。优先选择稳定文本、稳定属性、父子关系、元素语义或项目已有元素库；不要只依赖明显随机生成的 class，也不要因为按钮文案相同就假设 DOM 结构相同。已有 XPath / CSS 失效时，优先重新确认页面结构并修正定位规则，不要在业务代码里堆多个未经验证的候选 XPath 作为兜底，否则容易在页面变化后静默点错元素。
 
 | 方法 | 参数 | 类型 |
 |---|---|---|
@@ -586,6 +602,8 @@ element.scroll_to(location="bottom", behavior="instant", search_up=True)
 | `top` | `int` | `0` | 指定纵坐标 |
 | `left` | `int` | `0` | 指定横坐标 |
 | `search_up` | `bool` | `False` | 无滚动条时是否向上找可滚动父级 |
+
+处理懒加载、无限滚动或内部滚动容器时，不能只执行滚动动作。至少要确认实际滚动对象是整页还是内部容器，并在每轮滚动后检查数据量是否增长、是否出现“查看更多”入口、是否已经到底以及结果是否需要去重。连续滚动后数据量不再变化时，应按当前业务规则结束或报错，不要无限滚动。
 
 ---
 

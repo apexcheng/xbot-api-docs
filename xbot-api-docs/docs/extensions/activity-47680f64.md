@@ -17,6 +17,20 @@
 - Flow：`xbot_extensions.activity_47680f64.process1()` ~ `process5()`
 - Direct：`CreateDir.main()`、`MoveToPardir.main()`、`DateStringCheck.main()`、`latest_email.main()`、`get_SMS_code.main()`
 
+**入口能力映射：**
+
+| 入口 | 调用类型 | 能力 | 主要入参 | 主要输出 |
+|---|---|---|---|---|
+| `CreateDir.main()` | Direct | 递归创建文件夹 | 创建文件夹路径 | — |
+| `MoveToPardir.main()` | Direct | 移动文件到上一级目录 | 文件路径 | 移动后文件路径 |
+| `process1()` | Flow | 解压文件到当前目录 | 压缩文件路径、删除原文件 | 文件路径列表 |
+| `process2()` | Flow | 下载一个文件 | 是否弹窗下载、保存文件夹、文件名、下载前文件数量、浏览器下载保存路径、最大等待时长 | 文件路径 |
+| `process3()` | Flow | 快捷日期检验和转换 | 日期范围或快捷日期、quick_select_map | 勾选日期 |
+| `DateStringCheck.main()` | Direct | 日期检验 | 开始日期、结束日期、日期格式 | — |
+| `latest_email.main()` | Direct | 获取收件箱最新邮件 | email、password、select_from | `latest_email` |
+| `get_SMS_code.main()` | Direct | 获取短信验证码 | 获取验证码接口 | 验证码 |
+| `process5()` | Flow | 入参校验 | 传入值、可选项列表、是否多选、分隔符 | — |
+
 **参数说明：**
 - `process2(是否弹窗下载, 保存文件夹, 文件名, 下载前文件数量, 浏览器下载保存路径, 最大等待时长)`
 

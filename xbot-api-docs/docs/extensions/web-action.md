@@ -1,7 +1,7 @@
 # 网页扩展操作 (web_action)
 
 > 调用类型：`both`  
-> 主要入口：Flow 型通过 processN() 调用；Direct 型可调用 element_core.py、import_js.py、select_date.py 等独立模块。  
+> 主要入口：Flow 型通过 processN() 调用；Direct 型可调用 element_core.py、js_utility.py、select_date.py 等独立模块。
 > 证据边界：页面行为需结合目标网页运行验证。
 > 返回：[市场指令索引](../extension-instructions.md)
 
@@ -16,6 +16,33 @@
 **调用入口：**
 - Flow（Visual）：`xbot_extensions.web_action.processN(...)`（N=1,2,3,4,6,7,8,10,11,12,13,14,15,18,19,20,21,22,23,24）
 - Direct（Code）：`select_date.select_date()`、`auto_drop_selector.set_dropdown()`、`element_core.*`、`js_utility.*`、`web_page_core.*`
+
+**Flow 入口映射：**
+
+| 入口 | 能力 | 主要入参 | 主要输出 |
+|---|---|---|---|
+| `process1` | 滚动元素至可视区域 | 网页对象、操作目标、垂直方向、水平方向 | — |
+| `process2` | 隐藏元素 | 网页对象、操作目标 | — |
+| `process3` | 显示元素 | 网页对象、操作目标 | — |
+| `process4` | 获取元素背景颜色 | 网页对象、操作目标 | 背景色 |
+| `process6` | 获取元素字体颜色 | 网页对象、操作目标 | 字体颜色 |
+| `process7` | 导入常用 JS 库 | 网页对象、JS库 | — |
+| `process8` | 获取当前激活网页对象 | 网页对象 | `web_page` |
+| `process10` | 关闭其他网页 | 保留网页对象 | — |
+| `process11` | 导入 JS 库 | 网页对象、JS来源类型、JS来源 | — |
+| `process12` | 删除元素 | 网页对象、操作目标 | — |
+| `process13` | 浏览器启动配置 | 禁用图片、端口、用户数据、指定用户、最大化、无痕、UA 等 | 命令行 |
+| `process14` | 元素长截图 | 网页对象、操作目标、超时时间、保存路径 | — |
+| `process15` | 元素增加边框 | 网页对象、操作目标、粗细、样式、颜色 | — |
+| `process18` | 取消 HTML 缩放 | 网页对象 | — |
+| `process19` | 获取元素背景图片 | 网页对象、操作目标 | 背景图片 |
+| `process20` | 获取文本节点内容 | 网页对象、XPath | `text_list` |
+| `process21` | 获取 localStorage | 网页对象 | `local_storage` |
+| `process22` | 获取 sessionStorage | 网页对象 | `session_storage` |
+| `process23` | 获取网页对象类型 | 网页对象 | 网页类型 |
+| `process24` | 强制关闭网页 | 网页对象 | — |
+
+Direct 入口的职责也应按模块区分：`element_core.py` 负责元素隐藏、显示、删除、滚动、颜色、边框和长截图；`js_utility.py` 负责 JS 执行和库导入；`web_page_core.py` 负责网页对象、存储和关闭；`select_date.py` / `auto_drop_selector.py` 分别处理智能日期和通用下拉框。不要仅凭 `processN` 编号猜功能。
 
 **参数说明：**
 - `网页对象` / `web_page`：网页对象

@@ -102,6 +102,7 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 - 特殊符号和快捷键输入要按源码约定处理。
 - `force_ime_eng=True` 时会尝试切到英文输入。
 - `hardware_driver_input=True` 只支持键盘可见字符，不用于 `Tab`、`Ctrl`、`Enter`、`Shift` 等特殊按键。
+- `send_keys()` 发送给当前激活窗口，执行前必须确认目标窗口已激活、目标输入框已有焦点且没有弹窗遮挡；拿得到元素时优先使用元素级 `input()` / `clipboard_input()`。
 
 ### 4.6 `mouse_click(button='left', click_type='click', hardware_driver_click=False, keys='none', delay_after=1)`
 
@@ -118,6 +119,8 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 ### 4.8 `mouse_wheel(wheel_direction='down', wheel_times=1, keys='none', delay_after=1)`
 
 鼠标滚轮滚动。
+
+滚轮作用位置依赖当前鼠标所在区域。页面或软件存在内部滚动容器时，先把鼠标移到目标区域再滚动；否则 API 调用成功也可能滚动了错误容器。坐标类操作还会受系统缩放、分辨率、窗口位置和远程桌面状态影响，因此已有元素对象时不要优先退回坐标方案。
 
 ### 4.9 `get_mouse_position(relative_to='screen') -> tuple`
 
