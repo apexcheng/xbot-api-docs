@@ -498,9 +498,10 @@ element.set_attribute("data-id", "123")
 
 ### 15.1 `get_text()` 暂时读取不到动态渲染文本
 
-动态页面中，元素已经可以定位时，`get_text()` 仍可能暂时拿不到完整文本。不要把“元素已找到”直接当成“业务值已加载完成”。
+动态页面中，元素已经可以定位时，`get_text()` 仍可能拿不到完整业务文本。先区分两种情况：
 
-应等待文本满足预期业务格式，再继续执行；优先使用“短间隔轮询 + 总超时”，不要固定 `sleep()`。动态刷新页面中，每轮重新定位元素。
+1. 文本只是尚未加载完成：继续用“短间隔轮询 + 总超时”，每轮重新定位元素并读取。
+2. 页面视觉上已经显示值，但 `get_text()` / `get_html()` 始终缺少动态渲染内容：不要继续重复 `get_text()`；改从真实 DOM 的 `textContent` 读取，再按业务格式判断。
 
 ```python
 import re
@@ -520,7 +521,22 @@ while True:
     time.sleep(0.2)
 ```
 
-正则应替换为当前业务值最终应满足的格式。该方式适用于倒计时、价格、库存、状态等异步加载字段。
+正则应替换为当前业务值最终应满足的格式。
+
+如果页面已经能看到动态数字，但 `get_text()` / `get_html()` 仍持续缺失这些值，可直接对当前元素读取 DOM `textContent`：
+
+```python
+element = page.find_by_xpath(countdown_xpath, timeout=1)
+text = element.execute_javascript(
+    """
+    function (element, args) {
+        return element.textContent;
+    }
+    """
+)
+```
+
+真实案例中，倒计时视觉显示 `06 分 08 秒 后结束`，但 `get_text()` 只能得到 `分 秒 后结束`；此时继续轮询 `get_text()` 不会补出数字，应改读 `textContent` 后再用正则解析。动态内容本身仍可能延迟出现，因此 `textContent` 也应按“短间隔轮询 + 总超时”控制，不要无限等待。
 
 ---
 
