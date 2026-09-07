@@ -17,7 +17,7 @@
 
 ## 内容边界
 
-- 跨项目稳定开发规则只写入根 [AGENTS.md](AGENTS.md)。
+- 跨项目稳定开发规则以根 [AGENTS.md](AGENTS.md) 为唯一规范源；`project-template/AGENTS.md` 是复制到真实项目的便携投影，只同步真实项目必须直接加载的核心约束，不独立发明新规则。
 - API 签名、参数、返回值和限制写入对应的 `xbot-api-docs/docs/` 页面。
 - 市场指令参数和返回值写入对应事实页；只有新增指令时才在总索引补一条链接。
 - 项目专用流程、页面字段和业务口径留在真实项目文档中。
@@ -49,3 +49,5 @@
 规则引用 [AGENTS.md](AGENTS.md)，查找入口引用 [llms.txt](llms.txt)，API 事实引用其唯一页面。不要为了让每个文件“独立完整”而复制规则、教程或长示例。
 
 提交前检查：链接有效、事实等级清楚、示例最小、内容已脱敏、没有新增重复规则。
+
+修改根 `AGENTS.md` 中会影响真实项目开发行为的核心约束时，同时检查 `project-template/AGENTS.md`；`tests/test_agent_rule_consistency.py` 只守住关键不变量，不要求两份文件逐字一致。
