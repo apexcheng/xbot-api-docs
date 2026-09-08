@@ -12,7 +12,9 @@
 
 编码版通过 `xbot_extensions.activity_a90a8311` 暴露的包装函数调用：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions import activity_a90a8311
 
 web = activity_a90a8311.process13(username=username, password=password, ERP浏览器标识="Default", refresh=True)
@@ -23,7 +25,9 @@ if not file_path:
 
 包装函数内部会组装 `inputs` / `outputs`，再调用：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 xbot_visual.process.run(
     process="xbot_extensions.activity_a90a8311.processN",
     package=__name__,
@@ -76,7 +80,9 @@ xbot_visual.process.run(
 
 优先使用 `init_v2` 初始化或复用 ERP 页面：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions import activity_a90a8311
 
 web = activity_a90a8311.process13(username=username, password=password, ERP浏览器标识="Default", refresh=True)
@@ -84,13 +90,17 @@ web = activity_a90a8311.process13(username=username, password=password, ERP浏�
 
 需要进入某个菜单页时：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 activity_a90a8311.process5("库存统计", web)
 ```
 
 下载类指令直接返回 `file_path`：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 stock_path = activity_a90a8311.process4(商品代码=None, 规格代码=None, 仓库名称="正品仓")
 platform_path = activity_a90a8311.process11("淘宝", "店铺名称", "平台商品ID")
 summary_path = activity_a90a8311.process12("店铺名称", "2026/08/01", "2026/08/05", False)
@@ -102,7 +112,9 @@ return_path = activity_a90a8311.process15(店铺名称=None, 发货时间start="
 
 `process12` 的日期参数是时间边界，不是“起止日期都包含”。例如下载 `2026/08/01` 一整天，应传入 `2026/08/01 00:00` 到 `2026/08/02 00:00`：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from datetime import timedelta
 
 download_start_text = download_date.strftime("%Y/%m/%d")
@@ -114,7 +126,9 @@ file_path = activity_a90a8311.process12("店铺名称", download_start_text, dow
 
 如果需要等待并获取下载文件：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 file_path = activity_a90a8311.process8("文件关键词", None, 600)
 ```
 

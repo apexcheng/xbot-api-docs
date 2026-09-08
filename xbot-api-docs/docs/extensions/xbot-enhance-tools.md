@@ -1,5 +1,7 @@
 # 增强工具2026 (xbot_enhance_tools)
 
+> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../../AGENTS.md)。
+
 > 调用类型：`direct python`  
 > 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py、market_config.py 中的公开函数；__init__.py 不提供 processN 包装入口。
 > 证据边界：入口以当前安装版本公开模块为准；网页登录和下载等待需运行验证。
@@ -64,7 +66,9 @@
 
 **最小示例：**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import time
 
 from xbot_extensions.xbot_enhance_tools.browser_utils import (
@@ -98,7 +102,9 @@ except Exception as e:
 
 **商家后台登录示例：**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.xbot_enhance_tools import shop_utils
 
 
@@ -117,7 +123,9 @@ if not ok:
 
 **Windows 元素可点击判断示例：**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.xbot_enhance_tools.win_utils import is_win_element_clickable
 
 
@@ -143,27 +151,19 @@ if user:
 
 **ntfy 消息发送与接收示例：**
 
-```python
-from xbot.app import logging
-from xbot_extensions.xbot_enhance_tools.ntfy_message import (
-    receive_ntfy_message,
-    send_ntfy_message,
-)
+```text
+非执行调用说明（不可直接运行）：
 
-
-send_ntfy_message("验证码 382914", topic="your-private-topic")
-
-messages = receive_ntfy_message(
-    topic="your-private-topic",
-    timeout=15,
-)
-if messages:
-    logging.info(messages[0]["message"])
+发送：send_ntfy_message(已确认的消息内容, topic=已确认的目标主题)
+接收：receive_ntfy_message(topic=同一已确认主题, timeout=15)
+按真实返回消息处理结果；示例不发送验证码或使用固定公共主题。
 ```
 
 **初始化配置加密持久化示例：**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot.app.dialog import show_custom_dialog
 from xbot_extensions.xbot_enhance_tools.market_config import (
     dialog_result_to_dict,
@@ -196,7 +196,9 @@ username = config["username"]
 
 示例：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 dialog_settings = {
     "dialogTitle": "初始化配置",
     "settings": {

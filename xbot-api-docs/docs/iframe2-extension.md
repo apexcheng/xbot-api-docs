@@ -1,5 +1,7 @@
 # iframe2 扩展指令说明
 
+> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+
 > 来源目录：`xbot_extensions/iframe2`
 > 结论依据：`package.json`、`prototype.block.json`、`api.py`、`_core.py`
 > 整理日期：2026-06-16
@@ -150,7 +152,9 @@ detail_iframe = to_iframe(
 
 ### 4.2 按数组 XPath 逐层切入
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.iframe2.api import find_ele
 
 submit_btn = find_ele(
@@ -168,7 +172,9 @@ submit_btn.click()
 
 ### 4.3 跨 iframe 点击
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.iframe2.api import click_by_xpath
 
 click_by_xpath(
@@ -187,7 +193,9 @@ click_by_xpath(
 
 ### 4.4 跨 iframe 输入
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.iframe2.api import input_by_xpath
 
 input_by_xpath(

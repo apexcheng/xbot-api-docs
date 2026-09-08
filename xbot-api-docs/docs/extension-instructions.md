@@ -29,7 +29,9 @@ Direct Python:
 
 只检查当前安装版本的公开模块和公开函数：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import inspect
 from xbot_extensions import your_extension_module
 

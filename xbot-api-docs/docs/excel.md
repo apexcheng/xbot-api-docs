@@ -1,5 +1,7 @@
 # 影刀表格操作方法整理
 
+> 保留的 Python 片段依赖当前流程已取得的 `workbook`、`sheet` 或待处理数据，Sheet 名和区域由项目确认。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+
 > 定位：影刀 / xbot 操作 Excel 的开发者参数手册。  
 > 重点：用户写代码时看不到源码，所以本文尽量把**参数名、默认值、可选值、大小写、传参示例**写清楚。  
 > 规则：字符串参数必须按文档中的值原样传入，例如 `kind="wps"`，不是 `WPS`，也不是 `PWS`。
@@ -11,6 +13,8 @@
 本页按本机可见 ShadowBot 6.3.13 内置 `xbot/excel/` 与 `xbot_visual/excel.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.excel)` 定位当前实现。基础对象见 [`package.md`](package.md)。
 
 ---
+
+新增影刀 Excel / WPS 操作默认优先使用 `xbot.excel`。涉及公式刷新、界面交互、宏、格式或文件占用时，不为了图快改用其他后台读写库；项目已有稳定实现路线时遵守[根开发规则](../../AGENTS.md)。真实 Office / WPS 行为需要对应环境运行证据，静态检查不能代替。
 
 ## 2. 参数传值总规则
 
@@ -91,7 +95,9 @@ file_name = "C:\\path\\demo.xlsx"
 
 ### 4.1 方法签名
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 workbook = xbot.excel.create(
     kind="office",
     visible=True,
@@ -109,7 +115,9 @@ workbook = xbot.excel.create(
 
 ### 4.3 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import xbot.excel
 
 # 用 Office 新建
@@ -128,7 +136,9 @@ workbook = xbot.excel.create(kind="openpyxl")
 
 ### 5.1 方法签名
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 workbook = xbot.excel.open(
     file_name=r"C:\path\demo.xlsx",
     kind="office",
@@ -154,7 +164,9 @@ workbook = xbot.excel.open(
 
 ### 5.3 正确示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import xbot.excel
 
 # Office 打开
@@ -206,7 +218,9 @@ workbook = xbot.excel.get_active_workbook()
 
 ## 7. 关闭 Excel 进程：`xbot.excel.kill_excel_process()`
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 xbot.excel.kill_excel_process("office", False)
 xbot.excel.kill_excel_process("wps", True)
 ```
@@ -224,7 +238,9 @@ xbot.excel.kill_excel_process("wps", True)
 
 ### 8.1 保存 / 另存 / 关闭
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 workbook.save()
 workbook.save_as(r"C:\path\new.xlsx")
 workbook.close()
@@ -239,9 +255,11 @@ file_path = workbook.get_full_name()
 | `is_closed()` | 无 | 判断工作簿对象是否已关闭 |
 | `set_saved(True)` | `True` / `False` | 标记保存状态；常用于不保存关闭 |
 
-`workbook.close()` 直接调用即可，不需要为了关闭工作簿单独套一层 `try / except`。需要保证业务异常时也关闭工作簿，可以放在 `finally` 中直接调用；工作簿对象可能未创建时只判断对象是否存在，例如 `if workbook: workbook.close()`：
+工作簿关闭及异常收尾统一遵守[根开发规则](../../AGENTS.md)。以下为读取后关闭工作簿的非执行调用说明：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 workbook = xbot.excel.open(file_name=file_path, kind="wps", visible=True)
 try:
     sheet = workbook.get_active_sheet()
@@ -275,7 +293,9 @@ sheet_name = sheet.get_name()
 
 ### 9.2 激活 / 创建 / 删除 / 重命名
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 workbook.active_sheet_by_name("Sheet1")
 workbook.active_sheet_by_index(1)
 workbook.create_sheet("新Sheet", "last")
@@ -342,7 +362,9 @@ data = sheet.get_used_range()
 
 ### 11.1 原生 Sheet 方法
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 sheet.set_cell(1, "A", "hello")
 sheet.set_cell(row_num=2, col_name="A", value="2026/08/05")
 sheet.set_row(1, ["姓名", "年龄"], begin_column_name="A")
@@ -413,7 +435,9 @@ pywintypes.com_error: (-2147352567, '发生意外。', ..., -1880948725)
 
 写入前应把**本来就是业务文本、但以 `=` 开头**的值加上英文单引号：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 cleaned_data = []
 for row in data:
     cleaned_row = []
@@ -449,7 +473,9 @@ row_num = sheet.get_first_free_row_on_column("A")
 
 只有业务明确要求精确行数、精确列数或严格边界时，才在当前代码中直接做简单换算，例如最后数据行为 `sheet.get_first_free_row() - 1`。
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 sheet.remove_row(2)
 sheet.remove_column("C")
 sheet.insert_blank_row(2, amount=1)
@@ -470,9 +496,13 @@ sheet.clear_range(begin_row_num=1, begin_column_name="E", end_row_num=first_free
 
 也可按位置传参：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 sheet.clear_range(1, "E", 20000, "AA")
 ```
+
+清空或覆盖目标数据前，先成功读取本次写入所需的源数据，并按当前业务契约确认必需字段、数据范围、目标区域及空结果是否允许覆盖；不满足约定时停止写入，不清空旧数据。只检查本次真实路径所需内容，不重复读取或校验已由正常流程确认的结果。
 
 清空旧数据是后续写入正确性的前提时，不要静默忽略 `clear_range()` 异常。
 
@@ -492,7 +522,9 @@ sheet.clear_range(1, "E", 20000, "AA")
 
 原生区域复制：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 source_sheet.copy_range(begin_row_num=1, begin_column_name="A", end_row_num=end_row, end_column_name="BA")
 target_sheet.paste_range_ex(row_num=1, column_name="G")
 ```
@@ -522,7 +554,9 @@ target_sheet.paste_range_ex(row_num=1, column_name="G")
 
 ### 13.2 粘贴区域
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 sheet.paste_range_ex(
     row_num=1,
     column_name="A",
@@ -544,7 +578,9 @@ sheet.paste_range_ex(
 
 ### 13.3 选择多行
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 sheet.select_rows(list(range(2, 11)))
 ```
 
@@ -586,7 +622,9 @@ used_range = sheet.used_range()
 
 ## 15. 高级功能
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 workbook.execute_macro("宏名称")
 workbook.refresh_data()
 workbook.export_to_pdf(r"C:\path\demo.pdf", sheet_name="Sheet1", all_sheets=False, override=True)
@@ -607,7 +645,9 @@ workbook.export_to_pdf(r"C:\path\demo.pdf", sheet_name="Sheet1", all_sheets=Fals
 
 ### 16.1 只读数据
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import xbot.excel
 
 workbook = xbot.excel.open(
@@ -623,7 +663,9 @@ workbook.close()
 
 ### 16.2 写入数据并保存
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import xbot.excel
 
 workbook = xbot.excel.open(
@@ -641,7 +683,9 @@ workbook.close()
 
 ### 16.3 WPS 打开文件
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import xbot.excel
 
 workbook = xbot.excel.open(
@@ -654,6 +698,8 @@ workbook = xbot.excel.open(
 ---
 
 ## 17. 排错速查
+
+解压后的报表包含多个 Excel 文件时，目标工作簿的识别规则见 [ZIP 使用建议](xzip.md#5-使用建议)。
 
 ### 17.1 长数字已经丢失精度时不能靠格式恢复
 

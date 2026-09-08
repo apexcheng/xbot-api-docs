@@ -52,7 +52,9 @@
 
 ### 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot import xzip
 
 xzip.zip([r"C:\a.txt", r"C:\b.txt"], r"C:\out.zip", compress_level=5)
@@ -86,7 +88,9 @@ xzip.zip([r"C:\a.txt", r"C:\b.txt"], r"C:\out.zip", compress_level=5)
 
 ### 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot import xzip
 
 xzip.unzip(r"C:\out.zip", r"C:\out")

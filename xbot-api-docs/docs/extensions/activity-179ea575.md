@@ -1,5 +1,7 @@
 # 离线 OCR（activity_179ea575）
 
+> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../../AGENTS.md)。
+
 > 调用类型：Visual flow 包装入口
 > 证据等级：已从市场指令源码和一个真实项目调用确认；识别效果需在目标图片上运行验证。
 > 返回：[市场指令索引](../extension-instructions.md)
@@ -35,7 +37,9 @@ ocr_result = activity_179ea575.process1(
 
 ## 4. 最小示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions import activity_179ea575
 
 

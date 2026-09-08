@@ -36,7 +36,9 @@
 
 ## Direct Python 参数
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 send_dingtalk_group(
     message_type,
     content,
@@ -59,7 +61,9 @@ send_dingtalk_group(
 私聊入口使用相同的消息类型与内容参数，并通过 `user_ids` 或 `user_mobiles` 指定接收人。账号、密钥、webhook 等敏感信息应从项目参数或安全配置中读取，不要写入知识库或提交到 Git。
 
 **典型调用方式：**
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.dingtalk_bot_message.py_api import (
     send_dingtalk_group,
     send_dingtalk_private,
@@ -92,7 +96,9 @@ md = to_markdown_table(data=[["a", "b"], ["1", "2"]], max_cell_length=100)
 
 **项目里的 Markdown 群通知模式：**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.dingtalk_bot_message.py_api import send_dingtalk_group
 from xbot.app import logging
 

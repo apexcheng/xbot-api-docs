@@ -1,5 +1,7 @@
 # 影刀基础对象与全局变量
 
+> 保留的 Python 片段依赖当前影刀项目的 `package`，资源名、变量名和对象由项目确认。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+
 > 定位：影刀 RPA Python 编码版里的 `package` 运行时辅助对象。
 > 说明：以下内容结合官方接口文档笔记整理，当前仓库未直接提取到 `package` 源码实现；若客户端版本不一致，以影刀客户端内置提示或官方文档为准。
 
@@ -106,7 +108,9 @@ logo_bytes = package.resources.get_bytes("logo.png")
 
 ### `copy_to()`
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 package.resources.copy_to("模板.xlsx", r"D:\temp\模板.xlsx")
@@ -114,7 +118,9 @@ package.resources.copy_to("模板.xlsx", r"D:\temp\模板.xlsx")
 
 ### `copy_to_clipboard()`
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 package.resources.copy_to_clipboard(["模板.xlsx", "logo.png"])
@@ -150,7 +156,9 @@ package.resources.copy_to_clipboard(["模板.xlsx", "logo.png"])
 
 ### 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 package.variables["web_page"] = browser
@@ -161,7 +169,9 @@ web_page = package.variables["web_page"]
 
 #### 1. 保存网页对象供后续流程继续使用
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 package.variables["web_page"] = browser
@@ -190,7 +200,9 @@ secret = package.variables["SECRET"]
 
 #### 4. 回写流程结果
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 package.variables["collect_status"] = "success"
@@ -204,6 +216,8 @@ package.variables["collect_count"] = 20
 - 敏感信息优先放到全局变量，不建议硬编码。
 - 读变量前，先确认变量名是否由当前项目约定好，不要凭感觉新造名字。
 - 浏览器对象、列表、字典等运行时对象可以放进去，但前提是后续流程确实会继续消费这些对象。
+- 确需用 `package.variables` 保存任务级缓存时，在每轮任务开始时显式初始化或清空该缓存，避免复用上一轮结果；不要清空其他流程仍需使用的全局变量。
+- 任务级缓存只保存本轮可复用的页面数据、接口响应或解析结果；账号密码、Token、Cookie 等由项目既有凭证配置管理，不复制到业务缓存中。
 
 ---
 
@@ -211,7 +225,9 @@ package.variables["collect_count"] = 20
 
 ### 5.1 元素库 + 全局变量
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 web_page = package.variables["web_page"]
@@ -223,7 +239,9 @@ query_btn.click()
 
 ### 5.2 资源文件 + 全局变量
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from . import package
 
 template_file = package.resources.get_path("模板.xlsx")

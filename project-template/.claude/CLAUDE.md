@@ -8,4 +8,4 @@
 
 读取旧版影刀可视化编排项目时，使用 `.claude/skills/xbot-visual-flow-reader/SKILL.md`；纯 Python 任务不触发该 Skill。
 
-新增 `.py` 文件或用户要求“同步影刀”时，在项目根目录执行 `python shadowbot_sync_tool.py`，不传文件列表。不把同步或静态检查描述成已在影刀编辑器中运行验证。
+影刀同步的触发条件、执行方式及验证边界统一遵守当前项目的 [AGENTS.md](../AGENTS.md)。

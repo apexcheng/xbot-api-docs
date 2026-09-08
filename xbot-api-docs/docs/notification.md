@@ -74,7 +74,9 @@
 
 当前运行时要求对象数组时，可使用以下写法；其他版本需运行验证：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot.app.dialog import show_custom_dialog
 
 dialog_settings = {
@@ -266,7 +268,9 @@ result = show_custom_dialog(dialog_settings)
 
 ### 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot.app.dialog import show_notifycation
 
 show_notifycation("✅ 完成", placement="rightbottom", level="info")

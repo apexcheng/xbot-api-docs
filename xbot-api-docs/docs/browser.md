@@ -1,10 +1,12 @@
 # 影刀浏览器操作方法整理
 
+> 保留的 Python 片段依赖当前流程已取得的 `browser`、`page` 或 `element`，定位值和页面状态由项目确认。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+
 > 定位：影刀 / xbot 操作浏览器的开发者参数手册。
 > 重点：把 `xbot.web` 常用方法、参数、默认值、可选值写清楚。
 > 规则：字符串参数必须按文档中的值原样传入，例如 `mode="chrome"`，不是 `Chrome` / `CHROME`。
 
-涉及浏览器、URL、网页业务功能时，除非用户明确要求，否则不要使用 `requests`、`httpx`、`aiohttp`、`urllib` 或其他网络相关 Python 库；只使用 `xbot.web` 及其浏览器对象能力处理页面、请求、Cookie、网络监听和下载。
+网页实现路线及 HTTP 例外统一遵守[根开发规则](../../AGENTS.md)：默认使用 `xbot.web` 和浏览器对象能力；用户明确要求接口方式，或项目已有稳定接口实现时，沿用对应路线。
 
 ---
 
@@ -84,7 +86,9 @@ logging.info("第1页采集中...")
 
 更完整的 `package` 用法见 [`package.md`](package.md)。
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from .package import variables as glv
 client_id = glv['client_id']
 glv['my_var'] = 'value'
@@ -119,7 +123,9 @@ glv['my_var'] = 'value'
 
 ## 5. 打开网页：`xbot.web.create()`
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot import web
 
 browser = web.create(
@@ -159,7 +165,11 @@ browsers = web.get_all(mode="chrome")
 
 长期运行的多 Profile 自动化通常还需要在收尾时清理残留页面。清理某个 Profile 前同样先切换用户环境；日常目标如果只是防止页面越积越多，应保留该 Profile 的最后一个页面，避免把对应 Chrome 实例一起完全关闭，影响后续复用登录状态：
 
-```python
+下例仅适用于对应 Profile 的全部页面已由当前流程接管的情况。Profile 中混有用户工作页时，不能直接按 `get_all()[:-1]` 清理，应只关闭当前流程已确认接管的页面。
+
+```text
+非执行调用说明（不可直接运行）：
+
 for profile in dict.fromkeys(profiles):
     profile = str(profile or "Default").strip() or "Default"
     web.set_user_environment(mode="chrome", profile_name=profile, specifield_userdata=False, user_data_dir=None)
@@ -181,12 +191,14 @@ for profile in dict.fromkeys(profiles):
 
 ## 7. 关闭网页：`close()` / `close_all()`
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 browser.close(ignore_beforeunload=False)
 web.close_all(mode="chrome", task_kill=False, ignore_beforeunload=False)
 ```
 
-`WebBrowser.close()`（常见变量名包括 `browser`、`page`、`web_page`、`erp_web`）和 `web.close_all()` 直接调用即可，不需要为了关闭网页单独套 `try / except`。需要保证业务异常时仍关闭网页，可以放在 `finally` 中直接调用；网页对象可能未创建时只判断对象是否存在。
+网页关闭及异常收尾统一遵守[根开发规则](../../AGENTS.md)；关闭范围仍须符合本页的页面所有权和 Profile 边界。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
@@ -235,7 +247,9 @@ web.close_all(mode="chrome", task_kill=False, ignore_beforeunload=False)
 
 ## 9. 页面基础信息和加载控制
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 url = browser.get_url()
 title = browser.get_title()
 text = browser.get_text()
@@ -356,7 +370,9 @@ element = browser.find_by_xpath('//button[contains(., "查询")]', timeout=10)
 
 ## 13. 点击、双击、悬停、聚焦
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.click(button="left", simulative=True, keys="none", delay_after=0.3)
 element.dblclick(simulative=True, delay_after=0.3)
 element.hover(simulative=True, delay_after=0.3)
@@ -398,7 +414,9 @@ element.focus()
 
 ### 13.3 `hover()` 参数
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.hover(simulative=True, delay_after=1, anchor=None)
 ```
 
@@ -410,7 +428,9 @@ element.hover(simulative=True, delay_after=1, anchor=None)
 
 示例：悬停在元素中心左侧 100px：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.hover(anchor=("middleCenter", -100, 0))
 ```
 
@@ -420,7 +440,9 @@ element.hover(anchor=("middleCenter", -100, 0))
 
 ### 14.1 普通输入
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.input(
     text="测试内容",
     simulative=True,
@@ -458,7 +480,9 @@ element.input(
 
 ### 14.2 剪切板输入
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.clipboard_input(
     "中文内容",
     append=False,
@@ -475,7 +499,9 @@ element.clipboard_input(
 
 ## 15. 文本、源码、属性和值
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 text = element.get_text()
 html = element.get_html()
 value = element.get_value()
@@ -542,7 +568,9 @@ text = element.execute_javascript(
 
 ## 16. 复选框和下拉框
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.check("check")
 element.check("uncheck")
 element.check("toggle")
@@ -579,7 +607,9 @@ x, y, width, height = element.get_bounding(to96dpi=True, relative_to="screen")
 | `to96dpi` | `bool` | `True` | 是否转换为 96 DPI |
 | `relative_to` | `str` | `"screen"` | 相对屏幕或窗口客户区 |
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 browser.scroll_to(location="bottom", behavior="smooth")
 browser.scroll_to(location="point", top=500, left=0)
 element.scroll_to(location="bottom", behavior="instant", search_up=True)
@@ -637,7 +667,9 @@ result = element.execute_javascript(
 
 ## 19. 网页弹窗
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 browser.handle_javascript_dialog("ok", text=None, wait_appear_timeout=20)
 browser.handle_javascript_dialog("cancel", wait_appear_timeout=20)
 text = browser.get_javascript_dialog_text(wait_appear_timeout=20)
@@ -653,7 +685,9 @@ text = browser.get_javascript_dialog_text(wait_appear_timeout=20)
 
 ## 20. Cookie
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 cookies = web.get_cookies("https://example.com", mode="chrome")
 cookie = web.get_cookie("https://example.com", mode="chrome", name="token")
 web.set_cookie("https://example.com", mode="chrome", name="token", value="abc")
@@ -678,7 +712,9 @@ web.remove_cookie("https://example.com", "token", mode="chrome")
 
 ## 21. 上传和下载
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 web.handle_upload_dialog(
     filenames=[r"C:\test.txt"],
     dialog_result="ok",
@@ -727,7 +763,9 @@ file_path = browser.dowload_url(
 
 ## 22. 截图
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 browser.screenshot(
     folder_path=r"C:\screenshots",
     file_name="page.png",
@@ -754,7 +792,9 @@ path = element.screenshot(
 
 ## 23. 网络监听和请求
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 # 开始监听必须放在触发页面请求之前；URL 不需要写完整，尽量用通配符提高命中率
 browser.start_monitor_network(url="*client.action*", use_wildcard=True, resource_type="XHR|Fetch")
 
@@ -773,7 +813,7 @@ result = browser.http_request(
 )
 ```
 
-`browser.stop_monitor_network()` 和 `browser.stop_load()` 也属于直接调用的收尾方法，不要为了收尾动作单独套 `try / except`。
+`stop_monitor_network()` 和 `stop_load()` 的异常收尾方式遵守[根开发规则](../../AGENTS.md)。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
@@ -800,7 +840,9 @@ result = browser.http_request(
 
 ## 24. 拖拽
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 element.drag_to(top=100, left=0, simulative=True, move_speed="middle")
 element.drag_to_by_cdp(targetX=500, targetY=300, targetType="viewport", move_speed="middle")
 ```
@@ -816,7 +858,9 @@ element.drag_to_by_cdp(targetX=500, targetY=300, targetType="viewport", move_spe
 
 ## 25. 自动处理弹窗和用户环境
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 web.auto_handle_popup(
     handle_method="close_dialog",
     close_button=close_button_selector,

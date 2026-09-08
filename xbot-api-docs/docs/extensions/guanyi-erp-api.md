@@ -51,7 +51,9 @@
 - 模块文件名 `select_order_dteail` 是扩展现有拼写，调用时不要自行改成 `detail`。
 
 **典型调用方式：**
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.guanyi_erp_api import select_stock
 
 params = {

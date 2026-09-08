@@ -44,7 +44,9 @@
 - `get_SMS_code.py` 需要配置验证码获取接口 URL
 
 **典型调用方式：**
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 # Flow 型
 xbot_extensions.activity_47680f64.process2(
     是否弹窗下载=False,

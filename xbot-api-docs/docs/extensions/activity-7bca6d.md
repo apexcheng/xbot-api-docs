@@ -63,7 +63,9 @@
 - `utils.py` 提供通用工具：`sdk_create_web_page()`、`drag()`、`get_active_by_web_page()`
 
 **典型调用方式：**
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 # 千牛登录（Code 型）
 from xbot_extensions.activity_7bca6d import qn_login
 page = qn_login.login(
@@ -87,7 +89,9 @@ move_captcha(web_page, distance=100, drag_ele=slider)
 
 **调用模板：登录后继续操作**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.activity_7bca6d import process56
 
 web_page = process56(

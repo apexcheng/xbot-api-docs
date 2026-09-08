@@ -1,6 +1,8 @@
 import contextlib
 import io
 import json
+import os
+import runpy
 import shutil
 import subprocess
 import sys
@@ -8,6 +10,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import patch
 
 PROJECT_TEMPLATE_DIR = Path(__file__).resolve().parents[1] / "project-template"
 sys.path.insert(0, str(PROJECT_TEMPLATE_DIR))
@@ -229,6 +232,47 @@ class SyncToolTests(unittest.TestCase):
             self.assertEqual(flows["main"]["kind"], "Visual")
             self.assertEqual(flows["run"]["kind"], "Code")
             self.assertEqual(flows["config"]["kind"], "Code")
+
+    def test_base_config_is_isolated_by_project_and_ignores_working_directory(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temporary_root = Path(temp_dir).resolve()
+            user_dir = temporary_root / "user"
+            legacy_config = user_dir / ".xbot" / "project_config.json"
+            legacy_config.parent.mkdir(parents=True)
+            legacy_config.write_text("legacy-config", encoding="utf-8")
+            project_dirs = [
+                temporary_root / "project_a" / "xbot_robot",
+                temporary_root / "project_b" / "xbot_robot",
+            ]
+            for project_dir in project_dirs:
+                project_dir.mkdir(parents=True)
+                shutil.copy2(PROJECT_TEMPLATE_DIR / "config.py", project_dir / "config.py")
+
+            original_cwd = Path.cwd()
+            config_paths = []
+            try:
+                os.chdir(temporary_root)
+                with patch.object(Path, "home", return_value=user_dir):
+                    for index, project_dir in enumerate(project_dirs):
+                        config_path = runpy.run_path(str(project_dir / "config.py"))["CONFIG_PATH"]
+                        self.assertTrue(config_path.is_relative_to(project_dir))
+                        self.assertNotEqual(config_path, legacy_config)
+                        config_path.parent.mkdir(parents=True, exist_ok=True)
+                        config_path.write_text(f"project-{index}", encoding="utf-8")
+                        config_paths.append(config_path)
+
+                    self.assertNotEqual(config_paths[0], config_paths[1])
+                    self.assertEqual(config_paths[0].read_text(encoding="utf-8"), "project-0")
+                    self.assertEqual(config_paths[1].read_text(encoding="utf-8"), "project-1")
+
+                    os.chdir(project_dirs[1])
+                    reloaded_path = runpy.run_path(str(project_dirs[0] / "config.py"))["CONFIG_PATH"]
+                    self.assertEqual(reloaded_path, config_paths[0])
+                    self.assertEqual(reloaded_path.read_text(encoding="utf-8"), "project-0")
+            finally:
+                os.chdir(original_cwd)
+
+            self.assertEqual(legacy_config.read_text(encoding="utf-8"), "legacy-config")
 
 
 if __name__ == "__main__":

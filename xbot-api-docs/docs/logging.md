@@ -1,5 +1,7 @@
 # 影刀日志记录方法
 
+> 保留的 Python 片段使用影刀日志接口；动态变量由当前流程提供。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+
 > 定位：影刀 / xbot 编码版的日志输出接口。
 > 说明：真实影刀项目里的运行日志优先使用 `xbot.app.logging`；`xbot.print()` 只作为历史兼容写法说明。
 
@@ -27,6 +29,8 @@ from xbot import print as xbot_print
 ### 2.2 建议
 
 - 当前项目示例和新代码统一使用 `from xbot.app import logging`
+- `debug()`、`info()`、`success()`、`warning()`、`error()` 的普通业务日志先拼成完整字符串传给 `text`，动态内容使用 f-string。第二个位置参数对应 `block`，具体用途尚未确认，不作为格式化参数使用。
+- `trace(*values)` 支持多个值，按本页签名使用，不套用上述业务日志字符串约定。
 - 需要普通运行日志时，用 `logging.info()`
 - 需要分级日志时，用 `debug/info/success/warning/error`
 - 需要导出日志时，用 `export()`
@@ -198,7 +202,9 @@ logging.info("开始采集")
 
 ### 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 import traceback
 
 from xbot.app import logging
@@ -236,7 +242,9 @@ except Exception:
 
 ### 示例
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot.app import logging
 
 logging.export(r"C:\logs\run.log")

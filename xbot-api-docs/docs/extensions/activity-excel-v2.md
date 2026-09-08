@@ -135,7 +135,9 @@
 - 具体入口函数、参数顺序和返回值以 `prototype.block.json` 与 `__init__.py` 为准，不根据可视化中文界面猜测编码版参数。
 
 **典型调用方式：**
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.activity_excel_v2 import (
     fill_down_formula,
     filter,
@@ -202,7 +204,9 @@ if isinstance(result, dict):
 
 ### 区域截图 `process24()`
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 result = process24(excel_instance, begin_row, begin_column, end_row, end_column, save_path, sheet_name)
 ```
 

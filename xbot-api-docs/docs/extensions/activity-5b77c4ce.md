@@ -19,7 +19,9 @@
 
 **通用调用格式：**
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.activity_5b77c4ce.croe import yd_ai_table_action
 
 result = yd_ai_table_action(
@@ -171,7 +173,9 @@ Agent 查询钉钉 AI 表格时，先按本节确认调用入口、参数和返�
 
 已验证的筛选结构：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 params = {
     "page_size": 1,
     "max_pages": 1,
@@ -202,7 +206,9 @@ params = {
 
 调用示例：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 result = yd_ai_table_action(
     action="获取多行记录分页",
     client_id=client_id,
@@ -228,7 +234,9 @@ result = yd_ai_table_action(
 
 错误示例：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 # 错误：filters 复数可能被接口静默忽略，结果相当于未筛选
 {"filters": {"combination": "and", "conditions": [...]}}
 
@@ -238,7 +246,9 @@ result = yd_ai_table_action(
 
 存在性查询或查重只需要确认是否有记录时，推荐：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 {
     "page_size": 1,
     "max_pages": 1,

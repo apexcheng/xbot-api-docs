@@ -74,7 +74,7 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 
 ### 3. 复制 base 项目模板
 
-把 `project-template/` 的内容复制到已存在 `package.json` 的真实项目根目录：
+将 `project-template/` 中缺失的文件复制到已存在 `package.json` 的真实项目根目录。同名文件先保留，再按需最小合并，不覆盖已有业务入口、配置、`.gitignore` 或规则：
 
 ```text
 AGENTS.md
@@ -87,7 +87,7 @@ shadowbot_sync_tool.py
 .claude/skills/xbot-visual-flow-reader/
 ```
 
-`run.py` 与 `config.py` 基于真实影刀项目核验，使用“增强工具2026”的加密配置能力。完整前提和验收见 [最小 base 骨架](docs/base-project-skeleton.md)。
+模板使用“增强工具2026”的加密配置能力，配置文件按项目分开保存。依赖前提、旧配置处理和仍需影刀运行验证的路径及发布边界，见 [最小 base 骨架](docs/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 
@@ -101,13 +101,7 @@ shadowbot_sync_tool.py
 
 ## 影刀同步
 
-真实项目新增 `.py` 文件，或者用户明确要求“同步影刀”时，在真实项目根目录执行：
-
-```powershell
-python shadowbot_sync_tool.py
-```
-
-同步脚本会扫描项目中的 Python 文件，完成登记和编译处理。“同步影刀”不是 Git 提交或普通文件复制；同步成功也不等于已经在影刀编辑器中运行验证。
+同步的触发条件、执行命令和验证边界统一见 [AGENTS.md 的影刀同步规则](AGENTS.md#6-影刀同步)。
 
 ## 开发与维护风格
 

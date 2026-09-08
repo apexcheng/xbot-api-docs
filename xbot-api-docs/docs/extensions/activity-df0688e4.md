@@ -1,5 +1,7 @@
 # ERP 订单详情查询与字段翻译（activity_df0688e4）
 
+> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../../AGENTS.md)。
+
 > 调用类型：`direct python`
 > 证据等级：已从市场指令源码和真实项目调用确认；ERP 接口可用性仍依赖当前账号、网络和服务状态。
 > 返回：[市场指令索引](../extension-instructions.md)
@@ -39,7 +41,9 @@ order_data = translation.main({"record": result}) or {}
 
 最小示例：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.activity_df0688e4 import select_order_dteail
 
 

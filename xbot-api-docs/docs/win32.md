@@ -1,5 +1,7 @@
 # 影刀 Windows 自动化方法
 
+> 保留的 Python 片段依赖当前流程已取得的窗口、元素和已确认的定位值。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+
 > 定位：影刀 / xbot 的 Windows 桌面自动化接口。
 > 说明：本页整理 `xbot.win32` 模块常用公开方法，重点覆盖窗口、鼠标、键盘、锁屏、输入法相关能力。
 
@@ -236,7 +238,7 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 
 关闭窗口、判断激活状态、等待激活、等待关闭。
 
-`Win32Window.close()`（常见变量名为 `window`）直接调用即可，不需要为了关闭窗口单独套 `try / except`。需要保证业务异常时仍关闭窗口，可以放在 `finally` 中直接调用；窗口对象可能未创建时只判断对象是否存在。
+窗口关闭及异常收尾统一遵守[根开发规则](../../AGENTS.md)。
 
 ### 6.6 `find()` / `find_all()` / `wait_appear()` / `wait_disappear()`
 
@@ -246,7 +248,9 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 
 推荐保留“先找窗口，再在窗口内找元素”的对象层级：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 window = win32.get_by_selector("ERP主窗口", timeout=10)
 
 query_btn = window.find("按钮_查询", timeout=10)
@@ -262,7 +266,9 @@ search_input.input("影刀")
 
 Windows 自动化优先让代码直接对应真实操作路径：先获取真正要操作的业务窗口；只有业务窗口不存在时，才进入主程序并打开该业务窗口。
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot.errors import UIAError
 
 try:
@@ -287,14 +293,18 @@ target_window.find("查询按钮", timeout=10).click()
 
 元素只使用一次并立即执行操作时，可以直接链式调用：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 window.find("输入框", timeout=10).clipboard_input(text, append=False)
 window.find("查询按钮", timeout=10).click()
 ```
 
 元素后续还需要读取、判断或重复使用时，保留变量：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 result = window.find("结果文本", timeout=10)
 if "成功" in str(result.get_text() or ""):
     result.click()
@@ -348,7 +358,9 @@ if "成功" in str(result.get_text() or ""):
 
 判断思路：
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 window = win32.get_active()
 element = window.find("你的元素选择器", timeout=3)
 

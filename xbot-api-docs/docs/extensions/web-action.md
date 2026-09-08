@@ -62,7 +62,9 @@ Direct 入口的职责也应按模块区分：`element_core.py` 负责元素隐�
 - `select_date.py` 是智能日期选择器，支持 Shadow DOM
 
 **典型调用方式：**
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 # Flow 型
 xbot_extensions.web_action.process1(
     网页对象=page, 操作目标=elem,

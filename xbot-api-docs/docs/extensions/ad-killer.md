@@ -21,7 +21,9 @@
 
 ## 最小调用
 
-```python
+```text
+非执行调用说明（不可直接运行）：
+
 from xbot_extensions.ad_killer import close_ads
 
 close_ads(
