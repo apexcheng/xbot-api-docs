@@ -24,6 +24,7 @@ class AgentRuleConsistencyTests(unittest.TestCase):
             "Service",
             "不增加等价的前置校验",
             "raise ... from exc",
+            "中间层不重复记录",
             "from xbot.app import logging",
             "shadowbot_sync_tool.py",
             "browser.md",
@@ -59,6 +60,8 @@ class AgentRuleConsistencyTests(unittest.TestCase):
             "Sphinx / reStructuredText",
             "正常路径直接执行",
             "裸 `raise` 重抛原业务异常",
+            "不是替代关系",
+            "不要把异常保存到变量后脱离原 `except` 再重新抛出",
             "不增加等价的前置校验",
         ]
 
