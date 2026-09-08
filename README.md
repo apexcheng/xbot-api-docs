@@ -30,12 +30,13 @@
 
 ### AI Agent 开发规则
 
-- [AGENTS.md](AGENTS.md)：跨项目稳定规则，包括最小改动、过程式主流程、不猜 API 和按风险验证。
+- [AGENTS.md](AGENTS.md)：执行任务时常驻的跨项目核心约束，完整保留过程式编程、文件职责、变量内联和少封装规则。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
 - [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口、可视化流程读取 Skill 和同步工具。
 
 ### 开发与排错专题
 
+- [影刀编码版编程风格详解](docs/coding-style.md)
 - [最小 base 骨架](docs/base-project-skeleton.md)
 - [多数据源报表安全边界](docs/multi-source-report-safety.md)
 - [影刀编码版通用排错](docs/troubleshooting.md)
@@ -117,11 +118,11 @@ shadowbot_sync_tool.py
 ## 目录结构
 
 ```text
-AGENTS.md                    # Agent 稳定开发规则
+AGENTS.md                    # Agent 常驻核心约束
 llms.txt                     # AI / LLM 文档索引
 README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
-docs/                        # base 骨架、多数据源安全与通用排错
+docs/                        # 编程风格详解、base 骨架、多数据源安全与通用排错
 project-template/            # 真实影刀项目 base 模板、Skill 与同步工具
 tests/                       # 影刀同步工具回归测试
 xbot-api-docs/

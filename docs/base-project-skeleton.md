@@ -40,7 +40,7 @@ load_secret_config()
 
 ## Agent 实现规则
 
-入口、参数、敏感信息与同步遵守[根开发规则](../AGENTS.md)。本模板只补充以下约定：
+入口、参数、敏感信息与同步遵守[根开发规则](../AGENTS.md)；过程式主流程、`run.py / config.py / tool.py（或 utils.py）` 职责、变量内联和函数边界的详细判断见[编程风格详解](coding-style.md)。本模板只补充以下约定：
 
 - `args` 是流程初始化参数字典，不等于 `package.variables`。
 - 修改 `dialog_settings` 时，`VariableName` 是转换后的配置字段名，按钮结果从 `pressed_button` 读取。
