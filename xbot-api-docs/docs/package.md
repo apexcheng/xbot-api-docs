@@ -137,7 +137,7 @@ package.resources.copy_to_clipboard(["模板.xlsx", "logo.png"])
 - `package.resources` 更适合读“跟项目一起打包”的固定文件，不适合存运行时动态生成内容。
 - 当前知识库以本机可见 `ResourceReader` 方法为准，`package.resources["xxx"]` 不应再作为可用写法保留。
 - 当前可见源码没有确认 `package.resources` 支持下标访问，不要把它当成字典使用。
-- 若运行结果与当前版本不一致，标注“需运行验证”。
+- 若运行结果与当前版本不一致，以当前版本实际行为为准。
 
 ---
 
