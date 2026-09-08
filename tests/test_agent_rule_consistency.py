@@ -39,8 +39,29 @@ class AgentRuleConsistencyTests(unittest.TestCase):
 
         for phrase in required_phrases:
             with self.subTest(phrase=phrase):
-                self.assertIn(phrase, root_rules)
                 self.assertIn(phrase, template_rules)
+
+        root_required_phrases = [
+            "知识库维护者",
+            "project-template/AGENTS.md",
+            "xbot-api-docs/AGENTS.md",
+            "llms.txt",
+            "职责分层",
+            "单一维护",
+        ]
+        for phrase in root_required_phrases:
+            with self.subTest(root_phrase=phrase):
+                self.assertIn(phrase, root_rules)
+
+        root_forbidden_phrases = [
+            "自上而下的过程式主流程",
+            "raise ... from exc",
+            "from xbot.app import logging",
+            "shadowbot_sync_tool.py",
+        ]
+        for phrase in root_forbidden_phrases:
+            with self.subTest(root_forbidden=phrase):
+                self.assertNotIn(phrase, root_rules)
 
     def test_detailed_examples_remain_available(self):
         root_rules = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
@@ -51,7 +72,7 @@ class AgentRuleConsistencyTests(unittest.TestCase):
             encoding="utf-8"
         )
 
-        self.assertIn("docs/coding-style.md", root_rules)
+        self.assertNotIn("docs/coding-style.md", root_rules)
         self.assertIn("docs/coding-style.md", template_rules)
 
         required_details = [

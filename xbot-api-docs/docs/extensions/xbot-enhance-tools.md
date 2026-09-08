@@ -1,6 +1,6 @@
 # 增强工具2026 (xbot_enhance_tools)
 
-> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../../AGENTS.md)。
+> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../AGENTS.md)。
 
 > 调用类型：`direct python`  
 > 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py、market_config.py 中的公开函数；__init__.py 不提供 processN 包装入口。

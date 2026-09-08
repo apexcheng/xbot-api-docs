@@ -40,14 +40,14 @@ load_secret_config()
 
 ## Agent 实现规则
 
-入口、参数、敏感信息与同步遵守[根开发规则](../AGENTS.md)；过程式主流程、`run.py / config.py / tool.py（或 utils.py）` 职责、变量内联和函数边界的详细判断见[编程风格详解](coding-style.md)。本模板只补充以下约定：
+入口、参数、敏感信息与同步遵守[项目开发规则](../project-template/AGENTS.md)；过程式主流程、`run.py / config.py / tool.py（或 utils.py）` 职责、变量内联和函数边界的详细判断见[编程风格详解](coding-style.md)。本模板只补充以下约定：
 
 - `args` 是流程初始化参数字典，不等于 `package.variables`。
 - 修改 `dialog_settings` 时，`VariableName` 是转换后的配置字段名，按钮结果从 `pressed_button` 读取。
 
 ## 最小验收
 
-1. 仅新增缺失文件；已有入口、配置与用户改动保留。按根规则需要同步时，先备份 `package.json`，再确认新增 Code 流已登记；用户要求暂不同步时记录未执行。
+1. 仅新增缺失文件；已有入口、配置与用户改动保留。按项目规则需要同步时，先备份 `package.json`，再确认新增 Code 流已登记；用户要求暂不同步时记录未执行。
 2. 在影刀 Code 流中确认配置实际位于当前项目 `.dev/project_config.json`，并核查 `.dev` 的打包、发布边界。
 3. 首次运行显示初始化对话框，取消时流程正常结束；保存后再次运行能加载本项目配置。
 4. 同一 Windows 用户下两个项目互不串用配置。

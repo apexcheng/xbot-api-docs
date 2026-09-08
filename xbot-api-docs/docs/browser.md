@@ -1,12 +1,12 @@
 # 影刀浏览器操作方法整理
 
-> 保留的 Python 片段依赖当前流程已取得的 `browser`、`page` 或 `element`，定位值和页面状态由项目确认。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+> 保留的 Python 片段依赖当前流程已取得的 `browser`、`page` 或 `element`，定位值和页面状态由项目确认。片段不是独立脚本；[示例边界](../AGENTS.md)。
 
 > 定位：影刀 / xbot 操作浏览器的开发者参数手册。
 > 重点：把 `xbot.web` 常用方法、参数、默认值、可选值写清楚。
 > 规则：字符串参数必须按文档中的值原样传入，例如 `mode="chrome"`，不是 `Chrome` / `CHROME`。
 
-网页实现路线及 HTTP 例外统一遵守[根开发规则](../../AGENTS.md)：默认使用 `xbot.web` 和浏览器对象能力；用户明确要求接口方式，或项目已有稳定接口实现时，沿用对应路线。
+网页实现路线及 HTTP 例外统一遵守[项目开发规则](../../project-template/AGENTS.md)：默认使用 `xbot.web` 和浏览器对象能力；用户明确要求接口方式，或项目已有稳定接口实现时，沿用对应路线。
 
 ---
 
@@ -198,7 +198,7 @@ browser.close(ignore_beforeunload=False)
 web.close_all(mode="chrome", task_kill=False, ignore_beforeunload=False)
 ```
 
-网页关闭及异常收尾统一遵守[根开发规则](../../AGENTS.md)；关闭范围仍须符合本页的页面所有权和 Profile 边界。
+网页关闭及异常收尾统一遵守[项目开发规则](../../project-template/AGENTS.md)；关闭范围仍须符合本页的页面所有权和 Profile 边界。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
@@ -813,7 +813,7 @@ result = browser.http_request(
 )
 ```
 
-`stop_monitor_network()` 和 `stop_load()` 的异常收尾方式遵守[根开发规则](../../AGENTS.md)。
+`stop_monitor_network()` 和 `stop_load()` 的异常收尾方式遵守[项目开发规则](../../project-template/AGENTS.md)。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|

@@ -1,6 +1,6 @@
 # iframe2 扩展指令说明
 
-> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+> 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../AGENTS.md)。
 
 > 来源目录：`xbot_extensions/iframe2`
 > 结论依据：`package.json`、`prototype.block.json`、`api.py`、`_core.py`

@@ -1,6 +1,6 @@
 # 影刀 Windows 自动化方法
 
-> 保留的 Python 片段依赖当前流程已取得的窗口、元素和已确认的定位值。片段不是独立脚本；[示例边界](../../AGENTS.md)。
+> 保留的 Python 片段依赖当前流程已取得的窗口、元素和已确认的定位值。片段不是独立脚本；[示例边界](../AGENTS.md)。
 
 > 定位：影刀 / xbot 的 Windows 桌面自动化接口。
 > 说明：本页整理 `xbot.win32` 模块常用公开方法，重点覆盖窗口、鼠标、键盘、锁屏、输入法相关能力。
@@ -238,7 +238,7 @@ window = win32.get_by_selector("ERP主窗口", timeout=10)
 
 关闭窗口、判断激活状态、等待激活、等待关闭。
 
-窗口关闭及异常收尾统一遵守[根开发规则](../../AGENTS.md)。
+窗口关闭及异常收尾统一遵守[项目开发规则](../../project-template/AGENTS.md)。
 
 ### 6.6 `find()` / `find_all()` / `wait_appear()` / `wait_disappear()`
 

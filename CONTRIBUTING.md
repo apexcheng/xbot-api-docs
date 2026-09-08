@@ -17,7 +17,7 @@
 
 ## 内容边界
 
-- 跨项目常驻核心约束以根 [AGENTS.md](AGENTS.md) 为唯一规范源；[编程风格详解](docs/coding-style.md) 只保存示例和低频边界，不削弱根规则。 `project-template/AGENTS.md` 是复制到真实项目的便携投影，完整保留必须直接生效的代码风格，不独立发明新规则。
+- 真实影刀项目的跨项目常驻核心约束以 [project-template/AGENTS.md](project-template/AGENTS.md) 为唯一规范源；[编程风格详解](docs/coding-style.md) 只保存示例和低频边界，不削弱项目规则。根 [AGENTS.md](AGENTS.md) 只维护知识库本身的职责、审查和路由规则。
 - API 签名、参数、返回值和限制写入对应的 `xbot-api-docs/docs/` 页面。
 - 市场指令参数和返回值写入对应事实页；只有新增指令时才在总索引补一条链接。
 - 项目专用流程、页面字段和业务口径留在真实项目文档中。
@@ -32,7 +32,7 @@
 - 标明运行环境以及哪些部分已验证。
 - 同一用法只维护一份；其他页面链接到它，不复制代码。
 
-API Python 片段须注明前置对象和适用条件，不声称可独立运行。脱敏占位、未知步骤和有实际副作用的调用统一使用标注“非执行调用说明（不可直接运行）”的 `text` 代码块或正文；边界遵守 [AGENTS.md](AGENTS.md) 的“API 与知识库”规则。
+API Python 片段须注明前置对象和适用条件，不声称可独立运行。脱敏占位、未知步骤和有实际副作用的调用统一使用标注“非执行调用说明（不可直接运行）”的 `text` 代码块或正文；边界遵守 [xbot-api-docs/AGENTS.md](xbot-api-docs/AGENTS.md) 的 API 文档维护规则。
 
 ## 脱敏
 
@@ -46,8 +46,8 @@ API Python 片段须注明前置对象和适用条件，不声称可独立运行
 
 ## 链接而不是复制
 
-规则引用 [AGENTS.md](AGENTS.md)，查找入口引用 [llms.txt](llms.txt)，API 事实引用其唯一页面。不要为了让每个文件“独立完整”而复制规则、教程或长示例。
+知识库维护规则引用根 [AGENTS.md](AGENTS.md)，真实项目开发规则引用 [project-template/AGENTS.md](project-template/AGENTS.md)，查找入口引用 [llms.txt](llms.txt)，API 事实引用其唯一页面。不要为了让每个文件“独立完整”而复制规则、教程或长示例。
 
 提交前检查：链接有效、事实等级清楚、示例最小、内容已脱敏、没有新增重复规则。
 
-修改根 `AGENTS.md` 中会影响真实项目开发行为的核心约束时，同时检查 `project-template/AGENTS.md`；`tests/test_agent_rule_consistency.py` 只守住关键不变量，不要求两份文件逐字一致。
+修改真实项目开发行为的核心约束时，只在 `project-template/AGENTS.md` 维护其正文，并检查 `tests/test_agent_rule_consistency.py` 的关键不变量；不要把同一规则复制回根 `AGENTS.md`。
