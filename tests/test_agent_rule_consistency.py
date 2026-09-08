@@ -17,6 +17,8 @@ class AgentRuleConsistencyTests(unittest.TestCase):
             "自上而下的过程式主流程",
             "Service",
             "raise ... from exc",
+            "正常路径直接执行收尾",
+            "裸 `raise` 重抛原业务异常",
             "from xbot.app import logging",
             "shadowbot_sync_tool.py",
             "browser.md",
