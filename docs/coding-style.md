@@ -47,6 +47,30 @@ page.find_by_xpath("//button[contains(., '下一页')]", timeout=3).click()
 - 变量名直白表达业务含义，避免 `x`、`tmp`、`obj` 等无语义名称。
 - 需要函数或方法文档注释时使用 Sphinx / reStructuredText 格式，不要求给每个函数补文档。
 
+### 市场指令调用注释
+
+所有市场指令调用都适用本规则，包括 Flow 的 `processN(...)`、直接 Python API，以及通过别名导入后的调用。市场指令的模块名、函数名和 `processN(...)` 往往不能完整表达真实业务含义，因此每个调用点都要用紧邻注释补足“功能 + 参数”。即使使用了关键字参数，也不能只依赖参数名让读者反推该市场指令做什么。
+
+注释保持简短，至少包含：
+
+- 该市场指令入口实际完成什么业务动作。
+- 本次传入的每个参数分别控制什么；位置参数尤其要写清参数顺序。
+- 说明只能来自对应市场指令事实页、当前安装版本源码或用户已确认用法，不根据 `process11`、`process13` 之类编号猜测。
+
+```text
+非执行调用说明（不可直接运行）：
+# C-ERP 市场指令 process11：下载平台铺货数据；参数依次为平台类型、店铺筛选值、平台商品 ID 筛选值。
+csv_path = activity_a90a8311.process11("拼多多", "", "")
+
+# C-ERP 市场指令 process13：初始化或复用 ERP 网页；username/password 为 ERP 账号密码，ERP浏览器标识指定浏览器 Profile，refresh 控制已有网页是否刷新。
+erp_web = activity_a90a8311.process13(
+    username=project_config.ERP_USERNAME,
+    password=project_config.ERP_PASSWORD,
+    ERP浏览器标识=project_config.ERP_PROFILE,
+    refresh=True,
+)
+```
+
 ## 6. 异常、收尾与日志
 
 - 捕获后只是继续失败时直接 `raise`；需要增加业务步骤、字段、XPath、订单号等定位信息时，使用 `raise ... from exc` 保留异常链。不要做 `raise RuntimeError(str(exc)) from exc` 这类无意义包装，也不要默认用 `raise ... from None` 隐藏底层异常。

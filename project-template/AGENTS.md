@@ -36,10 +36,11 @@
 
 1. 不根据通用 Python 经验、旧项目记忆或名称相似度猜 xbot API、市场指令、页面字段、XPath 或命令。
 2. 用户已给出或当前代码已确认的稳定调用优先原样沿用。只有新增、修改或排查相关行为且证据不足时，才按知识库 `llms.txt` 读取事实页的相关章节。
-3. 网页相关问题查 `browser.md`，Win32 查 `win32.md`，Excel / WPS 查 `excel.md`；不机械加载与当前改动无关的全文。
-4. 网页业务默认使用 `xbot.web`；等待明确异步条件，不靠不断增加固定 `sleep`。
-5. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。
-6. 读取旧版可视化项目时使用 `.agents/skills/xbot-visual-flow-reader/SKILL.md`，纯 Python 任务不触发。
+3. 调用任何市场指令（`xbot_extensions`）时，无论是 Flow 的 `processN(...)`、直接 Python API，还是通过别名导入后调用，都必须在调用点紧邻添加注释，至少说明该入口的业务功能，以及本次传入各参数的名称和含义；不得只保留裸调用。功能和参数说明必须来自知识库事实页、当前安装版本源码或用户已确认用法，不得根据函数编号、函数名或参数值猜测。
+4. 网页相关问题查 `browser.md`，Win32 查 `win32.md`，Excel / WPS 查 `excel.md`；不机械加载与当前改动无关的全文。
+5. 网页业务默认使用 `xbot.web`；等待明确异步条件，不靠不断增加固定 `sleep`。
+6. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。
+7. 读取旧版可视化项目时使用 `.agents/skills/xbot-visual-flow-reader/SKILL.md`，纯 Python 任务不触发。
 
 ## 验证与同步
 
